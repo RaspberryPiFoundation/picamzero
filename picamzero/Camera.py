@@ -22,7 +22,7 @@ class Camera():
             filename += '.mp4'  # Append '.mp4' extension if not present
 
         # Start recording the video
-        video_config = self._pc2.create_video_configuration()   # Do we need a config option?
+        video_config = self._pc2.create_video_configuration()   # Add config options?
         self._pc2.configure(video_config)
         self._pc2.start(show_preview=True)
         encoder = H264Encoder(10000000)
@@ -34,4 +34,4 @@ class Camera():
         self._pc2.stop_preview()
 
 cam = Camera()
-cam.record_video('test', 10)
+cam.record_video('test')
