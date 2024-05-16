@@ -6,32 +6,63 @@ from time import sleep
 class Camera():
 
     def __init__(
-        self,
-        demo_string="Something exciting"        
+        self      
     ):
         
         """
         Creates a Camera object based on a Picamera2 object
+
+        :param type name:
+            Description of the parameter
         """    
-        self._pc2 = Picamera2()
-        self.demo_string = demo_string
-        
+        self.picamera2 = Picamera2()
+        self.example = "example"
+    
+    # PROPERTIES
+    # ----------------------------------
+    @property
+    def example(self):
+        """
+        An example 
+        """
+        return self.example
+    
+    @example.setter
+    def example(self, value):
+        self.example = value
+
+    # METHODS
+    # ----------------------------------
+
+    # Record video 
+    """
+    Picam video methods:
+    start_recording(type, format, filename, quality)
+    wait_recording(duration)
+    stop_recording()
+    """           
     def record_video(self, filename, duration=5):
         
         if not filename.endswith('.mp4'):
             filename += '.mp4'  # Append '.mp4' extension if not present
 
         # Start recording the video
-        video_config = self._pc2.create_video_configuration()   # Add config options?
-        self._pc2.configure(video_config)
-        self._pc2.start(show_preview=True)
+        video_config = self.picamera2.create_video_configuration()   # Add config options?
+        self.picamera2.configure(video_config)
+        self.picamera2.start(show_preview=True)
         encoder = H264Encoder(10000000)
         
         output = FfmpegOutput(filename)
-        self._pc2.start_recording(encoder, output)
+        self.picamera2.start_recording(encoder, output)
         sleep(duration)
-        self._pc2.stop_recording()
-        self._pc2.stop_preview()
+        self.picamera2.stop_recording()
+        self.picamera2.stop_preview()
 
-cam = Camera()
-cam.record_video('test')
+
+    """
+    Picam image methods:
+    capture(output, format, resize)
+    capture_sequence(output, format, resize)
+    """  
+
+
