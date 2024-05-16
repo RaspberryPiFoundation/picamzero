@@ -15,8 +15,9 @@ class Camera():
         :param type name:
             Description of the parameter
         """    
-        self.picamera2 = Picamera2()
-        self.example = "example"
+        self.pc2 = Picamera2()
+        self.eg = "example"
+    
     
     # PROPERTIES
     # ----------------------------------
@@ -25,11 +26,11 @@ class Camera():
         """
         An example 
         """
-        return self.example
+        return self.eg
     
     @example.setter
     def example(self, value):
-        self.example = value
+        self.eg = value
 
     # METHODS
     # ----------------------------------
@@ -47,16 +48,16 @@ class Camera():
             filename += '.mp4'  # Append '.mp4' extension if not present
 
         # Start recording the video
-        video_config = self.picamera2.create_video_configuration()   # Add config options?
-        self.picamera2.configure(video_config)
-        self.picamera2.start(show_preview=True)
+        video_config = self.pc2.create_video_configuration()   # Add config options?
+        self.pc2.configure(video_config)
+        self.pc2.start(show_preview=True)
         encoder = H264Encoder(10000000)
         
         output = FfmpegOutput(filename)
-        self.picamera2.start_recording(encoder, output)
+        self.pc2.start_recording(encoder, output)
         sleep(duration)
-        self.picamera2.stop_recording()
-        self.picamera2.stop_preview()
+        self.pc2.stop_recording()
+        self.pc2.stop_preview()
 
 
     """
@@ -64,5 +65,4 @@ class Camera():
     capture(output, format, resize)
     capture_sequence(output, format, resize)
     """  
-
 
