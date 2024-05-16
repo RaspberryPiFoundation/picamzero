@@ -38,6 +38,8 @@
     - Calculate NDVI
     - Colour mapping areas of an image
 - Take a photo when a button is pressed (GPIOzero)
+- Using two cameras
+- Taking a photo whilst also recording a video (9.3. Multiple outputs)
 
 New way of packaging Python projects:
 https://packaging.python.org/en/latest/tutorials/packaging-projects/
