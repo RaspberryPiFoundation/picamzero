@@ -1,0 +1,20 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "picamzero"
+description = "A library to make it easy for beginners to use the Raspberry Pi camera"
+readme = "README.md"
+license = {file="LICENSE"}
+version = "0.0.1"
+authors = [
+  { name="Peter Bell", email="peter.bell@raspberrypi.org" },
+  { name="Laura Sach", email="laura.sach@raspberrypi.org"},
+]
+
+dependencies = [
+  "picamera2",
+]
+
+requires-python = ">= 3.8"
