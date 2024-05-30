@@ -162,3 +162,4 @@ cython_debug/
 # Video files that accidentally crept in
 .mp4
 .h264
+.DS_Store
