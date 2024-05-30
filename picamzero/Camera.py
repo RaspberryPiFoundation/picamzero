@@ -1,7 +1,7 @@
 from picamera2 import Picamera2
-from picamera2.encoders import H264Encoder
-from picamera2.outputs import FfmpegOutput
-from time import sleep
+# from picamera2.encoders import H264Encoder
+# from picamera2.outputs import FfmpegOutput
+from time import sleep, strftime, localtime
 
 class Camera():
 
@@ -12,12 +12,19 @@ class Camera():
         """
         Creates a Camera object based on a Picamera2 object
 
-        :param type name:
-            Description of the parameter
+        :param Picamera2 pc2:
+            An internal Picamera2 object. This can be accessed by
+            advanced users who want to use methods we have not 
+            wrapped from the Picamera2 library.
         """    
-        self.pc2 = Picamera2()
-        self.eg = "example"
+        try:
+            self.pc2 = Picamera2()
+        except RuntimeError:
+            print("Could not connect to the camera!")
+            print("Please check all connections")
+            exit()
     
+   
     
     # PROPERTIES
     # ----------------------------------
@@ -35,34 +42,36 @@ class Camera():
     # METHODS
     # ----------------------------------
 
-    # Record video 
-    """
-    Picam video methods:
-    start_recording(type, format, filename, quality)
-    wait_recording(duration)
-    stop_recording()
-    """           
-    def record_video(self, filename, duration=5):
+	# Take a picture
+    def take_picture(self, filename=None):
+        """
+        Takes a jpeg image using the camera
+        """
+        if filename is None:
+            # Set a default filename of example + current date/time
+            filename = "example" + strftime("%Y%m%d%H%M%S", localtime()) + ".jpg"
+
+        # Use inbuilt function for now
+        self.pc2.start_and_capture_file(filename)
         
-        if not filename.endswith('.mp4'):
-            filename += '.mp4'  # Append '.mp4' extension if not present
+        # Useful to know what the file is called
+        return filename
 
-        # Start recording the video
-        video_config = self.pc2.create_video_configuration()   # Add config options?
-        self.pc2.configure(video_config)
-        self.pc2.start(show_preview=True)
-        encoder = H264Encoder(10000000)
+
+    # Record a video 
+    def record_video(self, filename=None, duration=5):
+        """
+        Record a video using the camera
+        """
         
-        output = FfmpegOutput(filename)
-        self.pc2.start_recording(encoder, output)
-        sleep(duration)
-        self.pc2.stop_recording()
-        self.pc2.stop_preview()
+        if filename is None:
+            # Set a default filename of example + current date/time
+            filename = "example" + strftime("%Y%m%d%H%M%S", localtime()) + ".mp4"
+        
+        # Use basic inbuilt function
+        self.pc2.start_and_record_video(filename, duration=duration)
+        
+        return filename
+        
 
-
-    """
-    Picam image methods:
-    capture(output, format, resize)
-    capture_sequence(output, format, resize)
-    """  
 

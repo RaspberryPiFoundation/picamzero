@@ -31,6 +31,16 @@ You can make changes to the docs in the .md files.
 
 Do **NOT** use `mkdocs gh-deploy` command until the package is live - even though the repo is private, this will still publish a public website!
 
+### Testing
+Navigate to the `tests` directory and run the pytest command:
+
+```
+pytest
+```
+
+You can write tests in the tests directory. Each test function, and each file needs to begin with the prefix `test_`
+
+
 ## Build the package
 
 From the main directory (with `pyproject.toml`) type:
@@ -40,3 +50,5 @@ python -m build
 ```
 
 The distribution will be created in the `dist` directory. 
+
+(You might need to `sudo apt install python3-build` I can't remember!)
