@@ -1,0 +1,5 @@
+site_name: picamzero
+nav:
+ - Home: index.md
+ - Camera: camera.md
+theme: readthedocs
