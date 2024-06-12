@@ -3,32 +3,32 @@
 
 
 # Preview
-- Test whether the camera is working ok!
-- Start the preview
-- Stop the preview
-- Horizontal or vertical flip the preview 
-- Change the size (resolution?) of the preview
-- Change the brightness
-- Change the contrast
-- Add image effects
+Test whether the camera is working ok!
+-- Start the preview
+-- Stop the preview
+-- Horizontal or vertical flip the preview 
+-- Change the size (resolution?) of the preview
+-- Change the brightness
+-- Change the contrast
+-- Add image effects
 
 # Stills
-- Start the camera
-- Take a still picture and save it as <filename>
-- Take a series of <n> pictures and save them as <filename> with auto number, also set the delay betweeen
-- Time lapse mode (continual photo taking after <delay>)
-- Different exposure modes?
-- White balance? 
+-X Start the camera
+-- Take a still picture and save it as <filename>
+-- Take a series of <n> pictures and save them as <filename> with auto number, also set the delay betweeen
+-- Time lapse mode (continual photo taking after <delay>)
+-- Different exposure modes?
+-- White balance? 
 
 # Video
-- Record a video and save it as <filename>
-- Set the duration of the video recording 
-- Create a video of a bunch of timelapse images 
+-- Record a video and save it as <filename>
+-- Set the duration of the video recording 
+-- Create a video of a bunch of timelapse images 
 
 # Overlays
-- Add a text overlay on the preview
-- Add a text overlay on the captured image
-- Change parameters of the text e.g. size, color, bgcolor
+-- Add a text overlay on the preview
+-- Add a text overlay on the captured image
+-- Change parameters of the text e.g. size, color, bgcolor
 
 # Extras - possibly separate library / optional extra?
 - Use OpenCV (or Pillow?) to modify images
@@ -39,7 +39,14 @@
     - Colour mapping areas of an image
 - Take a photo when a button is pressed (GPIOzero)
 - Using two cameras
-- Taking a photo whilst also recording a video (9.3. Multiple outputs)
+-- Taking a photo whilst also recording a video (9.3. Multiple outputs)
 
 New way of packaging Python projects:
 https://packaging.python.org/en/latest/tutorials/packaging-projects/
+
+
+Looking at making the function levels dufferent. i/.e. havung preview object inside Camera dn then attributes that are the functions for Preview.
+Looking at picozero and guizero to see what they have done.
+
+
+? Look at iso (gain) / shutter speed / framerate < Did they get rid of framerate?
