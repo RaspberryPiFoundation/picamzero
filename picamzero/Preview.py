@@ -1,5 +1,5 @@
-class Preview():       
-        
+class Preview():
+
     # METHODS
     # ----------------------------------
 
@@ -17,6 +17,13 @@ class Preview():
         """
         pass
 
+    @property
+    def annotation(self):
+        pass
+    """
+    Other annotation properties...
+    """
+
     # Text overlay
     def add_text_overlay(self, text):
         """
@@ -30,3 +37,5 @@ class Preview():
         Image overlays
         """
         pass
+
+

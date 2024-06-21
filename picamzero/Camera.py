@@ -7,35 +7,37 @@ from .Preview import Preview
 class Camera():
 
     def __init__(
-        self      
+        self
     ):
-        
+
         """
         Creates a Camera object based on a Picamera2 object
 
         :param Picamera2 pc2:
             An internal Picamera2 object. This can be accessed by
-            advanced users who want to use methods we have not 
+            advanced users who want to use methods we have not
             wrapped from the Picamera2 library.
-        """    
+        """
         try:
             self.pc2 = Picamera2()
         except RuntimeError:
             print("Could not connect to the camera!")
             print("Please check all connections")
             exit()
-    
+
         self.preview = Preview()
+
+
 
     # PROPERTIES
     # ----------------------------------
     @property
     def example(self):
         """
-        An example 
+        An example
         """
         return self.eg
-    
+
     @example.setter
     def example(self, value):
         self.eg = value
@@ -56,44 +58,46 @@ class Camera():
         Stop the preview
         """
         pass
-    
-    # Flip image
-    def flip_image(self, direction):
+
+    def flip_camera(self, direction):
         """
         Flip the image H or V
         """
         pass
 
-    # Set brightness
-    def set_brightness(self):
+    @property
+    def brightness(self):
         """
         Set the brightness
         """
         pass
-    
-    # Set contrast
-    def set_contrast(self):
+
+    @property
+    def contrast(self):
         """
         Set the contrast
         """
         pass
 
     # Set exposure
-    def set_exposure(self):
+    @property
+    def exposure(self):
         """
         Set the exposure
         """
         pass
 
     # Set gain
-    def set_gain(self):
+    @property
+    def gain(self):
         """
         Set the gain
         """
         pass
 
     # Set white balance
-    def set_white_balance(self):
+    @property
+    def white_balance(self):
         """
         Set the white balance
         """
@@ -105,9 +109,22 @@ class Camera():
         Give choice of effects (greyscale, negative, sketch)
         """
         pass
-    
-    # Text overlay
-    def add_text_overlay(self, text, size, colour, bgcolour):
+
+    @property
+    def annotation(self):
+        pass
+    @property
+    def annotation_size(self):
+        pass
+    @property
+    def annotation_color(self):
+        pass
+    @property
+    def annotation_background_color(self):
+        pass
+
+    def set_annotation(self, text, size, colour, bgcolour,
+                       on_preview=True, on_image=True):
         """
         Text overlays - **need to implement to take note of the current mode (preview or capture)**
         """
@@ -138,14 +155,14 @@ class Camera():
 
         # Use inbuilt function for now
         self.pc2.start_and_capture_file(filename)
-        
+
         # Useful to know what the file is called
         return filename
-    
+
     # Synonym method for take a picture
     def capture_image(self):
         return self.take_photo()
-    
+
     # Take a sequence
     def capture_burst(self, filename=None, num_images = 10, interval=0.01):
         """
@@ -153,49 +170,49 @@ class Camera():
         """
         pass
 
-    # Synonym methods for burst
+    # Synonym method
+    def take_sequence(self):
+        pass
+
+    # Synonym methods for burst (from picamera1)
     def capture_sequence(self):
         return self.capture_burst()
-    
-    def take_photos(self):
-        return self.capture_burst()
 
-    def take_pictures(self):
-        return self.capture_burst()
+    # def take_pictures(self):
+    #     return self.capture_burst()
 
     # Take timelapse (optional video from result)
     def take_timelapse(self, filename=None, make_video=False):
         """
-        Time lapse mode (continual photo taking after <delay>)
+        Time-lapse mode (continual photo taking after <delay>)
         """
         pass
 
     # Record a video
-    def record_video(self, filename=None, duration=5, record_in_background=False):
+    def record_video(self, filename=None, duration=5):
         """
         Record a video
         """
         if filename is None:
             # Set a default filename of example + current date/time
             filename = "example" + strftime("%Y%m%d%H%M%S", localtime()) + ".mp4"
-        
+
         # Use basic inbuilt function
         self.pc2.start_and_record_video(filename, duration=duration)
-        
+
         return filename
-    
+
     # Record a video with option to take a photo
-    def start_recording(self, filename=None, duration=5):
+    def start_recording(self, filename=None):
         """
         Record a video with option to take a photo (9.3. Multiple outputs)
         """
-        return self.record_video(filename, duration, record_in_background=True)
+        pass
 
     # Stop recording video
-    def stop_recording(self, filename=None):
+    def stop_recording(self):
         """
         Stop recording video
         """
         pass
-
 

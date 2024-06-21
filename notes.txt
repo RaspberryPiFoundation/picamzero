@@ -6,7 +6,7 @@
 Test whether the camera is working ok!
 -- Start the preview
 -- Stop the preview
--- Horizontal or vertical flip the preview 
+-- Horizontal or vertical flip the preview
 -- Change the size (resolution?) of the preview
 -- Change the brightness
 -- Change the contrast
@@ -16,14 +16,13 @@ Test whether the camera is working ok!
 -X Start the camera
 -- Take a still picture and save it as <filename>
 -- Take a series of <n> pictures and save them as <filename> with auto number, also set the delay betweeen
--- Time lapse mode (continual photo taking after <delay>)
+-- Time-lapse mode (continual photo taking after <delay>)
 -- Different exposure modes?
--- White balance? 
+-- White balance?
 
 # Video
 -- Record a video and save it as <filename>
--- Set the duration of the video recording 
--- Create a video of a bunch of timelapse images 
+-- Set the duration of the video recording
 
 # Overlays
 -- Add a text overlay on the preview
@@ -31,6 +30,7 @@ Test whether the camera is working ok!
 -- Change parameters of the text e.g. size, color, bgcolor
 
 # Extras - possibly separate library / optional extra?
+- Create a video of a bunch of timelapse images
 - Use OpenCV (or Pillow?) to modify images
 - NDVI stuff for Astro Pi (OpenCV, numpy, libatlas-base-dev)
     - Display an image
