@@ -25,9 +25,8 @@ class Camera():
             print("Please check all connections")
             exit()
 
-        self.preview = Preview()
-
-
+        self.preview = Preview(self.pc2)
+     
 
     # PROPERTIES
     # ----------------------------------
@@ -44,20 +43,6 @@ class Camera():
 
      # METHODS
     # ----------------------------------
-
-    # Start preview
-    def start_preview(self, size):
-        """
-        Test whether the camera is working ok!
-        """
-        pass
-
-    # Stop preview
-    def stop_preview(self):
-        """
-        Stop the preview
-        """
-        pass
 
     def flip_camera(self, direction):
         """
