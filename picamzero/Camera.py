@@ -123,11 +123,31 @@ class Camera():
         pass
 
     # Take video and take still
-    def take_video_and_still(self):
+    def take_video_and_still(self, filename, duration=20, still_interval=4):
         """
-        Take video and take a still at certain times?
+        Take video for <duration> and take a still every <interval> seconds?
         """
-        pass
+        if filename is None:
+            # Set a default filename of example + current date/time
+            filename = "test-" + strftime("%Y%m%d%H%M%S", localtime())
+        else:
+            filename = filename + "-" + strftime("%Y%m%d%H%M%S", localtime())
+
+        # Use inbuilt function for now    
+        if duration % still_interval == 0:
+            for i in range (int(duration/still_interval)):
+                self.pc2.start_and_record_video(filename+".mp4")
+                sleep(still_interval)
+                request = self.pc2.capture_request()
+                request.save("main", filename + "-" + str(i) + ".jpg")
+                request.release()
+
+            self.pc2.stop_recording()
+        else:
+            print("Duration must be equally divisible by interval")
+            """
+            Can also handle this differently using different division?
+            """
 
     # Take a picture
     def take_photo(self, filename=None):
@@ -137,6 +157,8 @@ class Camera():
         if filename is None:
             # Set a default filename of example + current date/time
             filename = "example" + strftime("%Y%m%d%H%M%S", localtime()) + ".jpg"
+        else:
+            filename = filename + strftime("%Y%m%d%H%M%S", localtime()) + ".jpg"
 
         # Use inbuilt function for now
         self.pc2.start_and_capture_file(filename)
@@ -151,13 +173,24 @@ class Camera():
     # Take a sequence
     def capture_burst(self, filename=None, num_images = 10, interval=0.01):
         """
-        Take a series of <num_images> and save them as <filename> with auto number, also set the delay betweeen
+        Take a series of <num_images> and save them as <filename> with auto number, also set the interval betweeen
+        I think we might want to add  make_video=False as an option...?
         """
-        pass
+        if filename is None:
+            # Set a default filename of burst- + current date/time + sequence number
+            filename = "burst-" + strftime("%Y%m%d%H%M%S", localtime()) + "-{:d}" + ".jpg"
+        else:
+            filename = filename + strftime("%Y%m%d%H%M%S", localtime()) + "-{:d}" + ".jpg"
+
+        # Use inbuilt function for now
+        self.pc2.start_and_capture_files(filename, num_files=num_images, delay=interval)
+
+        # Useful to know what the file is called
+        return filename
 
     # Synonym method
     def take_sequence(self):
-        pass
+        return self.capture_burst()
 
     # Synonym methods for burst (from picamera1)
     def capture_sequence(self):
@@ -166,12 +199,16 @@ class Camera():
     # def take_pictures(self):
     #     return self.capture_burst()
 
-    # Take timelapse (optional video from result)
-    def take_timelapse(self, filename=None, make_video=False):
+    """ 
+    Take timelapse (optional video from result) <<< After MUCH messing around - I think this is just the same as capture_burst!
+    I also think the make_video boolean can go in there, too.
+    Maybe keep this as a synonym method?
+    """
+    def take_timelapse(self, filename=None, num_images = 10, interval=60, make_video=False):
         """
-        Time-lapse mode (continual photo taking after <delay>)
+        Time-lapse mode (continual photo taking after <interval>)
         """
-        pass
+        return self.capture_burst()
 
     # Record a video
     def record_video(self, filename=None, duration=5):
