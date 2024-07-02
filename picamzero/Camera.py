@@ -158,7 +158,8 @@ class Camera():
             # Set a default filename of example + current date/time
             filename = "example" + strftime("%Y%m%d%H%M%S", localtime()) + ".jpg"
         else:
-            filename = filename + strftime("%Y%m%d%H%M%S", localtime()) + ".jpg"
+            filename = filename + ".jpg"
+            # Validation if they've added .jpg?
 
         # Use inbuilt function for now
         self.pc2.start_and_capture_file(filename)
@@ -180,7 +181,7 @@ class Camera():
             # Set a default filename of burst- + current date/time + sequence number
             filename = "burst-" + strftime("%Y%m%d%H%M%S", localtime()) + "-{:d}" + ".jpg"
         else:
-            filename = filename + strftime("%Y%m%d%H%M%S", localtime()) + "-{:d}" + ".jpg"
+            filename = filename + "-{:d}" + ".jpg"
 
         # Use inbuilt function for now
         self.pc2.start_and_capture_files(filename, num_files=num_images, delay=interval)
