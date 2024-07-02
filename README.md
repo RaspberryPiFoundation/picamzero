@@ -11,6 +11,16 @@ sudo apt install python3-pytest
 sudo apt install mkdocs
 ```
 
+Alternatively, if not on a Raspberry Pi you may install the dependencies directly into a virtual environment using Python's built-in `venv` module:
+
+```bash
+python3 -m venv venv
+source venv/bin/activate
+pip install pytest mkdocs
+```
+
+Note that `picamera2` - the library on which `picamera-zero` depends - is only installable on Linux.
+
 ### Clone the repo
 On your Raspberry Pi (Bookworm):
 
