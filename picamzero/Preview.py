@@ -35,11 +35,12 @@ class Preview():
         """
         Stop the preview
         """
-        try:
-            self.pc2.stop_preview()
-            self._started = False
-        except RuntimeError:
-            print("Couldn't stop preview")
+        if self._started:
+			try:
+				self.pc2.stop_preview()
+				self._started = False
+			except RuntimeError:
+				print("Couldn't stop preview")
 
     @property
     def annotation(self):
