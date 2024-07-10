@@ -25,23 +25,23 @@ class Preview():
         Show a preview of the camera
         """
         if not self._started:
-			try:
-				self.pc2.start_preview(PC2Preview.QTGL, width=width, height=height)
-				self.pc2.start()
-				self._started = True
-			except RuntimeError:
-				print("Preview couldn't start")
+            try:
+                self.pc2.start_preview(PC2Preview.QTGL, width=width, height=height)
+                self.pc2.start()
+                self._started = True
+            except RuntimeError:
+                print("Preview couldn't start")
 
     def stop(self):
         """
         Stop the preview
         """
         if self._started:
-			try:
-				self.pc2.stop_preview()
-				self._started = False
-			except RuntimeError:
-				print("Couldn't stop preview")
+            try:
+                self.pc2.stop_preview()
+                self._started = False
+            except RuntimeError:
+                print("Couldn't stop preview")
 
     @property
     def annotation(self):
