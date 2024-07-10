@@ -214,7 +214,7 @@ class Camera():
         """
         Time-lapse mode (continual photo taking after <interval>)
         """
-        return self.capture_burst()
+        return self.capture_burst(filename, num_images, interval)
 
     # Record a video
     def record_video(self, filename=None, duration=5):
