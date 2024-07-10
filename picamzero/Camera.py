@@ -191,6 +191,30 @@ class Camera():
         # Use inbuilt function for now
         self.pc2.start_and_capture_files(filename, num_files=num_images, delay=interval)
 
+        if make_video:
+            try:
+                # Extract base name from filename pattern
+                base_name = filename[:-8]  # Remove the "-{:d}.jpg" part
+                video_name = base_name + "timelapse.mp4"
+                frame = cv2.imread(filename.format(0))
+                height, width, layers = frame.shape
+    
+                # Define the codec and create VideoWriter object
+                fourcc = cv2.VideoWriter_fourcc(*'mp4v')
+                video = cv2.VideoWriter(video_name, fourcc, 1 / interval, (width, height))
+    
+                for i in range(num_images):
+                    img_path = filename.format(i)
+                    if os.path.exists(img_path):
+                        video.write(cv2.imread(img_path))
+                    else:
+                        print(f"Warning: {img_path} does not exist and will be skipped.")
+    
+                video.release()
+                return video_name
+            except Exception as e:
+                return f"Error creating video: {e}"
+
         # Useful to know what the file is called
         return filename
 
