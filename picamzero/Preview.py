@@ -24,12 +24,13 @@ class Preview():
         """
         Show a preview of the camera
         """
-        try:
-            self.pc2.start_preview(PC2Preview.QTGL, width=width, height=height)
-            self.pc2.start()
-            self._started = True
-        except RuntimeError:
-            print("Preview couldn't start")
+        if not self._started:
+			try:
+				self.pc2.start_preview(PC2Preview.QTGL, width=width, height=height)
+				self.pc2.start()
+				self._started = True
+			except RuntimeError:
+				print("Preview couldn't start")
 
     def stop(self):
         """
