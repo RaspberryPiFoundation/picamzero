@@ -3,6 +3,7 @@ from picamera2 import Picamera2
 # from picamera2.outputs import FfmpegOutput
 from time import sleep, strftime, localtime
 from .Preview import Preview
+import cv2
 
 class Camera():
 
@@ -173,16 +174,19 @@ class Camera():
         return self.take_photo()
 
     # Take a sequence
-    def capture_burst(self, filename=None, num_images = 10, interval=0.01):
+    def capture_burst(self, filename=None, num_images = 10, interval=0.01, make_video=False):
         """
-        Take a series of <num_images> and save them as <filename> with auto number, also set the interval betweeen
-        I think we might want to add  make_video=False as an option...?
+        Take a series of <num_images> and save them as <filename> with auto-number, also set the interval between
         """
         if filename is None:
             # Set a default filename of burst- + current date/time + sequence number
             filename = "burst-" + strftime("%Y%m%d%H%M%S", localtime()) + "-{:d}" + ".jpg"
         else:
-            filename = filename + "-{:d}" + ".jpg"
+            # Check if the filename already has the ".jpg" extension
+            if not filename.lower().endswith(".jpg"):
+                filename = filename + "-{:d}" + ".jpg"
+            else:
+                filename = filename[:-4] + "-{:d}.jpg"
 
         # Use inbuilt function for now
         self.pc2.start_and_capture_files(filename, num_files=num_images, delay=interval)
