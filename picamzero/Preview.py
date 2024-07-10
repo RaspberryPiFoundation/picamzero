@@ -13,14 +13,13 @@ class Preview():
         self._text_color = (255, 255, 255, 255)
         self._text_origin = (0, 30)
         self._text_font = cv2.FONT_HERSHEY_SIMPLEX
-        
+        self._overlay_size = (640, 480)
         self._started = False
 
 
     # METHODS
     # ----------------------------------
 
-	# Start
     def start(self, width=800, height=600):
         """
         Show a preview of the camera
@@ -32,7 +31,6 @@ class Preview():
         except RuntimeError:
             print("Preview couldn't start")
 
-    # Stop
     def stop(self):
         """
         Stop the preview
@@ -53,7 +51,7 @@ class Preview():
     @annotation.setter
     def annotation(self, text):
         self._annotation = text
-        overlay = np.zeros((640, 480, 4), dtype=np.uint8)
+        overlay = np.zeros((self._overlay_size[0], self._overlay_size[1], 4), dtype=np.uint8)
         cv2.putText(
                 overlay,
                 self._annotation,
