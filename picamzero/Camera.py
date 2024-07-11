@@ -179,8 +179,8 @@ class Camera():
         Take a series of <num_images> and save them as <filename> with auto-number, also set the interval between
         """
         if filename is None:
-            # Set a default filename of burst- + current date/time + sequence number
-            filename = "burst-" + strftime("%Y%m%d%H%M%S", localtime()) + "-{:d}" + ".jpg"
+            # Set a default filename of 'burst-' + sequence number
+            filename = "burst-" + "-{:d}" + ".jpg"
         else:
             # Check if the filename already has the ".jpg" extension
             if not filename.lower().endswith(".jpg"):
