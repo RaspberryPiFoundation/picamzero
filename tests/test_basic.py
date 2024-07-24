@@ -9,6 +9,7 @@ sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')
 from picamzero import Camera
 from os.path import exists
 from time import sleep
+import pytest
 
 # ============================================================
 # WARNING - this script will take pictures with your picamera
@@ -18,48 +19,51 @@ from time import sleep
 # ============================================================
 
 
-# Set up camera 
-camera = Camera()
-
-def test_init():
-	assert camera.pc2 is not None
-
-def test_named_video():
-	# Record a video with a specific filename
-	camera.record_video("testvideo.mp4", 3)
+# Returns a camera to use in tests
+@pytest.fixture
+def cam():
+	camera = Camera()
+	yield camera
+	camera.pc2.close()
+	
+# Initialise a camera
+def test_init(cam):
+	assert cam.pc2 is not None
+	
+# Record a video with a specific filename
+def test_named_video(cam):
+	cam.record_video("testvideo.mp4", 3)
 	assert exists("testvideo.mp4")
 	os.remove("testvideo.mp4") # Delete the file
 
-def test_unnamed_video():
-	# Record a video with no specified filename
-	filename = camera.record_video()
+# Record a video with no specified filename
+def test_unnamed_video(cam):
+	filename = cam.record_video()
 	assert exists(filename)
 	os.remove(filename)
 
-# I don't know why but if you put the tests for the picture
-# _before_ the video tests, the video tests fail. If they are 
-# after, they pass. Weird.
-
-def test_named_picture():
-	# Take a picture with a specific filename
-	camera.take_photo("testpic.jpg")
+# Take a picture with a specific filename
+def test_named_picture(cam):
+	cam.take_photo("testpic.jpg")
 	assert exists("testpic.jpg")
 	os.remove("testpic.jpg") # Delete the file
 	
-def test_unnamed_picture():
-	# Take a pic with no specified filename
-	filename = camera.take_photo()
+# Take a pic with no specified filename
+def test_unnamed_picture(cam):
+	filename = cam.take_photo()
 	assert exists(filename)
 	os.remove(filename)
 
-# Test the preview
+# Does the preview exist?
+def test_preview_exists(cam):
+	assert cam.preview is not None
+	assert cam.preview.pc2 is not None
 
-def test_preview_exists():
-    assert camera.preview is not None
-    assert camera.preview.pc2 is not None
+# Can you start and stop the preview
+def test_preview_starts_and_stops(cam):
+	cam.preview.start()
+	assert cam.preview._started == True
+	cam.preview.stop()
+	assert cam.preview._started == False
 
-def test_preview_starts_and_stops():
-    camera.preview.start()
-    assert camera.preview._started == True
-    camera.preview.stop()
-    assert camera.preview._started == False
+
