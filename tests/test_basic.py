@@ -162,6 +162,14 @@ def test_burst_synonyms(cam):
 	assert exists("cap-timelapse.mp4")
 	
 	assert cap_total > seq_total
+
+# Test that you can video and take stills
+def test_video_with_stills(cam):
+	# Finish this when method updated 
+	# - need to take out strftime from filename
+	#cam.take_video_and_still(filename="abc", duration=12, still_interval=3)
+	#assert exists("abc.mp4")
+	
 	
 
 # ----------------------------------
