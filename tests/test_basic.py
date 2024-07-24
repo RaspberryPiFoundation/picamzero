@@ -39,6 +39,12 @@ def test_named_video(cam):
 	cam.record_video("testvideo.mp4", 3)
 	assert exists("testvideo.mp4")
 	os.remove("testvideo.mp4") # Delete the file
+	
+# Record a video with a specific filename
+def test_named_video_no_extension(cam):
+	cam.record_video("testvid", 3)
+	assert exists("testvid.mp4")
+	os.remove("testvid.mp4") # Delete the file
 
 # Record a video with no specified filename
 def test_unnamed_video(cam):
