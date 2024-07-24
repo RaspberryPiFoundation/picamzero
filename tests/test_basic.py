@@ -9,6 +9,7 @@ sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')
 from picamzero import Camera
 from os.path import exists
 from time import sleep
+from datetime import datetime
 import pytest
 
 # ============================================================
@@ -80,7 +81,7 @@ def test_named_picture_no_ext(cam):
 	
 # Test a burst capture of 10 images at 0.01 sec interval
 def test_unnamed_burst(cam):
-	cam.capture_burst() # 10 images default
+	cam.capture_burst() 
 	assert exists("burst-0.jpg")
 	assert exists("burst-9.jpg")
 	# Clean up
@@ -89,16 +90,57 @@ def test_unnamed_burst(cam):
 	
 # Test a burst capture with a filename but no extension
 def test_named_burst_no_extension(cam):
-	cam.capture_burst("test") # 10 images default
+	cam.capture_burst("test") 
 	assert exists("test-0.jpg")
 	assert exists("test-9.jpg")
 	#Clean up
 	for i in range(10):
 		os.remove(f"test-{i}.jpg")
-		
-#def test_named_burst(cam):
 	
-#def test_burst_with_video(cam):
+# Test a named burst capture with extension	
+def test_named_burst(cam):
+	cam.capture_burst("testing.jpg") 
+	assert exists("testing-0.jpg")
+	assert exists("testing-9.jpg")
+	# Clean up
+	for i in range(10):
+		os.remove(f"testing-{i}.jpg")
+
+# Test whether you can change the number of pics
+def test_burst_quantity(cam):
+	cam.capture_burst(filename="fewer", num_images=2)
+	assert exists("fewer-0.jpg")
+	assert exists("fewer-1.jpg")
+	assert not exists("fewer-2.jpg")
+	# Clean up
+	for i in range(1):
+		os.remove(f"fewer-{i}.jpg")
+
+# Test the burst interval
+def test_burst_interval(cam):
+	start = datetime.now()
+	cam.capture_burst(filename="longer", interval=1, num_images=3)
+	stop = datetime.now()
+	elapsed = stop - start
+	start2 = datetime.now()
+	# This one should be faster
+	cam.capture_burst(filename="shorter", interval=0.5, num_images=3)
+	stop2 = datetime.now()
+	elapsed2 = stop2 - start2
+	assert elapsed > elapsed2
+	# Clean up
+	for i in range(3):
+		os.remove(f"longer-{i}.jpg")
+		os.remove(f"shorter-{i}.jpg")
+	
+# Test the video gets made when you do a burst
+def test_burst_with_video(cam):
+	cam.capture_burst(filename="with-vid", make_video=True)
+	assert exists("with-vid-timelapse.mp4")
+	os.remove("with-vid-timelapse.mp4")
+	for i in range(10):
+		os.remove(f"with-vid-{i}.jpg")
+	
 
 # ----------------------------------
 # Preview.py tests
