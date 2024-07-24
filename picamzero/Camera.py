@@ -170,8 +170,8 @@ class Camera():
         return filename
 
     # Synonym method for take a picture
-    def capture_image(self):
-        return self.take_photo()
+    def capture_image(self, filename=None):
+        return self.take_photo(filename)
 
     # Take a sequence
     def capture_burst(self, filename=None, num_images = 10, interval=0.01, make_video=False):
