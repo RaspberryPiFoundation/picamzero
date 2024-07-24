@@ -248,7 +248,10 @@ class Camera():
         if filename is None:
             # Set a default filename of example + current date/time
             filename = "example" + strftime("%Y%m%d%H%M%S", localtime()) + ".mp4"
-
+        elif not filename.lower().endswith(".mp4"):
+		    # Check if the filename already has the ".mp4" extension
+            filename = filename + ".mp4"
+           
         # Use basic inbuilt function
         self.pc2.start_and_record_video(filename, duration=duration)
 
