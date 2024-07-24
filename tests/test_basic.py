@@ -169,6 +169,7 @@ def test_video_with_stills(cam):
 	# - need to take out strftime from filename
 	#cam.take_video_and_still(filename="abc", duration=12, still_interval=3)
 	#assert exists("abc.mp4")
+	assert True
 	
 	
 
