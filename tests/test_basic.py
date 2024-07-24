@@ -140,6 +140,28 @@ def test_burst_with_video(cam):
 	os.remove("with-vid-timelapse.mp4")
 	for i in range(10):
 		os.remove(f"with-vid-{i}.jpg")
+
+# Test burst synonym methods
+def test_burst_synonyms(cam):
+	start_seq = datetime.now()
+	cam.take_sequence(filename="seq", num_images=4, interval=0.5, make_video=True)
+	stop_seq = datetime.now()
+	seq_total = stop_seq - start_seq
+	assert exists("seq-0.jpg")
+	assert exists("seq-3.jpg")
+	assert not exists("seq-4.jpg")
+	assert exists("seq-timelapse.mp4")
+	
+	start_cap = datetime.now()
+	cam.capture_sequence(filename="cap", num_images=8, interval=1, make_video=True)
+	stop_cap = datetime.now()
+	cap_total = stop_cap - start_cap
+	assert exists("cap-0.jpg")
+	assert exists("cap-7.jpg")
+	assert not exists("cap-8.jpg")
+	assert exists("cap-timelapse.mp4")
+	
+	assert cap_total > seq_total
 	
 
 # ----------------------------------
