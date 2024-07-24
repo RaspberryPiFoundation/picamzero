@@ -219,12 +219,12 @@ class Camera():
         return filename
 
     # Synonym method
-    def take_sequence(self):
-        return self.capture_burst()
+    def take_sequence(self, filename=None, num_images = 10, interval=0.01, make_video=False):
+        return self.capture_burst(filename, num_images, interval, make_video)
 
     # Synonym methods for burst (from picamera1)
-    def capture_sequence(self):
-        return self.capture_burst()
+    def capture_sequence(self, filename=None, num_images = 10, interval=0.01, make_video=False):
+        return self.capture_burst(filename, num_images, interval, make_video)
 
     # def take_pictures(self):
     #     return self.capture_burst()
