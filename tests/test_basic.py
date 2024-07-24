@@ -8,6 +8,7 @@ sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')
 
 from picamzero import Camera
 from os.path import exists
+from time import sleep
 
 # ============================================================
 # WARNING - this script will take pictures with your picamera
@@ -41,14 +42,24 @@ def test_unnamed_video():
 
 def test_named_picture():
 	# Take a picture with a specific filename
-	camera.take_picture("testpic.jpg")
+	camera.take_photo("testpic.jpg")
 	assert exists("testpic.jpg")
 	os.remove("testpic.jpg") # Delete the file
 	
 def test_unnamed_picture():
 	# Take a pic with no specified filename
-	filename = camera.take_picture()
+	filename = camera.take_photo()
 	assert exists(filename)
 	os.remove(filename)
 
+# Test the preview
 
+def test_preview_exists():
+    assert camera.preview is not None
+    assert camera.preview.pc2 is not None
+
+def test_preview_starts_and_stops():
+    camera.preview.start()
+    assert camera.preview._started == True
+    camera.preview.stop()
+    assert camera.preview._started == False
