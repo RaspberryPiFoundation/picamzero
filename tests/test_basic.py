@@ -116,6 +116,28 @@ def test_named_burst_no_extension(cam):
 #def test_named_burst(cam):
 	
 #def test_burst_with_video(cam):
+
+# Can you take a video and stills	
+def test_video_with_stills(cam):
+	cam.take_video_and_still(filename="abc", duration=12, still_interval=2)
+	assert exists("abc.mp4")
+	assert exists("abc-0.jpg")
+	assert exists("abc-5.jpg")
+	assert not exists("abc-6.jpg")
+	
+	cam.take_video_and_still() # no args
+	assert exists("testvs.mp4")
+	assert exists("testvs-0.jpg")
+	assert exists("testvs-4.jpg")
+	assert not exists("testvs-5.jpg")
+	
+	# Clean up
+	for i in range(5):
+		os.remove(f"abc-{i}.jpg")
+		os.remove(f"testvs-{i}.jpg")
+	os.remove("abc-5.jpg")
+	os.remove("abc.mp4")
+	os.remove("testvs.mp4")
 	
 
 # --------------------------------
