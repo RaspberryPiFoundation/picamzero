@@ -48,8 +48,9 @@ def test_unnamed_video(cam):
 	os.remove(filename)
 
 # Record a video with a filename but no extension
+@pytest.mark.skip(reason="TODO")
 def test_unnamed_video(cam):
-	assert True # To do!
+	pass
 
 
 # Take a picture with a specific filename
@@ -164,12 +165,13 @@ def test_burst_synonyms(cam):
 	assert cap_total > seq_total
 
 # Test that you can video and take stills
+@pytest.mark.skip(reason="TODO")
 def test_video_with_stills(cam):
 	# Finish this when method updated 
 	# - need to take out strftime from filename
 	#cam.take_video_and_still(filename="abc", duration=12, still_interval=3)
 	#assert exists("abc.mp4")
-	assert True
+	pass
 	
 	
 
