@@ -19,6 +19,15 @@ import pytest
 # to GitHub! :D
 # ============================================================
 
+@pytest.fixture(autouse=True)
+def cwd(tmpdir, monkeypatch):
+    """
+    This fixture changes the current working directory before
+    each test in this file to to a temporary directory so that
+    image / video clean up is taken care of by the OS.
+    """
+    monkeypatch.chdir(tmpdir)
+
 
 # Returns a camera to use in tests
 @pytest.fixture
@@ -39,19 +48,16 @@ def test_init(cam):
 def test_named_video(cam):
 	cam.record_video("testvideo.mp4", 3)
 	assert exists("testvideo.mp4")
-	os.remove("testvideo.mp4") # Delete the file
 	
 # Record a video with a specific filename
 def test_named_video_no_extension(cam):
 	cam.record_video("testvid", 3)
 	assert exists("testvid.mp4")
-	os.remove("testvid.mp4") # Delete the file
 
 # Record a video with no specified filename
 def test_unnamed_video(cam):
 	filename = cam.record_video()
 	assert exists(filename)
-	os.remove(filename)
 
 # Record a video with a filename but no extension
 @pytest.mark.skip(reason="TODO")
@@ -64,8 +70,6 @@ def test_named_picture(cam):
 	cam.capture_image("testpic2.jpg")
 	assert exists("testpic.jpg")
 	assert exists("testpic2.jpg")
-	os.remove("testpic.jpg") # Delete the file
-	os.remove("testpic2.jpg")
 	
 # Take a pic with no specified filename
 def test_unnamed_picture(cam):
@@ -73,8 +77,6 @@ def test_unnamed_picture(cam):
 	filename2 = cam.capture_image()
 	assert exists(filename)
 	assert exists(filename2)
-	os.remove(filename)
-	os.remove(filename2)
 
 # Take a pic with a filename but no extension
 def test_named_picture_no_ext(cam):
@@ -82,26 +84,18 @@ def test_named_picture_no_ext(cam):
 	filename2 = cam.capture_image("test2")
 	assert exists("test.jpg")
 	assert exists("test2.jpg")
-	os.remove(filename)
-	os.remove(filename2)
 	
 # Test a burst capture of 10 images at 0.01 sec interval
 def test_unnamed_burst(cam):
 	cam.capture_burst() 
 	assert exists("burst-0.jpg")
 	assert exists("burst-9.jpg")
-	# Clean up
-	for i in range(10):
-		os.remove(f"burst-{i}.jpg")
 	
 # Test a burst capture with a filename but no extension
 def test_named_burst_no_extension(cam):
 	cam.capture_burst("test") 
 	assert exists("test-0.jpg")
 	assert exists("test-9.jpg")
-	#Clean up
-	for i in range(10):
-		os.remove(f"test-{i}.jpg")
 
 # Can you take a video and stills	
 def test_video_with_stills(cam):
@@ -117,22 +111,11 @@ def test_video_with_stills(cam):
 	assert exists("testvs-4.jpg")
 	assert not exists("testvs-5.jpg")
 	
-	# Clean up
-	for i in range(5):
-		os.remove(f"abc-{i}.jpg")
-		os.remove(f"testvs-{i}.jpg")
-	os.remove("abc-5.jpg")
-	os.remove("abc.mp4")
-	os.remove("testvs.mp4")
-	
 # Test a named burst capture with extension	
 def test_named_burst(cam):
 	cam.capture_burst("testing.jpg") 
 	assert exists("testing-0.jpg")
 	assert exists("testing-9.jpg")
-	# Clean up
-	for i in range(10):
-		os.remove(f"testing-{i}.jpg")
 
 # Test whether you can change the number of pics
 def test_burst_quantity(cam):
@@ -140,9 +123,6 @@ def test_burst_quantity(cam):
 	assert exists("fewer-0.jpg")
 	assert exists("fewer-1.jpg")
 	assert not exists("fewer-2.jpg")
-	# Clean up
-	for i in range(1):
-		os.remove(f"fewer-{i}.jpg")
 
 # Test the burst interval
 def test_burst_interval(cam):
@@ -156,18 +136,11 @@ def test_burst_interval(cam):
 	stop2 = datetime.now()
 	elapsed2 = stop2 - start2
 	assert elapsed > elapsed2
-	# Clean up
-	for i in range(3):
-		os.remove(f"longer-{i}.jpg")
-		os.remove(f"shorter-{i}.jpg")
 	
 # Test the video gets made when you do a burst
 def test_burst_with_video(cam):
 	cam.capture_burst(filename="with-vid", make_video=True)
 	assert exists("with-vid-timelapse.mp4")
-	os.remove("with-vid-timelapse.mp4")
-	for i in range(10):
-		os.remove(f"with-vid-{i}.jpg")
 
 # Test burst synonym methods
 def test_burst_synonyms(cam):
