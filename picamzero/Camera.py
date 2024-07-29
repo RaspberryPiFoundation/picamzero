@@ -3,6 +3,7 @@ from picamera2 import Picamera2
 # from picamera2.outputs import FfmpegOutput
 from time import sleep, strftime, localtime
 from .Preview import Preview
+from .PicameraZeroException import PicameraZeroException
 import cv2
 import logging
 
@@ -127,10 +128,14 @@ class Camera():
         pass
 
     # Take video and take still
-    def take_video_and_still(self, filename="testvs", duration=20, still_interval=4):
+    def take_video_and_still(self, filename, duration=20, still_interval=4):
         """
         Take video for <duration> and take a still every <interval> seconds?
         """
+        
+        if filename is None:
+            raise PicameraZeroException("Filename not specified", hint="Check that you specified a name for the video")
+            exit()
 
         # Use inbuilt function for now    
         if duration % still_interval == 0:
@@ -154,8 +159,8 @@ class Camera():
         Takes a jpeg image using the camera
         """
         if filename is None:
-            # Set a default filename of example + current date/time
-            filename = "example" + strftime("%Y%m%d%H%M%S", localtime()) + ".jpg"
+            raise PicameraZeroException("Filename not specified", hint="Check that you specified a name for the photo")
+            exit()
         else:
             # Check if the filename already has the ".jpg" extension
             if not filename.lower().endswith(".jpg"):
@@ -168,7 +173,7 @@ class Camera():
         return filename
 
     # Synonym method for take a picture
-    def capture_image(self, filename=None):
+    def capture_image(self, filename):
         return self.take_photo(filename)
 
     # Take a sequence
@@ -177,8 +182,8 @@ class Camera():
         Take a series of <num_images> and save them as <filename> with auto-number, also set the interval between
         """
         if filename is None:
-            # Set a default filename of 'burst-' + sequence number
-            filename = "burst" + "-{:d}" + ".jpg"
+            raise PicameraZeroException("Filename not specified", hint="Check that you specified a filename for the burst")
+            exit()
         else:
             # Check if the filename already has the ".jpg" extension
             if not filename.lower().endswith(".jpg"):
@@ -217,11 +222,11 @@ class Camera():
         return filename
 
     # Synonym method
-    def take_sequence(self, filename=None, num_images = 10, interval=0.01, make_video=False):
+    def take_sequence(self, filename, num_images = 10, interval=0.01, make_video=False):
         return self.capture_burst(filename, num_images, interval, make_video)
 
     # Synonym methods for burst (from picamera1)
-    def capture_sequence(self, filename=None, num_images = 10, interval=0.01, make_video=False):
+    def capture_sequence(self, filename, num_images = 10, interval=0.01, make_video=False):
         return self.capture_burst(filename, num_images, interval, make_video)
 
     # def take_pictures(self):
@@ -232,7 +237,7 @@ class Camera():
     I also think the make_video boolean can go in there, too.
     Maybe keep this as a synonym method?
     """
-    def take_timelapse(self, filename=None, num_images = 10, interval=60, make_video=False):
+    def take_timelapse(self, filename, num_images = 10, interval=60, make_video=False):
         """
         Time-lapse mode (continual photo taking after <interval>)
         """
@@ -244,8 +249,8 @@ class Camera():
         Record a video
         """
         if filename is None:
-            # Set a default filename of example + current date/time
-            filename = "example" + strftime("%Y%m%d%H%M%S", localtime()) + ".mp4"
+            raise PicameraZeroException("Filename not specified", hint="Check that you specified a name for the video")
+            exit()
         elif not filename.lower().endswith(".mp4"):
 		    # Check if the filename already has the ".mp4" extension
             filename = filename + ".mp4"
@@ -256,7 +261,7 @@ class Camera():
         return filename
 
     # Record a video with option to take a photo
-    def start_recording(self, filename=None):
+    def start_recording(self, filename):
         """
         Record a video with option to take a photo (9.3. Multiple outputs)
         """

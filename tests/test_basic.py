@@ -6,7 +6,7 @@ import sys
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 # --------------------------------------------------------------
 
-from picamzero import Camera
+from picamzero import Camera, PicameraZeroException
 from os.path import exists
 from time import sleep
 from datetime import datetime
@@ -47,16 +47,10 @@ def test_named_video_no_extension(cam):
 	assert exists("testvid.mp4")
 	os.remove("testvid.mp4") # Delete the file
 
-# Record a video with no specified filename
+# Fail to specify a filename for a video
 def test_unnamed_video(cam):
-	filename = cam.record_video()
-	assert exists(filename)
-	os.remove(filename)
-
-# Record a video with a filename but no extension
-@pytest.mark.skip(reason="TODO")
-def test_unnamed_video(cam):
-	pass
+	with pytest.raises(PicameraZeroException):
+		filename = cam.record_video()
 
 # Take a picture with a specific filename
 def test_named_picture(cam):
@@ -67,14 +61,11 @@ def test_named_picture(cam):
 	os.remove("testpic.jpg") # Delete the file
 	os.remove("testpic2.jpg")
 	
-# Take a pic with no specified filename
+# Fail to specify a filename for a picture
 def test_unnamed_picture(cam):
-	filename = cam.take_photo()
-	filename2 = cam.capture_image()
-	assert exists(filename)
-	assert exists(filename2)
-	os.remove(filename)
-	os.remove(filename2)
+	with pytest.raises(PicameraZeroException):
+		filename = cam.take_photo()
+		filename2 = cam.capture_image()
 
 # Take a pic with a filename but no extension
 def test_named_picture_no_ext(cam):
@@ -85,14 +76,11 @@ def test_named_picture_no_ext(cam):
 	os.remove(filename)
 	os.remove(filename2)
 	
-# Test a burst capture of 10 images at 0.01 sec interval
+# Fail to specify a filename for a burst
 def test_unnamed_burst(cam):
-	cam.capture_burst() 
-	assert exists("burst-0.jpg")
-	assert exists("burst-9.jpg")
-	# Clean up
-	for i in range(10):
-		os.remove(f"burst-{i}.jpg")
+	with pytest.raises(PicameraZeroException):
+		cam.capture_burst() 
+	
 	
 # Test a burst capture with a filename but no extension
 def test_named_burst_no_extension(cam):
@@ -111,7 +99,7 @@ def test_video_with_stills(cam):
 	assert exists("abc-5.jpg")
 	assert not exists("abc-6.jpg")
 	
-	cam.take_video_and_still() # no args
+	cam.take_video_and_still(filename="testvs") 
 	assert exists("testvs.mp4")
 	assert exists("testvs-0.jpg")
 	assert exists("testvs-4.jpg")
