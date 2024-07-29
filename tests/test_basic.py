@@ -40,6 +40,12 @@ def test_named_video(cam):
 	cam.record_video("testvideo.mp4", 3)
 	assert exists("testvideo.mp4")
 	os.remove("testvideo.mp4") # Delete the file
+	
+# Record a video with a specific filename
+def test_named_video_no_extension(cam):
+	cam.record_video("testvid", 3)
+	assert exists("testvid.mp4")
+	os.remove("testvid.mp4") # Delete the file
 
 # Record a video with no specified filename
 def test_unnamed_video(cam):
@@ -51,7 +57,6 @@ def test_unnamed_video(cam):
 @pytest.mark.skip(reason="TODO")
 def test_unnamed_video(cam):
 	pass
-
 
 # Take a picture with a specific filename
 def test_named_picture(cam):
@@ -97,6 +102,28 @@ def test_named_burst_no_extension(cam):
 	#Clean up
 	for i in range(10):
 		os.remove(f"test-{i}.jpg")
+
+# Can you take a video and stills	
+def test_video_with_stills(cam):
+	cam.take_video_and_still(filename="abc", duration=12, still_interval=2)
+	assert exists("abc.mp4")
+	assert exists("abc-0.jpg")
+	assert exists("abc-5.jpg")
+	assert not exists("abc-6.jpg")
+	
+	cam.take_video_and_still() # no args
+	assert exists("testvs.mp4")
+	assert exists("testvs-0.jpg")
+	assert exists("testvs-4.jpg")
+	assert not exists("testvs-5.jpg")
+	
+	# Clean up
+	for i in range(5):
+		os.remove(f"abc-{i}.jpg")
+		os.remove(f"testvs-{i}.jpg")
+	os.remove("abc-5.jpg")
+	os.remove("abc.mp4")
+	os.remove("testvs.mp4")
 	
 # Test a named burst capture with extension	
 def test_named_burst(cam):
@@ -161,7 +188,6 @@ def test_burst_synonyms(cam):
 	assert exists("cap-7.jpg")
 	assert not exists("cap-8.jpg")
 	assert exists("cap-timelapse.mp4")
-	
 	assert cap_total > seq_total
 
 # Test that you can video and take stills
@@ -197,5 +223,6 @@ def test_annotation(cam):
 	cam.preview.annotation = "test"
 	assert cam.preview.annotation == "test" # property
 	assert cam.preview._annotation == "test" # attribute
+
 
 

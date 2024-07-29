@@ -124,23 +124,18 @@ class Camera():
         pass
 
     # Take video and take still
-    def take_video_and_still(self, filename, duration=20, still_interval=4):
+    def take_video_and_still(self, filename="testvs", duration=20, still_interval=4):
         """
         Take video for <duration> and take a still every <interval> seconds?
         """
-        if filename is None:
-            # Set a default filename of example + current date/time
-            filename = "test-" + strftime("%Y%m%d%H%M%S", localtime())
-        else:
-            filename = filename + "-" + strftime("%Y%m%d%H%M%S", localtime())
 
         # Use inbuilt function for now    
         if duration % still_interval == 0:
             for i in range (int(duration/still_interval)):
-                self.pc2.start_and_record_video(filename+".mp4")
+                self.pc2.start_and_record_video(f"{filename}.mp4")
                 sleep(still_interval)
                 request = self.pc2.capture_request()
-                request.save("main", filename + "-" + str(i) + ".jpg")
+                request.save("main", f"{filename}-{str(i)}.jpg")
                 request.release()
 
             self.pc2.stop_recording()
@@ -219,12 +214,12 @@ class Camera():
         return filename
 
     # Synonym method
-    def take_sequence(self):
-        return self.capture_burst()
+    def take_sequence(self, filename=None, num_images = 10, interval=0.01, make_video=False):
+        return self.capture_burst(filename, num_images, interval, make_video)
 
     # Synonym methods for burst (from picamera1)
-    def capture_sequence(self):
-        return self.capture_burst()
+    def capture_sequence(self, filename=None, num_images = 10, interval=0.01, make_video=False):
+        return self.capture_burst(filename, num_images, interval, make_video)
 
     # def take_pictures(self):
     #     return self.capture_burst()
@@ -248,7 +243,10 @@ class Camera():
         if filename is None:
             # Set a default filename of example + current date/time
             filename = "example" + strftime("%Y%m%d%H%M%S", localtime()) + ".mp4"
-
+        elif not filename.lower().endswith(".mp4"):
+		    # Check if the filename already has the ".mp4" extension
+            filename = filename + ".mp4"
+           
         # Use basic inbuilt function
         self.pc2.start_and_record_video(filename, duration=duration)
 
