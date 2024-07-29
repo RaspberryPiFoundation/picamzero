@@ -153,7 +153,7 @@ class Camera():
         """
         Takes a jpeg image using the camera
         """
-	valid_extensions = {".jpg", ".png", ".jpeg"}
+	valid_extensions = {".jpg", ".jpeg"}
         if filename is None:
             # Set a default filename of example + current date/time
             filename = "example" + strftime("%Y%m%d%H%M%S", localtime()) + ".jpg"
