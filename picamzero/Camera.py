@@ -4,6 +4,9 @@ from picamera2 import Picamera2
 from time import sleep, strftime, localtime
 from .Preview import Preview
 import cv2
+import logging
+
+logger = logging.getLogger(__name__)
 
 class Camera():
 
@@ -22,8 +25,8 @@ class Camera():
         try:
             self.pc2 = Picamera2()
         except RuntimeError:
-            print("Could not connect to the camera!")
-            print("Please check all connections")
+            logger.error("Could not connect to the camera!")
+            logger.error("Please check all connections")
             exit()
 
         self.preview = Preview(self.pc2)
@@ -140,7 +143,7 @@ class Camera():
 
             self.pc2.stop_recording()
         else:
-            print("Duration must be equally divisible by interval")
+            logger.error("Duration must be equally divisible by interval")
             """
             Can also handle this differently using different division?
             """
@@ -203,7 +206,7 @@ class Camera():
                     if os.path.exists(img_path):
                         video.write(cv2.imread(img_path))
                     else:
-                        print(f"Warning: {img_path} does not exist and will be skipped.")
+                        logger.warning(f"{img_path} does not exist and will be skipped.")
     
                 video.release()
                 return video_name

@@ -1,6 +1,9 @@
 from picamera2 import Preview as PC2Preview
 import cv2
 import numpy as np
+import logging
+
+logger = logging.getLogger(__name__)
 
 class Preview():
 
@@ -30,7 +33,7 @@ class Preview():
                 self.pc2.start()
                 self._started = True
             except RuntimeError:
-                print("Preview couldn't start")
+                logger.error("Preview couldn't start")
 
     def stop(self):
         """
@@ -41,7 +44,7 @@ class Preview():
                 self.pc2.stop_preview()
                 self._started = False
             except RuntimeError:
-                print("Couldn't stop preview")
+                logger.error("Couldn't stop preview")
 
     @property
     def annotation(self):
@@ -67,9 +70,9 @@ class Preview():
             self.pc2.set_overlay(overlay)
         except AttributeError:
             if not self._started:
-                print("Start the preview before adding an annotation")
+                logger.error("Start the preview before adding an annotation")
             else:
-                print("Could not add overlay")
+                logger.error("Could not add overlay")
 
 
     # Image overlay
