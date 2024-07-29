@@ -62,10 +62,23 @@ def test_unnamed_video(cam):
 def test_named_picture(cam):
 	cam.take_photo("testpic.jpg")
 	cam.capture_image("testpic2.jpg")
+	cam.take_photo("testpic.jpeg")
+	cam.capture_image("testpic2.jpeg")
+	cam.take_photo("testpic.png")
+	cam.capture_image("testpic2.png")
 	assert exists("testpic.jpg")
 	assert exists("testpic2.jpg")
+	assert exists("testpic.jpeg")
+	assert exists("testpic2.jpeg")
+	assert exists("testpic.png")
+	assert exists("testpic2.png")
 	os.remove("testpic.jpg") # Delete the file
 	os.remove("testpic2.jpg")
+	os.remove("testpic.jpeg")
+	os.remove("testpic2.jpeg")
+	os.remove("testpic.png")
+	os.remove("testpic2.png")
+	
 	
 # Take a pic with no specified filename
 def test_unnamed_picture(cam):
