@@ -4,6 +4,9 @@ import sys
 from types import TracebackType
 from typing import Optional
 import tempfile
+import logging
+
+logger = logging.getLogger(__name__)
 
 class PicameraZeroException(Exception):
     """
@@ -52,10 +55,10 @@ def override_sys_except_hook():
     def on_exception(exctype, value, stacktrace: TracebackType):
         with tempfile.NamedTemporaryFile("w") as f:
             traceback.print_tb(stacktrace, file=f)
-        print(value)
-        print(f"To fix this, start by looking at line {stacktrace.tb_lineno}")
+        logger.error(value)
+        logger.error(f"To fix this, start by looking at line {stacktrace.tb_lineno}")
         # TODO print file name to look at from the stacktrace object
-        print("")
-        print(f"The full stacktrace has been written to: {f.name}")
+        logger.error("")
+        logger.error(f"The full stacktrace has been written to: {f.name}")
     sys.excepthook = on_exception
 
