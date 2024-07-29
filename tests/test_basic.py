@@ -64,6 +64,8 @@ def test_named_picture(cam):
 # Take a pic with no specified filename
 def test_unnamed_picture(cam):
 	filename = cam.take_photo()
+	assert exists(filename)
+	os.remove(filename)
 
 # Take a picture with a filename that doesnt end in jpg
 def test_named_picture_no_extension(cam):
