@@ -1,0 +1,49 @@
+name: Deploy workflow
+
+on:
+  release:
+    types: [published]
+
+env:
+  PYTHON_VERSION: '3.9'
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+      - name: Check that the python version in the code matches the tag
+        run: |
+          REPO_VERSION=$(make version)
+          if [ "refs/tags/v$REPO_VERSION" != "${{ github.ref }}" ]; then
+            echo "Declared version in repository does not match tag '${{ github.ref }}'"
+            exit 1
+          fi
+      - run: ci --publish-git-tags
+      - name: Deploy to TestPyPI
+        run: ./scripts/ci --deploy-test-pypi
+        env:
+          TWINE_USERNAME: __token__
+          TWINE_PASSWORD: ${{ secrets.PICAMERA_ZERO_TEST_API_KEY }}
+      - name: Smoke tests
+        run: ./scripts/ci --smoke-tests
+      - name: Deploy to PyPI
+        run: ./scripts/ci --deploy-pypi
+        env:
+          TWINE_USERNAME: __token__
+          TWINE_PASSWORD: ${{ secrets.PICAMERA_ZERO_API_KEY }}
+      - name: Notify alerts channel of failure
+        if: ${{ failure() && github.ref == 'refs/heads/main' }}
+        uses: rtCamp/action-slack-notify@v2.3.0
+        env:
+          SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
+          SLACK_COLOR: ${{ job.status }}
+          SLACK_TITLE: Failure Message
+          MSG_MINIMAL: actions url, commit, ref
+          SLACK_FOOTER: Build failure
+
+
