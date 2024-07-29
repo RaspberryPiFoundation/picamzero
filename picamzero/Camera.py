@@ -153,13 +153,14 @@ class Camera():
         """
         Takes a jpeg image using the camera
         """
+	valid_extensions = {".jpg", ".png", ".jpeg"}
         if filename is None:
             # Set a default filename of example + current date/time
             filename = "example" + strftime("%Y%m%d%H%M%S", localtime()) + ".jpg"
         else:
             # Check if the filename already has the ".jpg" extension
-            if not filename.lower().endswith(".jpg"):
-                filename = filename + ".jpg"
+            if not any(filename.lower().endswith(ext) for ext in valid_extensions):
+		filename = filename + ".jpg"
 
         # Use inbuilt function for now
         self.pc2.start_and_capture_file(filename)
