@@ -4,6 +4,9 @@ from picamera2 import Picamera2
 from time import sleep, strftime, localtime
 from .Preview import Preview
 import cv2
+import logging
+
+logger = logging.getLogger(__name__)
 
 class Camera():
 
@@ -22,8 +25,8 @@ class Camera():
         try:
             self.pc2 = Picamera2()
         except RuntimeError:
-            print("Could not connect to the camera!")
-            print("Please check all connections")
+            logger.error("Could not connect to the camera!")
+            logger.error("Please check all connections")
             exit()
 
         self.preview = Preview(self.pc2)
@@ -124,28 +127,23 @@ class Camera():
         pass
 
     # Take video and take still
-    def take_video_and_still(self, filename, duration=20, still_interval=4):
+    def take_video_and_still(self, filename="testvs", duration=20, still_interval=4):
         """
         Take video for <duration> and take a still every <interval> seconds?
         """
-        if filename is None:
-            # Set a default filename of example + current date/time
-            filename = "test-" + strftime("%Y%m%d%H%M%S", localtime())
-        else:
-            filename = filename + "-" + strftime("%Y%m%d%H%M%S", localtime())
 
         # Use inbuilt function for now    
         if duration % still_interval == 0:
             for i in range (int(duration/still_interval)):
-                self.pc2.start_and_record_video(filename+".mp4")
+                self.pc2.start_and_record_video(f"{filename}.mp4")
                 sleep(still_interval)
                 request = self.pc2.capture_request()
-                request.save("main", filename + "-" + str(i) + ".jpg")
+                request.save("main", f"{filename}-{str(i)}.jpg")
                 request.release()
 
             self.pc2.stop_recording()
         else:
-            print("Duration must be equally divisible by interval")
+            logger.error("Duration must be equally divisible by interval")
             """
             Can also handle this differently using different division?
             """
@@ -155,13 +153,14 @@ class Camera():
         """
         Takes a jpeg image using the camera
         """
+	valid_extensions = {".jpg", ".png", ".jpeg"}
         if filename is None:
             # Set a default filename of example + current date/time
             filename = "example" + strftime("%Y%m%d%H%M%S", localtime()) + ".jpg"
         else:
             # Check if the filename already has the ".jpg" extension
-            if not filename.lower().endswith(".jpg"):
-                filename = filename + ".jpg"
+            if not any(filename.lower().endswith(ext) for ext in valid_extensions):
+		filename = filename + ".jpg"
 
         # Use inbuilt function for now
         self.pc2.start_and_capture_file(filename)
@@ -208,7 +207,7 @@ class Camera():
                     if os.path.exists(img_path):
                         video.write(cv2.imread(img_path))
                     else:
-                        print(f"Warning: {img_path} does not exist and will be skipped.")
+                        logger.warning(f"{img_path} does not exist and will be skipped.")
     
                 video.release()
                 return video_name
@@ -219,12 +218,12 @@ class Camera():
         return filename
 
     # Synonym method
-    def take_sequence(self):
-        return self.capture_burst()
+    def take_sequence(self, filename=None, num_images = 10, interval=0.01, make_video=False):
+        return self.capture_burst(filename, num_images, interval, make_video)
 
     # Synonym methods for burst (from picamera1)
-    def capture_sequence(self):
-        return self.capture_burst()
+    def capture_sequence(self, filename=None, num_images = 10, interval=0.01, make_video=False):
+        return self.capture_burst(filename, num_images, interval, make_video)
 
     # def take_pictures(self):
     #     return self.capture_burst()
@@ -248,7 +247,10 @@ class Camera():
         if filename is None:
             # Set a default filename of example + current date/time
             filename = "example" + strftime("%Y%m%d%H%M%S", localtime()) + ".mp4"
-
+        elif not filename.lower().endswith(".mp4"):
+		    # Check if the filename already has the ".mp4" extension
+            filename = filename + ".mp4"
+           
         # Use basic inbuilt function
         self.pc2.start_and_record_video(filename, duration=duration)
 
