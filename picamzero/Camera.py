@@ -6,6 +6,7 @@ from .Preview import Preview
 from .PicameraZeroException import PicameraZeroException
 import cv2
 import logging
+import os
 
 logger = logging.getLogger(__name__)
 
@@ -158,14 +159,15 @@ class Camera():
         """
         Takes a jpeg image using the camera
         """
-	valid_extensions = {".jpg", ".jpeg"}
         if filename is None:
             raise PicameraZeroException("Filename not specified", hint="Check that you specified a name for the photo")
             exit()
-        else:
-            # Check if the filename already has the ".jpg" extension
-            if not any(filename.lower().endswith(ext) for ext in valid_extensions):
-		filename = filename + ".jpg"
+        
+        file_root, file_ext = os.path.splitext(filename)
+
+        # Check if the extension is valid, if not replace it with ".jpg"
+        if file_ext.lower() != ".jpg":
+            filename = file_root + ".jpg"
 
         # Use inbuilt function for now
         self.pc2.start_and_capture_file(filename)
