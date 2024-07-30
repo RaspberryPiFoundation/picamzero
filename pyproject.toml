@@ -47,5 +47,5 @@ skips = ["B101", "B404"]
 exclude = ["tests/resources"]
 
 [tool.pyright]
-pythonPlatform = "All"
+pythonPlatform = "Linux"
 
