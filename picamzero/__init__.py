@@ -1,4 +1,5 @@
 from .Camera import Camera
+from .PicameraZeroException import PicameraZeroException, override_sys_except_hook
 import logging
 
 # Configure log level
@@ -10,3 +11,6 @@ logging.basicConfig(
 __all__ = [
     "Camera"
 ]
+
+# Use PicameraZeroExceptions
+override_sys_except_hook()
