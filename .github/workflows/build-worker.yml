@@ -1,0 +1,51 @@
+name: Build workflow
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+  pull_request:
+
+env:
+  PYTHON_VERSION: '3.9'
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+      - name: Run linter
+        run: ./scripts/ci --lint
+
+  build:
+    # Ideally would be on a Raspberry Pi custom runner
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+      - run:
+          ./scripts/ci --build
+      - name: Generate artifact name
+        id: artifact_name
+        run: |
+          # Concatenates the branch, commit, and date
+          ARTIFACT_NAME="dist_${{ github.ref }}_${{ github.sha }}_$(date -u +"%Y-%m-%dT%H-%M-%SZ")"
+          # Artifact names have restrictions,so
+          # replace them with hyphens, which are allowed:
+          ARTIFACT_NAME=$(echo "$ARTIFACT_NAME" | sed -z 's#[^a-zA-Z0-9_.-]#-#g')
+          # Set as step output for use in preceding steps
+          echo "ARTIFACT_NAME=$ARTIFACT_NAME" >> "$GITHUB_OUTPUT"
+      - name: Archive dist dir
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ steps.artifact_name.outputs.ARTIFACT_NAME }}
+          path: |
+            dist/
