@@ -1,20 +1,17 @@
-from picamera2 import Picamera2
+from picamera2 import Picamera2, MappedArray
 # from picamera2.encoders import H264Encoder
 # from picamera2.outputs import FfmpegOutput
 from time import sleep, strftime, localtime
-from .Preview import Preview
 from .PicameraZeroException import PicameraZeroException
-import cv2
-import logging
-import os
+import cv2, logging, os
+import numpy as np
+from libcamera import Transform
 
 logger = logging.getLogger(__name__)
 
 class Camera():
 
-    def __init__(
-        self
-    ):
+    def __init__(self):
 
         """
         Creates a Camera object based on a Picamera2 object
@@ -31,8 +28,16 @@ class Camera():
             logger.error("Please check all connections")
             exit()
 
-        self.preview = Preview(self.pc2)
-     
+        self.resolution = (2592, 1944)
+
+        capture_config = self.pc2.create_still_configuration({"size": self.resolution})
+        preview_config = self.pc2.create_preview_configuration({"size": self.resolution})
+        
+        # Set the current config as the preview config
+        self.pc2.configure(preview_config)
+        self._started = False
+        self._annotation = None
+
 
     # PROPERTIES
     # ----------------------------------
@@ -47,8 +52,30 @@ class Camera():
     def example(self, value):
         self.eg = value
 
-     # METHODS
+    # METHODS
     # ----------------------------------
+    
+    def start_preview(self):
+        """
+        Show a preview of the camera
+        """
+        if not self._started:
+            try:
+                self.pc2.start(show_preview=True)
+                self._started = True
+            except RuntimeError:
+                logger.error("Preview couldn't start")
+
+    def stop_preview(self):
+        """
+        Stop the preview
+        """
+        if self._started:
+            try:
+                self.pc2.close()
+                self._started = False
+            except RuntimeError:
+                logger.error("Couldn't stop preview")
 
     def flip_camera(self, direction):
         """
@@ -101,26 +128,69 @@ class Camera():
         """
         pass
 
-    @property
-    def annotation(self):
-        pass
-    @property
-    def annotation_size(self):
-        pass
-    @property
-    def annotation_color(self):
-        pass
-    @property
-    def annotation_background_color(self):
-        pass
-
-    def set_annotation(self, text, size, colour, bgcolour,
-                       on_preview=True, on_image=True):
+    def set_annotation(self, request, text="Default Text"):
         """
         Text overlays - **need to implement to take note of the current mode (preview or capture)**
         """
+        self.text_color = (255, 255, 255, 255)
+        self.bg_color = (0, 0, 0, 0)
+        self.origin = (0, 30)
+        self.text_font = cv2.FONT_HERSHEY_SIMPLEX
+        self.scale = 2
+        self.thickness = 2
+        with MappedArray(request, "main") as m:
+            cv2.putText(m.array, text , self.origin, self.text_font, self.scale, self.text_color, self.thickness)
+
+
+    @property
+    def annotation(self):
+        """
+        Return the current annotation
+        """
+        return self._annotation
+    
+    ### I think this is going to need implementing in each capture method - as a Boolean option?
+    ### Leaving this here for now and we can put our heads together in the morning!
+    @annotation.setter
+    def annotation(self, text):
+        self.pc2.pre_callback = set_annotation
+        self._annotation = text
+        overlay = np.zeros((self._overlay_size[0], self._overlay_size[1], 4), dtype=np.uint8)
+        cv2.putText(
+            overlay,
+            self._annotation,
+            self._text_origin,
+            self._text_font,
+            1, # scale
+            self._text_color,
+            2 # thickness
+        )
+        '''
+        try:
+            self.pc2.set_overlay(overlay)
+        except AttributeError:
+            if not self._started:
+                logger.error("Start the preview before adding an annotation")
+            else:
+                logger.error("Could not add overlay")
+        '''
+    
+    ''' DO WE NEED THESE THREE?
+
+    @property
+    def annotation_size(self):
         pass
 
+    @property
+    def annotation_color(self):
+        pass
+
+    @property
+    def annotation_background_color(self):
+        pass
+    
+    '''
+    
     # Image overlay
     def add_image_overlay(self, image):
         """
