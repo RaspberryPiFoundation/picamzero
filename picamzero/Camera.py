@@ -180,7 +180,7 @@ class Camera():
         return self.take_photo(filename)
 
     # Take a sequence
-    def capture_burst(self, filename=None, num_images = 10, interval=0.01, make_video=False):
+    def capture_sequence(self, filename=None, num_images = 10, interval=0.01, make_video=False):
         """
         Take a series of <num_images> and save them as <filename> with auto-number, also set the interval between
         """
@@ -223,28 +223,6 @@ class Camera():
 
         # Useful to know what the file is called
         return filename
-
-    # Synonym method
-    def take_sequence(self, filename, num_images = 10, interval=0.01, make_video=False):
-        return self.capture_burst(filename, num_images, interval, make_video)
-
-    # Synonym methods for burst (from picamera1)
-    def capture_sequence(self, filename, num_images = 10, interval=0.01, make_video=False):
-        return self.capture_burst(filename, num_images, interval, make_video)
-
-    # def take_pictures(self):
-    #     return self.capture_burst()
-
-    """ 
-    Take timelapse (optional video from result) <<< After MUCH messing around - I think this is just the same as capture_burst!
-    I also think the make_video boolean can go in there, too.
-    Maybe keep this as a synonym method?
-    """
-    def take_timelapse(self, filename, num_images = 10, interval=60, make_video=False):
-        """
-        Time-lapse mode (continual photo taking after <interval>)
-        """
-        return self.capture_burst(filename, num_images, interval)
 
     # Record a video
     def record_video(self, filename=None, duration=5):
