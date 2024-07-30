@@ -24,7 +24,7 @@ Note that `picamera2` - the library on which `picamera-zero` depends - is only i
 
 You may find it useful to set up `pre-commit` to run some static checks before each commit. Doing so can help catch common errors, and unify code style.
 
-`pre-commit` should already be installed if you followed the installation instructions above. To set it up to run before every commit, execute `pre-commit install`. Once set up, `pre-commit` will check every file changed in a commit. To make `pre-commit` check every file in the repository, execute `pre-commit run --all-files`. Alternatively, to skip verification, you can use the `--no-verify` option when committing: `git commit --no-verify`
+`pre-commit` should already be installed if you followed the installation instructions above - if not, install on a development pi with `sudo apt install pre-commit`. To set it up to run before every commit, execute `pre-commit install`. Once set up, `pre-commit` will check every file changed in a commit. To make `pre-commit` check every file in the repository, execute `pre-commit run --all-files`. Alternatively, to skip verification, you can use the `--no-verify` option when committing: `git commit --no-verify`
 
 At any time, you can uninstall `pre-commit` by running `pre-commit uninstall`.
 
