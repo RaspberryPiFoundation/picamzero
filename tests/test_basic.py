@@ -69,21 +69,17 @@ def test_named_picture(cam):
 	cam.capture_image("testpic2png.png")
 	assert exists("testpic.jpg")
 	assert exists("testpic2.jpg")
-	assert exists("testpic.jpeg")
-	assert exists("testpic2.jpeg")
-	assert not exists("testpic.png")
-	assert not exists("testpic2.png")
+	assert not exists("testpic.jpeg")
+	assert not exists("testpic2.jpeg")
+	assert not exists("testpicpng.png")
+	assert not exists("testpic2png.png")
 	assert exists("testpicpng.jpg")
 	assert exists("testpic2png.jpg")
 	os.remove("testpic.jpg") # Delete the file
 	os.remove("testpic2.jpg")
-	os.remove("testpic.jpeg")
-	os.remove("testpic2.jpeg")
 	os.remove("testpicpng.jpg")
 	os.remove("testpic2png.jpg")
-	
 
-	
 # Fail to specify a filename for a picture
 def test_unnamed_picture(cam):
 	with pytest.raises(PicameraZeroException):
