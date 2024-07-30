@@ -128,7 +128,7 @@ class Camera():
         pass
 
     # Take video and take still
-    def take_video_and_still(self, filename, duration=20, still_interval=4):
+    def take_video_and_still(self, filename=None, duration=20, still_interval=4):
         """
         Take video for <duration> and take a still every <interval> seconds?
         """
