@@ -158,7 +158,7 @@ class Camera():
         """
         Takes a jpeg image using the camera
         """
-	valid_extensions = {".jpg", ".png", ".jpeg"}
+	valid_extensions = {".jpg", ".jpeg"}
         if filename is None:
             raise PicameraZeroException("Filename not specified", hint="Check that you specified a name for the photo")
             exit()
