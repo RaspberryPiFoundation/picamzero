@@ -1,7 +1,8 @@
 from picamera2 import Picamera2
+
 # from picamera2.encoders import H264Encoder
 # from picamera2.outputs import FfmpegOutput
-from time import sleep, strftime, localtime
+from time import sleep
 from .Preview import Preview
 from .PicameraZeroException import PicameraZeroException
 import cv2
@@ -10,12 +11,9 @@ import os
 
 logger = logging.getLogger(__name__)
 
-class Camera():
 
-    def __init__(
-        self
-    ):
-
+class Camera:
+    def __init__(self):
         """
         Creates a Camera object based on a Picamera2 object
 
@@ -32,7 +30,6 @@ class Camera():
             exit()
 
         self.preview = Preview(self.pc2)
-     
 
     # PROPERTIES
     # ----------------------------------
@@ -47,7 +44,7 @@ class Camera():
     def example(self, value):
         self.eg = value
 
-     # METHODS
+    # METHODS
     # ----------------------------------
 
     def flip_camera(self, direction):
@@ -104,20 +101,25 @@ class Camera():
     @property
     def annotation(self):
         pass
+
     @property
     def annotation_size(self):
         pass
+
     @property
     def annotation_color(self):
         pass
+
     @property
     def annotation_background_color(self):
         pass
 
-    def set_annotation(self, text, size, colour, bgcolour,
-                       on_preview=True, on_image=True):
+    def set_annotation(
+        self, text, size, colour, bgcolour, on_preview=True, on_image=True
+    ):
         """
-        Text overlays - **need to implement to take note of the current mode (preview or capture)**
+        Text overlays - **need to implement to take note of the
+        current mode (preview or capture)**
         """
         pass
 
@@ -133,14 +135,17 @@ class Camera():
         """
         Take video for <duration> and take a still every <interval> seconds?
         """
-        
+
         if filename is None:
-            raise PicameraZeroException("Filename not specified", hint="Check that you specified a name for the video")
+            raise PicameraZeroException(
+                "Filename not specified",
+                hint="Check that you specified a name for the video",
+            )
             exit()
 
-        # Use inbuilt function for now    
+        # Use inbuilt function for now
         if duration % still_interval == 0:
-            for i in range (int(duration/still_interval)):
+            for i in range(int(duration / still_interval)):
                 self.pc2.start_and_record_video(f"{filename}.mp4")
                 sleep(still_interval)
                 request = self.pc2.capture_request()
@@ -160,9 +165,12 @@ class Camera():
         Takes a jpeg image using the camera
         """
         if filename is None:
-            raise PicameraZeroException("Filename not specified", hint="Check that you specified a name for the photo")
+            raise PicameraZeroException(
+                "Filename not specified",
+                hint="Check that you specified a name for the photo",
+            )
             exit()
-        
+
         file_root, file_ext = os.path.splitext(filename)
 
         # Check if the extension is valid, if not replace it with ".jpg"
@@ -180,12 +188,18 @@ class Camera():
         return self.take_photo(filename)
 
     # Take a sequence
-    def capture_sequence(self, filename=None, num_images = 10, interval=0.01, make_video=False):
+    def capture_sequence(
+        self, filename=None, num_images=10, interval=0.01, make_video=False
+    ):
         """
-        Take a series of <num_images> and save them as <filename> with auto-number, also set the interval between
+        Take a series of <num_images> and save them as
+        <filename> with auto-number, also set the interval between
         """
         if filename is None:
-            raise PicameraZeroException("Filename not specified", hint="Check that you specified a filename for the burst")
+            raise PicameraZeroException(
+                "Filename not specified",
+                hint="Check that you specified a filename for the burst",
+            )
             exit()
         else:
             # Check if the filename already has the ".jpg" extension
@@ -204,18 +218,22 @@ class Camera():
                 video_name = base_name + "timelapse.mp4"
                 frame = cv2.imread(filename.format(0))
                 height, width, layers = frame.shape
-    
+
                 # Define the codec and create VideoWriter object
-                fourcc = cv2.VideoWriter_fourcc(*'mp4v')
-                video = cv2.VideoWriter(video_name, fourcc, 1 / interval, (width, height))
-    
+                fourcc = cv2.VideoWriter_fourcc(*"mp4v")
+                video = cv2.VideoWriter(
+                    video_name, fourcc, 1 / interval, (width, height)
+                )
+
                 for i in range(num_images):
                     img_path = filename.format(i)
                     if os.path.exists(img_path):
                         video.write(cv2.imread(img_path))
                     else:
-                        logger.warning(f"{img_path} does not exist and will be skipped.")
-    
+                        logger.warning(
+                            f"{img_path} does not exist and will be skipped."
+                        )
+
                 video.release()
                 return video_name
             except Exception as e:
@@ -230,12 +248,15 @@ class Camera():
         Record a video
         """
         if filename is None:
-            raise PicameraZeroException("Filename not specified", hint="Check that you specified a name for the video")
+            raise PicameraZeroException(
+                "Filename not specified",
+                hint="Check that you specified a name for the video",
+            )
             exit()
         elif not filename.lower().endswith(".mp4"):
-		    # Check if the filename already has the ".mp4" extension
+            # Check if the filename already has the ".mp4" extension
             filename = filename + ".mp4"
-           
+
         # Use basic inbuilt function
         self.pc2.start_and_record_video(filename, duration=duration)
 
@@ -254,4 +275,3 @@ class Camera():
         Stop recording video
         """
         pass
-
