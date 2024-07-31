@@ -1,4 +1,3 @@
-import os
 from datetime import datetime
 from os.path import exists
 
@@ -37,12 +36,12 @@ def cam():
 
 
 # Initialise a camera
-def test_init(cam):
+def test_init(cam: Camera):
     assert cam.pc2 is not None
 
 
 # Record a video with a specific filename
-def test_named_video(cam):
+def test_named_video(cam: Camera):
     cam.record_video("testvideo.mp4", 3)
     assert exists("testvideo.mp4")
 
@@ -75,10 +74,6 @@ def test_named_picture(cam):
     assert not exists("testpic2png.png")
     assert exists("testpicpng.jpg")
     assert exists("testpic2png.jpg")
-    os.remove("testpic.jpg")  # Delete the file
-    os.remove("testpic2.jpg")
-    os.remove("testpicpng.jpg")
-    os.remove("testpic2png.jpg")
 
 
 # Fail to specify a filename for a picture
@@ -99,15 +94,15 @@ def test_named_picture_no_ext(cam):
     assert exists(filename2)
 
 
-# Fail to specify a filename for a burst
-def test_unnamed_burst(cam):
+# Fail to specify a filename for a sequence
+def test_unnamed_sequence(cam):
     with pytest.raises(PicameraZeroException):
-        cam.capture_burst()
+        cam.capture_sequence()
 
 
-# Test a burst capture with a filename but no extension
-def test_named_burst_no_extension(cam):
-    cam.capture_burst("test")
+# Test a sequence capture with a filename but no extension
+def test_named_sequence_no_extension(cam):
+    cam.capture_sequence("test")
     assert exists("test-0.jpg")
     assert exists("test-9.jpg")
 
@@ -127,61 +122,39 @@ def test_video_with_stills(cam):
     assert not exists("testvs-5.jpg")
 
 
-# Test a named burst capture with extension
-def test_named_burst(cam):
-    cam.capture_burst("testing.jpg")
+# Test a named sequence capture with extension
+def test_named_sequence(cam):
+    cam.capture_sequence("testing.jpg")
     assert exists("testing-0.jpg")
     assert exists("testing-9.jpg")
 
 
 # Test whether you can change the number of pics
-def test_burst_quantity(cam):
-    cam.capture_burst(filename="fewer", num_images=2)
+def test_sequence_quantity(cam):
+    cam.capture_sequence(filename="fewer", num_images=2)
     assert exists("fewer-0.jpg")
     assert exists("fewer-1.jpg")
     assert not exists("fewer-2.jpg")
 
 
-# Test the burst interval
-def test_burst_interval(cam):
+# Test the sequence interval
+def test_sequence_interval(cam):
     start = datetime.now()
-    cam.capture_burst(filename="longer", interval=1, num_images=3)
+    cam.capture_sequence(filename="longer", interval=1, num_images=3)
     stop = datetime.now()
     elapsed = stop - start
     start2 = datetime.now()
     # This one should be faster
-    cam.capture_burst(filename="shorter", interval=0.5, num_images=3)
+    cam.capture_sequence(filename="shorter", interval=0.5, num_images=3)
     stop2 = datetime.now()
     elapsed2 = stop2 - start2
     assert elapsed > elapsed2
 
 
-# Test the video gets made when you do a burst
-def test_burst_with_video(cam):
-    cam.capture_burst(filename="with-vid", make_video=True)
+# Test the video gets made when you do a sequence
+def test_sequence_with_video(cam):
+    cam.capture_sequence(filename="with-vid", make_video=True)
     assert exists("with-vid-timelapse.mp4")
-
-
-# Test burst synonym methods
-def test_burst_synonyms(cam):
-    start_seq = datetime.now()
-    cam.take_sequence(filename="seq", num_images=4, interval=0.5, make_video=True)
-    stop_seq = datetime.now()
-    seq_total = stop_seq - start_seq
-    assert exists("seq-0.jpg")
-    assert exists("seq-3.jpg")
-    assert not exists("seq-4.jpg")
-    assert exists("seq-timelapse.mp4")
-
-    start_cap = datetime.now()
-    cam.capture_sequence(filename="cap", num_images=8, interval=1, make_video=True)
-    stop_cap = datetime.now()
-    cap_total = stop_cap - start_cap
-    assert exists("cap-0.jpg")
-    assert exists("cap-7.jpg")
-    assert not exists("cap-8.jpg")
-    assert exists("cap-timelapse.mp4")
-    assert cap_total > seq_total
 
 
 # ----------------------------------
