@@ -1,5 +1,9 @@
 site_name: picamzero
 nav:
- - Home: index.md
- - Camera: camera.md
-theme: readthedocs
+  - Home: index.md
+  - Getting started: start.md
+  - Methods: 
+    - Overview: methods.md
+    - Image overlay: add_image_overlay.md
+
+theme: cerulean
