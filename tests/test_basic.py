@@ -2,6 +2,7 @@ from datetime import datetime
 from os.path import exists
 
 import numpy as np
+import piexif
 import pytest
 from libcamera import Transform, controls
 from picamzero import Camera, PicameraZeroException, utilities
@@ -273,6 +274,21 @@ def test_capture_array(cam: Camera):
 # ----------------------------------
 # Sequence
 # ----------------------------------
+
+
+def test_picture_with_gps_coordinates(cam):
+    filename = "picture_with_gps.jpg"
+    latitude = (1.0, 29.1, 29.0, 48.78250810956524)
+    longitude = (-1.0, 79.0, 17.0, 53.33060722541995)
+    cam.take_photo(filename, gps_coordinates=(latitude, longitude))
+    assert exists(filename)
+    exif_data = piexif.load(filename)
+    assert "GPS" in exif_data
+    gps_ifd = exif_data["GPS"]
+    assert gps_ifd[piexif.GPSIFD.GPSLatitude] == ((29, 1), (29, 1), (488, 10))
+    assert gps_ifd[piexif.GPSIFD.GPSLatitudeRef].decode() == "N"
+    assert gps_ifd[piexif.GPSIFD.GPSLongitude] == ((79, 1), (17, 1), (533, 10))
+    assert gps_ifd[piexif.GPSIFD.GPSLongitudeRef].decode() == "W"
 
 
 # Fail to specify a filename for a sequence
