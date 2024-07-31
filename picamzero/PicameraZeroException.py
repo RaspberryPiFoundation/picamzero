@@ -8,6 +8,7 @@ import logging
 
 logger = logging.getLogger(__name__)
 
+
 class PicameraZeroException(Exception):
     """
     Base class for exceptions thrown by the picamera-zero
@@ -39,6 +40,7 @@ class PicameraZeroException(Exception):
     def __str__(self) -> str:
         return self._format_exception()
 
+
 def override_sys_except_hook():
     """
     When called, this function overrides the default
@@ -52,6 +54,7 @@ def override_sys_except_hook():
     instantiating picamera-zero's Camera object:
 
     """
+
     def on_exception(exctype, value, stacktrace: TracebackType):
         with tempfile.NamedTemporaryFile("w") as f:
             traceback.print_tb(stacktrace, file=f)
@@ -60,5 +63,5 @@ def override_sys_except_hook():
         # TODO print file name to look at from the stacktrace object
         logger.error("")
         logger.error(f"The full stacktrace has been written to: {f.name}")
-    sys.excepthook = on_exception
 
+    sys.excepthook = on_exception
