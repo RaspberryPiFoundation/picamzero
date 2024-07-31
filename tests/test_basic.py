@@ -1,6 +1,5 @@
 from datetime import datetime
 from os.path import exists
-from time import sleep  # This is not used in tese tests
 
 import pytest
 from picamzero import Camera, PicameraZeroException
@@ -158,7 +157,7 @@ def test_sequence_with_video(cam):
     assert exists("with-vid-timelapse.mp4")
 
 
-### To think about later:
+# To think about later:
 """
 # Does the preview exist?
 def test_preview_exists(cam):
