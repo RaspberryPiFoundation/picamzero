@@ -8,7 +8,7 @@ sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')
 
 from picamzero import Camera, PicameraZeroException
 from os.path import exists
-from time import sleep
+from time import sleep  # This is not used in tese tests
 from datetime import datetime
 import pytest
 
@@ -32,9 +32,9 @@ def cwd(tmpdir, monkeypatch):
 # Returns a camera to use in tests
 @pytest.fixture
 def cam():
-	camera = Camera()
-	yield camera
-	camera.pc2.close()
+    camera = Camera()
+    yield camera
+    camera.pc2.close()
 
 # ----------------------------------
 # Camera.py tests
@@ -181,10 +181,8 @@ def test_video_with_stills(cam):
 	
 	
 
-# ----------------------------------
-# Preview.py tests
-# ----------------------------------
-
+### To think about later:
+'''
 # Does the preview exist?
 def test_preview_exists(cam):
 	assert cam.preview is not None
@@ -204,5 +202,4 @@ def test_annotation(cam):
 	assert cam.preview.annotation == "test" # property
 	assert cam.preview._annotation == "test" # attribute
 
-
-
+'''

@@ -130,6 +130,7 @@ class Camera():
         """
         pass
 
+'''
     def set_annotation(self, request, text="Default Text"):
         """
         Text overlays - **need to implement to take note of the current mode (preview or capture)**
@@ -167,7 +168,7 @@ class Camera():
             self._text_color,
             2 # thickness
         )
-        '''
+        
         try:
             self.pc2.set_overlay(overlay)
         except AttributeError:
@@ -175,8 +176,9 @@ class Camera():
                 logger.error("Start the preview before adding an annotation")
             else:
                 logger.error("Could not add overlay")
-        '''
-    
+        
+'''
+
     # Image overlay
     def add_image_overlay(self, image):
         """
