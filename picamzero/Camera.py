@@ -202,11 +202,12 @@ class Camera:
             )
             exit()
         else:
-            # Check if the filename already has the ".jpg" extension
-            if not filename.lower().endswith(".jpg"):
-                filename = filename + "-{:d}" + ".jpg"
+            file_root, file_ext = os.path.splitext(filename)
+            # Check if the filename already has the “.jpg” extension
+            if file_ext.lower() != “.jpg”:
+                filename = file_root + “-{:d}” + “.jpg”
             else:
-                filename = filename[:-4] + "-{:d}.jpg"
+                filename = filename[:-4] + “-{:d}.jpg”
 
         # Use inbuilt function for now
         self.pc2.start_and_capture_files(filename, num_files=num_images, delay=interval)
