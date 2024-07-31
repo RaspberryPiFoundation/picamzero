@@ -128,7 +128,7 @@ class Camera:
         """
         pass
 
-'''
+    '''
     def set_annotation(self, request, text="Default Text"):
         """
         Text overlays - **need to implement to take note of the
@@ -176,7 +176,7 @@ class Camera:
             else:
                 logger.error("Could not add overlay")
 
-'''
+    '''
 
     # Image overlay
     def add_image_overlay(self, image):
