@@ -11,7 +11,9 @@ logger = logging.getLogger(__name__)
 
 class Camera():
 
-    def __init__(self):
+    def __init__(
+        self
+    ):
 
         """
         Creates a Camera object based on a Picamera2 object
@@ -61,7 +63,7 @@ class Camera():
         """
         if not self._started:
             try:
-                self.pc2.start(show_preview=True)
+                self.pc2.start(show_preview=True)  # Can we mix and match?
                 self._started = True
             except RuntimeError:
                 logger.error("Preview couldn't start")
@@ -72,7 +74,7 @@ class Camera():
         """
         if self._started:
             try:
-                self.pc2.close()
+                self.pc2.stop_preview()  # Pete to change to close() later?...
                 self._started = False
             except RuntimeError:
                 logger.error("Couldn't stop preview")
@@ -174,22 +176,6 @@ class Camera():
             else:
                 logger.error("Could not add overlay")
         '''
-    
-    ''' DO WE NEED THESE THREE?
-
-    @property
-    def annotation_size(self):
-        pass
-
-    @property
-    def annotation_color(self):
-        pass
-
-    @property
-    def annotation_background_color(self):
-        pass
-    
-    '''
     
     # Image overlay
     def add_image_overlay(self, image):
