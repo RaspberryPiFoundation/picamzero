@@ -1,12 +1,16 @@
-from picamera2 import Picamera2, MappedArray
+from picamera2 import Picamera2
+# from picamera2 import MappedArray
 
 # from picamera2.encoders import H264Encoder
 # from picamera2.outputs import FfmpegOutput
-from time import sleep, strftime, localtime
+from time import sleep
+# from time import strftime, localtime
 from .PicameraZeroException import PicameraZeroException
-import cv2, logging, os
-import numpy as np
-from libcamera import Transform
+import cv2
+import logging
+import os
+# import numpy as np
+# from libcamera import Transform
 
 logger = logging.getLogger(__name__)
 
@@ -30,14 +34,15 @@ class Camera:
 
         self.resolution = (2592, 1944)
 
-        capture_config = self.pc2.create_still_configuration({"size": self.resolution})
-        preview_config = self.pc2.create_preview_configuration({"size": self.resolution})
+        # capture_config = self.pc2.create_still_configuration({"size":
+        #                                                      self.resolution})
+        preview_config = self.pc2.create_preview_configuration({"size":
+                                                                self.resolution})
 
         # Set the current config as the preview config
         self.pc2.configure(preview_config)
         self._started = False
         self._annotation = None
-
 
     # PROPERTIES
     # ----------------------------------
@@ -141,7 +146,8 @@ class Camera:
         self.scale = 2
         self.thickness = 2
         with MappedArray(request, "main") as m:
-            cv2.putText(m.array, text , self.origin, self.text_font, self.scale, self.text_color, self.thickness)
+            cv2.putText(m.array, text , self.origin, self.text_font, self.scale,
+            self.text_color, self.thickness)
 
 
     @property
@@ -151,13 +157,14 @@ class Camera:
         """
         return self._annotation
 
-    ### I think this is going to need implementing in each capture method - as a Boolean option?
+    ### Implement in each capture method - as a Boolean option?
     ### Leaving this here for now and we can put our heads together in the morning!
     @annotation.setter
     def annotation(self, text):
         self.pc2.pre_callback = set_annotation
         self._annotation = text
-        overlay = np.zeros((self._overlay_size[0], self._overlay_size[1], 4), dtype=np.uint8)
+        overlay = np.zeros((self._overlay_size[0], self._overlay_size[1], 4),
+        dtype=np.uint8)
         cv2.putText(
             overlay,
             self._annotation,
@@ -330,4 +337,3 @@ class Camera:
         Stop recording video
         """
         pass
-
