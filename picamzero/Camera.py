@@ -1,4 +1,5 @@
 from picamera2 import Picamera2, MappedArray
+
 # from picamera2.encoders import H264Encoder
 # from picamera2.outputs import FfmpegOutput
 from time import sleep, strftime, localtime
@@ -9,12 +10,9 @@ from libcamera import Transform
 
 logger = logging.getLogger(__name__)
 
-class Camera():
 
-    def __init__(
-        self
-    ):
-
+class Camera:
+    def __init__(self):
         """
         Creates a Camera object based on a Picamera2 object
 
@@ -34,7 +32,7 @@ class Camera():
 
         capture_config = self.pc2.create_still_configuration({"size": self.resolution})
         preview_config = self.pc2.create_preview_configuration({"size": self.resolution})
-        
+
         # Set the current config as the preview config
         self.pc2.configure(preview_config)
         self._started = False
@@ -56,7 +54,7 @@ class Camera():
 
     # METHODS
     # ----------------------------------
-    
+
     def start_preview(self):
         """
         Show a preview of the camera
@@ -133,7 +131,8 @@ class Camera():
 '''
     def set_annotation(self, request, text="Default Text"):
         """
-        Text overlays - **need to implement to take note of the current mode (preview or capture)**
+        Text overlays - **need to implement to take note of the
+        current mode (preview or capture)**
         """
         self.text_color = (255, 255, 255, 255)
         self.bg_color = (0, 0, 0, 0)
@@ -151,7 +150,7 @@ class Camera():
         Return the current annotation
         """
         return self._annotation
-    
+
     ### I think this is going to need implementing in each capture method - as a Boolean option?
     ### Leaving this here for now and we can put our heads together in the morning!
     @annotation.setter
@@ -168,7 +167,7 @@ class Camera():
             self._text_color,
             2 # thickness
         )
-        
+
         try:
             self.pc2.set_overlay(overlay)
         except AttributeError:
@@ -176,7 +175,7 @@ class Camera():
                 logger.error("Start the preview before adding an annotation")
             else:
                 logger.error("Could not add overlay")
-        
+
 '''
 
     # Image overlay
@@ -191,14 +190,17 @@ class Camera():
         """
         Take video for <duration> and take a still every <interval> seconds?
         """
-        
+
         if filename is None:
-            raise PicameraZeroException("Filename not specified", hint="Check that you specified a name for the video")
+            raise PicameraZeroException(
+                "Filename not specified",
+                hint="Check that you specified a name for the video",
+            )
             exit()
 
-        # Use inbuilt function for now    
+        # Use inbuilt function for now
         if duration % still_interval == 0:
-            for i in range (int(duration/still_interval)):
+            for i in range(int(duration / still_interval)):
                 self.pc2.start_and_record_video(f"{filename}.mp4")
                 sleep(still_interval)
                 request = self.pc2.capture_request()
@@ -218,9 +220,12 @@ class Camera():
         Takes a jpeg image using the camera
         """
         if filename is None:
-            raise PicameraZeroException("Filename not specified", hint="Check that you specified a name for the photo")
+            raise PicameraZeroException(
+                "Filename not specified",
+                hint="Check that you specified a name for the photo",
+            )
             exit()
-        
+
         file_root, file_ext = os.path.splitext(filename)
 
         # Check if the extension is valid, if not replace it with ".jpg"
@@ -238,12 +243,18 @@ class Camera():
         return self.take_photo(filename)
 
     # Take a sequence
-    def capture_burst(self, filename=None, num_images = 10, interval=0.01, make_video=False):
+    def capture_sequence(
+        self, filename=None, num_images=10, interval=0.01, make_video=False
+    ):
         """
-        Take a series of <num_images> and save them as <filename> with auto-number, also set the interval between
+        Take a series of <num_images> and save them as
+        <filename> with auto-number, also set the interval between
         """
         if filename is None:
-            raise PicameraZeroException("Filename not specified", hint="Check that you specified a filename for the burst")
+            raise PicameraZeroException(
+                "Filename not specified",
+                hint="Check that you specified a filename for the burst",
+            )
             exit()
         else:
             # Check if the filename already has the ".jpg" extension
@@ -262,18 +273,22 @@ class Camera():
                 video_name = base_name + "timelapse.mp4"
                 frame = cv2.imread(filename.format(0))
                 height, width, layers = frame.shape
-    
+
                 # Define the codec and create VideoWriter object
-                fourcc = cv2.VideoWriter_fourcc(*'mp4v')
-                video = cv2.VideoWriter(video_name, fourcc, 1 / interval, (width, height))
-    
+                fourcc = cv2.VideoWriter_fourcc(*"mp4v")
+                video = cv2.VideoWriter(
+                    video_name, fourcc, 1 / interval, (width, height)
+                )
+
                 for i in range(num_images):
                     img_path = filename.format(i)
                     if os.path.exists(img_path):
                         video.write(cv2.imread(img_path))
                     else:
-                        logger.warning(f"{img_path} does not exist and will be skipped.")
-    
+                        logger.warning(
+                            f"{img_path} does not exist and will be skipped."
+                        )
+
                 video.release()
                 return video_name
             except Exception as e:
@@ -282,40 +297,21 @@ class Camera():
         # Useful to know what the file is called
         return filename
 
-    # Synonym method
-    def take_sequence(self, filename, num_images = 10, interval=0.01, make_video=False):
-        return self.capture_burst(filename, num_images, interval, make_video)
-
-    # Synonym methods for burst (from picamera1)
-    def capture_sequence(self, filename, num_images = 10, interval=0.01, make_video=False):
-        return self.capture_burst(filename, num_images, interval, make_video)
-
-    # def take_pictures(self):
-    #     return self.capture_burst()
-
-    """ 
-    Take timelapse (optional video from result) <<< After MUCH messing around - I think this is just the same as capture_burst!
-    I also think the make_video boolean can go in there, too.
-    Maybe keep this as a synonym method?
-    """
-    def take_timelapse(self, filename, num_images = 10, interval=60, make_video=False):
-        """
-        Time-lapse mode (continual photo taking after <interval>)
-        """
-        return self.capture_burst(filename, num_images, interval)
-
     # Record a video
     def record_video(self, filename=None, duration=5):
         """
         Record a video
         """
         if filename is None:
-            raise PicameraZeroException("Filename not specified", hint="Check that you specified a name for the video")
+            raise PicameraZeroException(
+                "Filename not specified",
+                hint="Check that you specified a name for the video",
+            )
             exit()
         elif not filename.lower().endswith(".mp4"):
-		    # Check if the filename already has the ".mp4" extension
+            # Check if the filename already has the ".mp4" extension
             filename = filename + ".mp4"
-           
+
         # Use basic inbuilt function
         self.pc2.start_and_record_video(filename, duration=duration)
 

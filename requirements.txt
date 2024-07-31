@@ -1,0 +1,6 @@
+build==1.2.1
+mkdocs==1.6.0
+numpy==2.0.1
+opencv-contrib-python-headless==4.10.0.84
+pre-commit==3.8.0
+pytest==8.2.1
