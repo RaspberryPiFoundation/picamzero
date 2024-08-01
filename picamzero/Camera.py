@@ -1,14 +1,17 @@
 from picamera2 import Picamera2
+
 # from picamera2 import MappedArray
 
 # from picamera2.encoders import H264Encoder
 # from picamera2.outputs import FfmpegOutput
 from time import sleep
+
 # from time import strftime, localtime
 from .PicameraZeroException import PicameraZeroException
 import cv2
 import logging
 import os
+
 # import numpy as np
 # from libcamera import Transform
 
@@ -36,8 +39,9 @@ class Camera:
 
         # capture_config = self.pc2.create_still_configuration({"size":
         #                                                      self.resolution})
-        preview_config = self.pc2.create_preview_configuration({"size":
-                                                                self.resolution})
+        preview_config = self.pc2.create_preview_configuration(
+            {"size": self.resolution}
+        )
 
         # Set the current config as the preview config
         self.pc2.configure(preview_config)
