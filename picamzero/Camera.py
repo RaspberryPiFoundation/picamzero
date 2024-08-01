@@ -268,9 +268,10 @@ class Camera:
             )
             exit()
         else:
+            file_root, file_ext = os.path.splitext(filename)
             # Check if the filename already has the ".jpg" extension
-            if not filename.lower().endswith(".jpg"):
-                filename = filename + "-{:d}" + ".jpg"
+            if file_ext.lower() != ".jpg":
+                filename = file_root + "-{:d}" + ".jpg"
             else:
                 filename = filename[:-4] + "-{:d}.jpg"
 
