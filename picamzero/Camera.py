@@ -13,7 +13,7 @@ import logging
 import os
 
 # import numpy as np
-# from libcamera import Transform
+from libcamera import Transform
 
 logger = logging.getLogger(__name__)
 
@@ -64,13 +64,23 @@ class Camera:
     # METHODS
     # ----------------------------------
 
+    def flip_camera(self, vflip=False, hflip=False):
+        """
+        Flip the image H or V
+        """
+        self.vflip = vflip
+        self.hflip = hflip
+
     def start_preview(self):
         """
         Show a preview of the camera
         """
         if not self._started:
             try:
-                self.pc2.start(show_preview=True)  # Can we mix and match?
+                self.pc2.start(
+                    show_preview=True,
+                    transform=Transform(vflip=self.vflip, hflip=self.hflip),
+                )  # Can we mix and match?
                 self._started = True
             except RuntimeError:
                 logger.error("Preview couldn't start")
@@ -85,12 +95,6 @@ class Camera:
                 self._started = False
             except RuntimeError:
                 logger.error("Couldn't stop preview")
-
-    def flip_camera(self, direction):
-        """
-        Flip the image H or V
-        """
-        pass
 
     @property
     def brightness(self):
@@ -212,9 +216,13 @@ class Camera:
         # Use inbuilt function for now
         if duration % still_interval == 0:
             for i in range(int(duration / still_interval)):
-                self.pc2.start_and_record_video(f"{filename}.mp4")
+                self.pc2.start_and_record_video(
+                    f"{filename}.mp4",
+                    transform=Transform(vflip=self.vflip, hflip=self.hflip),
+                )
                 sleep(still_interval)
                 request = self.pc2.capture_request()
+                # Does this result in a flipped image if set above?
                 request.save("main", f"{filename}-{str(i)}.jpg")
                 request.release()
 
@@ -244,7 +252,9 @@ class Camera:
             filename = file_root + ".jpg"
 
         # Use inbuilt function for now
-        self.pc2.start_and_capture_file(filename)
+        self.pc2.start_and_capture_file(
+            filename, transform=Transform(vflip=self.vflip, hflip=self.hflip)
+        )
 
         # Useful to know what the file is called
         return filename
@@ -276,7 +286,12 @@ class Camera:
                 filename = filename[:-4] + "-{:d}.jpg"
 
         # Use inbuilt function for now
-        self.pc2.start_and_capture_files(filename, num_files=num_images, delay=interval)
+        self.pc2.start_and_capture_files(
+            filename,
+            num_files=num_images,
+            delay=interval,
+            transform=Transform(vflip=self.vflip, hflip=self.hflip),
+        )
 
         if make_video:
             try:
@@ -325,7 +340,11 @@ class Camera:
             filename = filename + ".mp4"
 
         # Use basic inbuilt function
-        self.pc2.start_and_record_video(filename, duration=duration)
+        self.pc2.start_and_record_video(
+            filename,
+            duration=duration,
+            transform=Transform(vflip=self.vflip, hflip=self.hflip),
+        )
 
         return filename
 
