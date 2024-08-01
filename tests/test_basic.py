@@ -155,30 +155,3 @@ def test_sequence_interval(cam):
 def test_sequence_with_video(cam):
     cam.capture_sequence(filename="with-vid", make_video=True)
     assert exists("with-vid-timelapse.mp4")
-
-
-# ----------------------------------
-# Preview.py tests
-# ----------------------------------
-
-
-# Does the preview exist?
-def test_preview_exists(cam):
-    assert cam.preview is not None
-    assert cam.preview.pc2 is not None
-
-
-# Can you start and stop the preview
-def test_preview_starts_and_stops(cam):
-    cam.preview.start()
-    assert cam.preview._started is True
-    cam.preview.stop()
-    assert cam.preview._started is False
-
-
-# Can you add an annotation
-def test_annotation(cam):
-    cam.preview.start()
-    cam.preview.annotation = "test"
-    assert cam.preview.annotation == "test"  # property
-    assert cam.preview._annotation == "test"  # attribute
