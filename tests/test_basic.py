@@ -79,9 +79,9 @@ def test_named_picture(cam):
 # Fail to specify a filename for a picture
 def test_unnamed_picture(cam):
     with pytest.raises(PicameraZeroException):
-        _ = cam.take_photo(cam)
+        _ = cam.take_photo()
     with pytest.raises(PicameraZeroException):
-        _ = cam.capture_image(cam)
+        _ = cam.capture_image()
 
 
 # Take a pic with a filename but no extension
