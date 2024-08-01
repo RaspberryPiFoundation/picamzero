@@ -58,16 +58,13 @@ class Camera:
         return self.eg
 
     @example.setter
-    def example(self,
-                value):
+    def example(self, value):
         self.eg = value
 
     # METHODS
     # ----------------------------------
 
-    def flip_camera(self,
-                    vflip=False,
-                    hflip=False):
+    def flip_camera(self, vflip=False, hflip=False):
         """
         Flip the image H or V
         """
@@ -80,10 +77,10 @@ class Camera:
         """
         if not self._started:
             try:
-                self.pc2.start(show_preview=True,
-                               transform=Transform(
-                                   vflip=self.vflip,
-                                   hflip=self.hflip))  # Can we mix and match?
+                self.pc2.start(
+                    show_preview=True,
+                    transform=Transform(vflip=self.vflip, hflip=self.hflip),
+                )  # Can we mix and match?
                 self._started = True
             except RuntimeError:
                 logger.error("Preview couldn't start")
@@ -138,8 +135,7 @@ class Camera:
         pass
 
     # Add filter (add synonym method, e.g. set effect - [like sensehat library])
-    def add_filter(self,
-                   filter):
+    def add_filter(self, filter):
         """
         Give choice of effects (greyscale, negative, sketch)
         """
@@ -205,10 +201,7 @@ class Camera:
         pass
 
     # Take video and take still
-    def take_video_and_still(self,
-                             filename=None,
-                             duration=20,
-                             still_interval=4):
+    def take_video_and_still(self, filename=None, duration=20, still_interval=4):
         """
         Take video for <duration> and take a still every <interval> seconds?
         """
@@ -225,8 +218,8 @@ class Camera:
             for i in range(int(duration / still_interval)):
                 self.pc2.start_and_record_video(
                     f"{filename}.mp4",
-                    transform=Transform(vflip=self.vflip,
-                                        hflip=self.hflip))
+                    transform=Transform(vflip=self.vflip, hflip=self.hflip),
+                )
                 sleep(still_interval)
                 request = self.pc2.capture_request()
                 # Does this result in a flipped image if set above?
@@ -260,25 +253,19 @@ class Camera:
 
         # Use inbuilt function for now
         self.pc2.start_and_capture_file(
-            filename,
-            transform=Transform(vflip=self.vflip,
-                                hflip=self.hflip))
+            filename, transform=Transform(vflip=self.vflip, hflip=self.hflip)
+        )
 
         # Useful to know what the file is called
         return filename
 
     # Synonym method for take a picture
-    def capture_image(self,
-                      filename):
+    def capture_image(self, filename):
         return self.take_photo(filename)
 
     # Take a sequence
     def capture_sequence(
-        self,
-        filename=None,
-        num_images=10,
-        interval=0.01,
-        make_video=False
+        self, filename=None, num_images=10, interval=0.01, make_video=False
     ):
         """
         Take a series of <num_images> and save them as
@@ -299,11 +286,12 @@ class Camera:
                 filename = filename[:-4] + "-{:d}.jpg"
 
         # Use inbuilt function for now
-        self.pc2.start_and_capture_files(filename,
-                                         num_files=num_images,
-                                         delay=interval,
-                                         transform=Transform(vflip=self.vflip,
-                                                             hflip=self.hflip))
+        self.pc2.start_and_capture_files(
+            filename,
+            num_files=num_images,
+            delay=interval,
+            transform=Transform(vflip=self.vflip, hflip=self.hflip),
+        )
 
         if make_video:
             try:
@@ -316,10 +304,7 @@ class Camera:
                 # Define the codec and create VideoWriter object
                 fourcc = cv2.VideoWriter_fourcc(*"mp4v")
                 video = cv2.VideoWriter(
-                    video_name,
-                    fourcc,
-                    1 / interval,
-                    (width, height)
+                    video_name, fourcc, 1 / interval, (width, height)
                 )
 
                 for i in range(num_images):
@@ -340,9 +325,7 @@ class Camera:
         return filename
 
     # Record a video
-    def record_video(self,
-                     filename=None,
-                     duration=5):
+    def record_video(self, filename=None, duration=5):
         """
         Record a video
         """
@@ -357,10 +340,11 @@ class Camera:
             filename = filename + ".mp4"
 
         # Use basic inbuilt function
-        self.pc2.start_and_record_video(filename,
-                                        duration=duration,
-                                        transform=Transform(vflip=self.vflip,
-                                                            hflip=self.hflip))
+        self.pc2.start_and_record_video(
+            filename,
+            duration=duration,
+            transform=Transform(vflip=self.vflip, hflip=self.hflip),
+        )
 
         return filename
 
