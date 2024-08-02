@@ -68,6 +68,7 @@ class Camera:
         """
         if not self._started:
             try:
+                self.pc2.configure(self.preview_config)
                 self.pc2.start(
                     show_preview=True
                 )  

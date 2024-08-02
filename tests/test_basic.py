@@ -39,6 +39,17 @@ def test_init(cam: Camera):
     assert cam.pc2 is not None
 
 # ----------------------------------
+# Preview
+# ----------------------------------
+
+# Can you start and stop the preview
+def test_preview_starts_and_stops(cam):
+    cam.start_preview()
+    assert cam._started is True
+    cam.stop_preview()
+    assert cam._started is False
+
+# ----------------------------------
 # Camera orientation (hflip/vflip)
 # ----------------------------------
 
