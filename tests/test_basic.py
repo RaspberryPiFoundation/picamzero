@@ -4,14 +4,6 @@ from os.path import exists
 import pytest
 from picamzero import Camera, PicameraZeroException
 
-# ============================================================
-# WARNING - this script will take pictures with your picamera
-# It should remove them again but you may want to check the
-# /tests folder after running just in case, before committing
-# to GitHub! :D
-# ============================================================
-
-
 @pytest.fixture(autouse=True)
 def cwd(tmpdir, monkeypatch):
     """
@@ -53,7 +45,14 @@ def test_preview_starts_and_stops(cam):
 # Camera orientation (hflip/vflip)
 # ----------------------------------
 
-
+def test_cam_flip(cam):
+    cam.flip_camera(hflip=True)
+    assert cam.hflip == cam.preview_config['transform'].hflip == True 
+    cam.flip_camera(vflip=True)
+    assert cam.vflip == cam.preview_config['transform'].vflip == True
+    cam.flip_camera(hflip=False, vflip=False)
+    assert cam.hflip == cam.preview_config['transform'].hflip == False 
+    assert cam.vflip == cam.preview_config['transform'].vflip == False 
 
 # ----------------------------------
 # Video

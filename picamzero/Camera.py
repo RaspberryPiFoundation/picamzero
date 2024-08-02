@@ -56,7 +56,7 @@ class Camera:
 
     def flip_camera(self, vflip=False, hflip=False):
         """
-        Flip the image H or V
+        Flip the image horizontally or vertically
         """
         self.vflip = vflip
         self.hflip = hflip
