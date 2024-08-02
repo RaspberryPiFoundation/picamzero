@@ -40,16 +40,15 @@ class Camera:
         self.hflip = False
         self.vflip = False
 
-        # Set the current config as the preview config                   
+        # Set the current config as the preview config
         self.preview_config = self.pc2.create_preview_configuration(
             {"size": self.resolution}
         )
         self.pc2.configure(self.preview_config)
         self._started = False
-        
+
         # Annotation
         self._annotation = None
-
 
     # METHODS
     # ----------------------------------
@@ -69,9 +68,7 @@ class Camera:
         if not self._started:
             try:
                 self.pc2.configure(self.preview_config)
-                self.pc2.start(
-                    show_preview=True
-                )  
+                self.pc2.start(show_preview=True)
                 self._started = True
             except RuntimeError:
                 logger.error("Preview couldn't start")
@@ -229,7 +226,7 @@ class Camera:
         if filename is None:
             raise PicameraZeroException(
                 "Filename not specified",
-                hint="Check that you specified a name for the photo"
+                hint="Check that you specified a name for the photo",
             )
             exit()
 
@@ -272,11 +269,7 @@ class Camera:
                 filename = filename[:-4] + "-{:d}.jpg"
 
         # Use inbuilt function for now
-        self.pc2.start_and_capture_files(
-            filename,
-            num_files=num_images,
-            delay=interval
-        )
+        self.pc2.start_and_capture_files(filename, num_files=num_images, delay=interval)
 
         if make_video:
             try:
@@ -322,10 +315,7 @@ class Camera:
             filename = filename + ".mp4"
 
         # Use basic inbuilt function
-        self.pc2.start_and_record_video(
-            filename,
-            duration=duration
-        )
+        self.pc2.start_and_record_video(filename, duration=duration)
 
         return filename
 

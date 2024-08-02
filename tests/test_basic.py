@@ -4,6 +4,7 @@ from os.path import exists
 import pytest
 from picamzero import Camera, PicameraZeroException
 
+
 @pytest.fixture(autouse=True)
 def cwd(tmpdir, monkeypatch):
     """
@@ -26,13 +27,16 @@ def cam():
 # Initialise camera
 # ----------------------------------
 
+
 # Initialise a camera
 def test_init(cam: Camera):
     assert cam.pc2 is not None
 
+
 # ----------------------------------
 # Preview
 # ----------------------------------
+
 
 # Can you start and stop the preview
 def test_preview_starts_and_stops(cam):
@@ -41,41 +45,53 @@ def test_preview_starts_and_stops(cam):
     cam.stop_preview()
     assert cam._started is False
 
+
 # ----------------------------------
 # Camera orientation (hflip/vflip)
 # ----------------------------------
 
+
 def test_cam_flip(cam):
     cam.flip_camera(hflip=True)
-    assert cam.hflip == cam.preview_config['transform'].hflip == True 
+    assert cam.hflip is True
+    assert cam.preview_config["transform"].hflip is True
     cam.flip_camera(vflip=True)
-    assert cam.vflip == cam.preview_config['transform'].vflip == True
+    assert cam.vflip is True
+    assert cam.preview_config["transform"].vflip is True
     cam.flip_camera(hflip=False, vflip=False)
-    assert cam.hflip == cam.preview_config['transform'].hflip == False 
-    assert cam.vflip == cam.preview_config['transform'].vflip == False 
+    assert cam.hflip is False
+    assert cam.preview_config["transform"].hflip is False
+    assert cam.vflip is False
+    assert cam.preview_config["transform"].vflip is False
+
 
 # ----------------------------------
 # Video
 # ----------------------------------
+
 
 # Record a video with a specific filename
 def test_named_video(cam: Camera):
     cam.record_video("testvideo.mp4", 3)
     assert exists("testvideo.mp4")
 
+
 # Record a video with a specific filename
 def test_named_video_no_extension(cam):
     cam.record_video("testvid", 3)
     assert exists("testvid.mp4")
+
 
 # Fail to specify a filename for a video
 def test_unnamed_video(cam):
     with pytest.raises(PicameraZeroException):
         _ = cam.record_video()
 
+
 # ----------------------------------
 # Image
 # ----------------------------------
+
 
 # Take a picture with a specific filename
 def test_named_picture(cam):
@@ -112,14 +128,17 @@ def test_named_picture_no_ext(cam):
     assert exists(filename)
     assert exists(filename2)
 
+
 # ----------------------------------
 # Sequence
 # ----------------------------------
+
 
 # Fail to specify a filename for a sequence
 def test_unnamed_sequence(cam):
     with pytest.raises(PicameraZeroException):
         cam.capture_sequence()
+
 
 # Test a sequence capture with a filename but no extension
 def test_named_sequence_no_extension(cam):
@@ -127,11 +146,13 @@ def test_named_sequence_no_extension(cam):
     assert exists("test-0.jpg")
     assert exists("test-9.jpg")
 
+
 # Test a named sequence capture with extension
 def test_named_sequence(cam):
     cam.capture_sequence("testing.jpg")
     assert exists("testing-0.jpg")
     assert exists("testing-9.jpg")
+
 
 # Test whether you can change the number of pics
 def test_sequence_quantity(cam):
@@ -139,6 +160,7 @@ def test_sequence_quantity(cam):
     assert exists("fewer-0.jpg")
     assert exists("fewer-1.jpg")
     assert not exists("fewer-2.jpg")
+
 
 # Test the sequence interval
 def test_sequence_interval(cam):
@@ -153,15 +175,17 @@ def test_sequence_interval(cam):
     elapsed2 = stop2 - start2
     assert elapsed > elapsed2
 
+
 # Test the video gets made when you do a sequence
 def test_sequence_with_video(cam):
     cam.capture_sequence(filename="with-vid", make_video=True)
     assert exists("with-vid-timelapse.mp4")
-    
+
 
 # ----------------------------------
 # Video and still
 # ----------------------------------
+
 
 # Can you take a video and stills
 def test_video_with_stills(cam):
