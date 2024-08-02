@@ -321,9 +321,6 @@ class Camera:
             except Exception as e:
                 return f"Error creating video: {e}"
 
-        # Useful to know what the file is called
-        return filename
-
     # Record a video
     def record_video(self, filename=None, duration=5):
         """
