@@ -40,10 +40,12 @@ class Camera:
         self.hflip = False
         self.vflip = False
 
-        # Set the current config as the preview config
+        # Set up three different configs (preview, still, video)
         self.preview_config = self.pc2.create_preview_configuration(
             {"size": self.resolution}
         )
+
+        # Set the preview config by default
         self.pc2.configure(self.preview_config)
         self._started = False
 
@@ -52,6 +54,19 @@ class Camera:
 
     # METHODS
     # ----------------------------------
+
+    def _generate_config(self, mode):
+        """
+        Generate a suitable config to use
+        """
+        temp_config = None
+        if mode == "STILL":
+            temp_config = self.pc2.create_still_configuration({"size": self.resolution})
+        elif mode == "VIDEO":
+            temp_config = self.pc2.create_video_configuration({"size": self.resolution})
+        # Set any transforms
+        temp_config["transform"] = Transform(hflip=self.hflip, vflip=self.vflip)
+        return temp_config
 
     def flip_camera(self, vflip=False, hflip=False):
         """
@@ -204,6 +219,7 @@ class Camera:
         # Use inbuilt function for now
         if duration % still_interval == 0:
             for i in range(int(duration / still_interval)):
+                self._generate_config("VIDEO")
                 self.pc2.start_and_record_video(f"{filename}.mp4")
                 sleep(still_interval)
                 request = self.pc2.capture_request()
@@ -236,8 +252,9 @@ class Camera:
         if file_ext.lower() != ".jpg":
             filename = file_root + ".jpg"
 
-        # Use inbuilt function for now
-        self.pc2.start_and_capture_file(filename)
+        # Capture the image
+        still_config = self._generate_config("STILL")
+        self.pc2.switch_mode_and_capture_file(still_config, filename)
 
         # Useful to know what the file is called
         return filename
@@ -269,7 +286,9 @@ class Camera:
                 filename = filename[:-4] + "-{:d}.jpg"
 
         # Use inbuilt function for now
+        self._generate_config("STILL")
         self.pc2.start_and_capture_files(filename, num_files=num_images, delay=interval)
+        print(f"-----------Config: {self.pc2.still_configuration}")
 
         if make_video:
             try:
@@ -315,6 +334,7 @@ class Camera:
             filename = filename + ".mp4"
 
         # Use basic inbuilt function
+        self._generate_config("VIDEO")
         self.pc2.start_and_record_video(filename, duration=duration)
 
         return filename
