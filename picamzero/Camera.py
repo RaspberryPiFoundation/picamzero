@@ -64,6 +64,10 @@ class Camera:
             temp_config = self.pc2.create_still_configuration({"size": self.resolution})
         elif mode == "VIDEO":
             temp_config = self.pc2.create_video_configuration({"size": self.resolution})
+        elif mode == "PREVIEW":
+            temp_config = self.pc2.create_preview_configuration(
+                {"size": self.resolution}
+            )
         # Set any transforms
         temp_config["transform"] = Transform(hflip=self.hflip, vflip=self.vflip)
         return temp_config
@@ -300,8 +304,15 @@ class Camera:
                 filename = filename[:-4] + "-{:d}.jpg"
 
         # Use inbuilt function for now
-        self._generate_config("STILL")
-        self.pc2.start_and_capture_files(filename, num_files=num_images, delay=interval)
+        prev_config = self._generate_config("PREVIEW")
+        seq_config = self._generate_config("STILL")
+        self.pc2.start_and_capture_files(
+            filename,
+            num_files=num_images,
+            delay=interval,
+            capture_mode=seq_config,
+            preview_mode=prev_config,
+        )
         print(f"-----------Config: {self.pc2.still_configuration}")
 
         if make_video:
