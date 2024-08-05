@@ -40,14 +40,14 @@ class Camera:
         self.hflip = False
         self.vflip = False
 
-        # Set up three different configs (preview, still, video)
+        # Set up preview config
         self.preview_config = self.pc2.create_preview_configuration(
             {"size": self.resolution}
         )
 
         # Set the preview config by default
         self.pc2.configure(self.preview_config)
-        self._started = False
+        self._started_preview = False
 
         # Annotation
         self._annotation = None
@@ -74,17 +74,31 @@ class Camera:
         """
         self.vflip = vflip
         self.hflip = hflip
-        self.preview_config["transform"] = Transform(vflip=self.vflip, hflip=self.hflip)
+        if self._started_preview:
+            self.stop_preview()
+            self.pc2.stop()
+            self._started_preview = False
+            self.preview_config["transform"] = Transform(
+                vflip=self.vflip, hflip=self.hflip
+            )
+            self.pc2.configure(self.preview_config)
+            self.start_preview()
+            self._started_preview = True
+        else:
+            self.preview_config["transform"] = Transform(
+                vflip=self.vflip, hflip=self.hflip
+            )
+            self.pc2.configure(self.preview_config)
 
     def start_preview(self):
         """
         Show a preview of the camera
         """
-        if not self._started:
+        if not self._started_preview:
             try:
                 self.pc2.configure(self.preview_config)
                 self.pc2.start(show_preview=True)
-                self._started = True
+                self._started_preview = True
             except RuntimeError:
                 logger.error("Preview couldn't start")
 
@@ -92,10 +106,10 @@ class Camera:
         """
         Stop the preview
         """
-        if self._started:
+        if self._started_preview:
             try:
                 self.pc2.stop_preview()  # Pete to change to close() later?...
-                self._started = False
+                self._started_preview = False
             except RuntimeError:
                 logger.error("Couldn't stop preview")
 
