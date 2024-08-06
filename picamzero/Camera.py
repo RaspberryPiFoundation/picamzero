@@ -1,9 +1,10 @@
 from picamera2 import Picamera2
-from time import sleep
+from time import sleep, time
 from .PicameraZeroException import PicameraZeroException
 import cv2
 import logging
 import os
+import math
 
 # import numpy as np
 from libcamera import Transform
@@ -220,23 +221,33 @@ class Camera:
             exit()
 
         # Use inbuilt function for now
-        if duration % still_interval == 0:
-            for i in range(int(duration / still_interval)):
-                self._generate_config("VIDEO")
-                # Auto starts
-                self.pc2.start_and_record_video(f"{filename}.mp4")
-                sleep(still_interval)
-                request = self.pc2.capture_request()
-                # Does this result in a flipped image if set above?
-                request.save("main", f"{filename}-{str(i)}.jpg")
-                request.release()
+        self.pc2.start_and_record_video(
+            f"{filename}.mp4",
+            config=self._generate_config("VIDEO"),
+            show_preview=True,
+        )
 
-            self.pc2.stop_recording()
-        else:
-            logger.error("Duration must be equally divisible by interval")
-            """
-            Can also handle this differently using different division?
-            """
+        start_time = time()
+
+        still_times = [
+            i * still_interval
+            for i in range(1, math.ceil(duration / still_interval) + 1)
+        ]
+
+        for i, still_time in enumerate(still_times):
+            sleep(max(0, still_time - (time() - start_time)))
+            current_time = time() - start_time
+            if current_time >= duration:
+                break
+            request = self.pc2.capture_request()
+            request.save("main", f"{filename}-{i}.jpg")
+            request.release()
+
+        remaining_time = duration - (time() - start_time)
+        if remaining_time > 0:
+            sleep(remaining_time)
+
+        self.pc2.stop_recording()
 
     # Take a picture
     def take_photo(self, filename=None):
