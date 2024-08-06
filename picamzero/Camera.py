@@ -1,12 +1,5 @@
 from picamera2 import Picamera2
-
-# from picamera2 import MappedArray
-
-# from picamera2.encoders import H264Encoder
-# from picamera2.outputs import FfmpegOutput
 from time import sleep
-
-# from time import strftime, localtime
 from .PicameraZeroException import PicameraZeroException
 import cv2
 import logging
@@ -41,9 +34,7 @@ class Camera:
         self.vflip = False
 
         # Set up preview config
-        self.preview_config = self.pc2.create_preview_configuration(
-            {"size": self.resolution}
-        )
+        self.preview_config = self._generate_config("PREVIEW")
 
         # Set the preview config by default
         self.pc2.configure(self.preview_config)
@@ -51,6 +42,9 @@ class Camera:
 
         # Annotation
         self._annotation = None
+
+        # Is the camera started?
+        self._camera_started = False
 
     # METHODS
     # ----------------------------------
@@ -78,21 +72,16 @@ class Camera:
         """
         self.vflip = vflip
         self.hflip = hflip
-        if self._started_preview:
-            self.stop_preview()
+
+        if self._camera_started:
             self.pc2.stop()
-            self._started_preview = False
-            self.preview_config["transform"] = Transform(
-                vflip=self.vflip, hflip=self.hflip
-            )
-            self.pc2.configure(self.preview_config)
-            self.start_preview()
-            self._started_preview = True
-        else:
-            self.preview_config["transform"] = Transform(
-                vflip=self.vflip, hflip=self.hflip
-            )
-            self.pc2.configure(self.preview_config)
+
+        self.preview_config["transform"] = Transform(vflip=self.vflip, hflip=self.hflip)
+        self.pc2.configure(self.preview_config)
+
+        # Restart if previously started
+        if self._camera_started:
+            self.pc2.start()
 
     def start_preview(self):
         """
@@ -238,6 +227,7 @@ class Camera:
         if duration % still_interval == 0:
             for i in range(int(duration / still_interval)):
                 self._generate_config("VIDEO")
+                # Auto starts
                 self.pc2.start_and_record_video(f"{filename}.mp4")
                 sleep(still_interval)
                 request = self.pc2.capture_request()
@@ -270,8 +260,11 @@ class Camera:
         if file_ext.lower() != ".jpg":
             filename = file_root + ".jpg"
 
-        # Capture the image
         still_config = self._generate_config("STILL")
+        if not self._camera_started:
+            self.pc2.start()
+            self._camera_started = True
+        # Capture the image
         self.pc2.switch_mode_and_capture_file(still_config, filename)
 
         # Useful to know what the file is called
@@ -306,6 +299,7 @@ class Camera:
         # Use inbuilt function for now
         prev_config = self._generate_config("PREVIEW")
         seq_config = self._generate_config("STILL")
+        # Auto starts
         self.pc2.start_and_capture_files(
             filename,
             num_files=num_images,
@@ -360,6 +354,7 @@ class Camera:
 
         # Use basic inbuilt function
         self._generate_config("VIDEO")
+        # Auto starts
         self.pc2.start_and_record_video(filename, duration=duration)
 
         return filename

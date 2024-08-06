@@ -41,9 +41,9 @@ def test_init(cam: Camera):
 # Can you start and stop the preview
 def test_preview_starts_and_stops(cam):
     cam.start_preview()
-    assert cam._started is True
+    assert cam._started_preview is True
     cam.stop_preview()
-    assert cam._started is False
+    assert cam._started_preview is False
 
 
 # ----------------------------------
