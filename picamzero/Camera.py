@@ -1,12 +1,5 @@
 from picamera2 import Picamera2
-
-# from picamera2 import MappedArray
-
-# from picamera2.encoders import H264Encoder
-# from picamera2.outputs import FfmpegOutput
 from time import sleep
-
-# from time import strftime, localtime
 from .PicameraZeroException import PicameraZeroException
 import cv2
 import logging
@@ -35,53 +28,66 @@ class Camera:
             logger.error("Please check all connections")
             exit()
 
+        # Camera
         self.resolution = (2592, 1944)
+        self.hflip = False
+        self.vflip = False
 
-        # capture_config = self.pc2.create_still_configuration({"size":
-        #                                                      self.resolution})
-        preview_config = self.pc2.create_preview_configuration(
-            {"size": self.resolution}
-        )
+        # Set up preview config
+        self.preview_config = self._generate_config("PREVIEW")
 
-        # Set the current config as the preview config
-        self.pc2.configure(preview_config)
-        self._started = False
+        # Set the preview config by default
+        self.pc2.configure(self.preview_config)
+        self._started_preview = False
+
+        # Annotation
         self._annotation = None
-
-    # PROPERTIES
-    # ----------------------------------
-    @property
-    def example(self):
-        """
-        An example
-        """
-        return self.eg
-
-    @example.setter
-    def example(self, value):
-        self.eg = value
 
     # METHODS
     # ----------------------------------
 
+    def _generate_config(self, mode):
+        """
+        Generate a suitable config to use
+        """
+        temp_config = None
+        if mode == "STILL":
+            temp_config = self.pc2.create_still_configuration({"size": self.resolution})
+        elif mode == "VIDEO":
+            temp_config = self.pc2.create_video_configuration({"size": self.resolution})
+        elif mode == "PREVIEW":
+            temp_config = self.pc2.create_preview_configuration(
+                {"size": self.resolution}
+            )
+        # Set any transforms
+        temp_config["transform"] = Transform(hflip=self.hflip, vflip=self.vflip)
+        return temp_config
+
     def flip_camera(self, vflip=False, hflip=False):
         """
-        Flip the image H or V
+        Flip the image horizontally or vertically
         """
         self.vflip = vflip
         self.hflip = hflip
+
+        if self.pc2.started:
+            self.pc2.stop()
+
+        self.preview_config["transform"] = Transform(vflip=self.vflip, hflip=self.hflip)
+        self.pc2.configure(self.preview_config)
+
+        # Restart
+        self.pc2.start(show_preview=self._started_preview)
 
     def start_preview(self):
         """
         Show a preview of the camera
         """
-        if not self._started:
+        if not self._started_preview:
             try:
-                self.pc2.start(
-                    show_preview=True,
-                    transform=Transform(vflip=self.vflip, hflip=self.hflip),
-                )  # Can we mix and match?
-                self._started = True
+                # self.pc2.configure(self.preview_config)
+                self.pc2.start(show_preview=True)
+                self._started_preview = True
             except RuntimeError:
                 logger.error("Preview couldn't start")
 
@@ -89,10 +95,10 @@ class Camera:
         """
         Stop the preview
         """
-        if self._started:
+        if self._started_preview:
             try:
                 self.pc2.stop_preview()  # Pete to change to close() later?...
-                self._started = False
+                self._started_preview = False
             except RuntimeError:
                 logger.error("Couldn't stop preview")
 
@@ -216,10 +222,9 @@ class Camera:
         # Use inbuilt function for now
         if duration % still_interval == 0:
             for i in range(int(duration / still_interval)):
-                self.pc2.start_and_record_video(
-                    f"{filename}.mp4",
-                    transform=Transform(vflip=self.vflip, hflip=self.hflip),
-                )
+                self._generate_config("VIDEO")
+                # Auto starts
+                self.pc2.start_and_record_video(f"{filename}.mp4")
                 sleep(still_interval)
                 request = self.pc2.capture_request()
                 # Does this result in a flipped image if set above?
@@ -251,16 +256,17 @@ class Camera:
         if file_ext.lower() != ".jpg":
             filename = file_root + ".jpg"
 
-        # Use inbuilt function for now
+        self._generate_config("STILL")
+        # Capture the image
         self.pc2.start_and_capture_file(
-            filename, transform=Transform(vflip=self.vflip, hflip=self.hflip)
+            name=filename, show_preview=self._started_preview
         )
 
         # Useful to know what the file is called
         return filename
 
     # Synonym method for take a picture
-    def capture_image(self, filename):
+    def capture_image(self, filename=None):
         return self.take_photo(filename)
 
     # Take a sequence
@@ -286,12 +292,17 @@ class Camera:
                 filename = filename[:-4] + "-{:d}.jpg"
 
         # Use inbuilt function for now
+        prev_config = self._generate_config("PREVIEW")
+        seq_config = self._generate_config("STILL")
+        # Auto starts
         self.pc2.start_and_capture_files(
             filename,
             num_files=num_images,
             delay=interval,
-            transform=Transform(vflip=self.vflip, hflip=self.hflip),
+            capture_mode=seq_config,
+            preview_mode=prev_config,
         )
+        print(f"-----------Config: {self.pc2.still_configuration}")
 
         if make_video:
             try:
@@ -337,11 +348,9 @@ class Camera:
             filename = filename + ".mp4"
 
         # Use basic inbuilt function
-        self.pc2.start_and_record_video(
-            filename,
-            duration=duration,
-            transform=Transform(vflip=self.vflip, hflip=self.hflip),
-        )
+        self._generate_config("VIDEO")
+        # Auto starts
+        self.pc2.start_and_record_video(filename, duration=duration)
 
         return filename
 

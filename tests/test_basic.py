@@ -4,13 +4,6 @@ from os.path import exists
 import pytest
 from picamzero import Camera, PicameraZeroException
 
-# ============================================================
-# WARNING - this script will take pictures with your picamera
-# It should remove them again but you may want to check the
-# /tests folder after running just in case, before committing
-# to GitHub! :D
-# ============================================================
-
 
 @pytest.fixture(autouse=True)
 def cwd(tmpdir, monkeypatch):
@@ -31,13 +24,50 @@ def cam():
 
 
 # ----------------------------------
-# Camera.py tests
+# Initialise camera
 # ----------------------------------
 
 
 # Initialise a camera
 def test_init(cam: Camera):
     assert cam.pc2 is not None
+
+
+# ----------------------------------
+# Preview
+# ----------------------------------
+
+
+# Can you start and stop the preview
+def test_preview_starts_and_stops(cam):
+    cam.start_preview()
+    assert cam._started_preview is True
+    cam.stop_preview()
+    assert cam._started_preview is False
+
+
+# ----------------------------------
+# Camera orientation (hflip/vflip)
+# ----------------------------------
+
+
+def test_cam_flip(cam):
+    cam.flip_camera(hflip=True)
+    assert cam.hflip is True
+    assert cam.preview_config["transform"].hflip is True
+    cam.flip_camera(vflip=True)
+    assert cam.vflip is True
+    assert cam.preview_config["transform"].vflip is True
+    cam.flip_camera(hflip=False, vflip=False)
+    assert cam.hflip is False
+    assert cam.preview_config["transform"].hflip is False
+    assert cam.vflip is False
+    assert cam.preview_config["transform"].vflip is False
+
+
+# ----------------------------------
+# Video
+# ----------------------------------
 
 
 # Record a video with a specific filename
@@ -56,6 +86,11 @@ def test_named_video_no_extension(cam):
 def test_unnamed_video(cam):
     with pytest.raises(PicameraZeroException):
         _ = cam.record_video()
+
+
+# ----------------------------------
+# Image
+# ----------------------------------
 
 
 # Take a picture with a specific filename
@@ -94,6 +129,11 @@ def test_named_picture_no_ext(cam):
     assert exists(filename2)
 
 
+# ----------------------------------
+# Sequence
+# ----------------------------------
+
+
 # Fail to specify a filename for a sequence
 def test_unnamed_sequence(cam):
     with pytest.raises(PicameraZeroException):
@@ -105,21 +145,6 @@ def test_named_sequence_no_extension(cam):
     cam.capture_sequence("test")
     assert exists("test-0.jpg")
     assert exists("test-9.jpg")
-
-
-# Can you take a video and stills
-def test_video_with_stills(cam):
-    cam.take_video_and_still(filename="abc", duration=12, still_interval=2)
-    assert exists("abc.mp4")
-    assert exists("abc-0.jpg")
-    assert exists("abc-5.jpg")
-    assert not exists("abc-6.jpg")
-
-    cam.take_video_and_still(filename="testvs")
-    assert exists("testvs.mp4")
-    assert exists("testvs-0.jpg")
-    assert exists("testvs-4.jpg")
-    assert not exists("testvs-5.jpg")
 
 
 # Test a named sequence capture with extension
@@ -155,3 +180,23 @@ def test_sequence_interval(cam):
 def test_sequence_with_video(cam):
     cam.capture_sequence(filename="with-vid", make_video=True)
     assert exists("with-vid-timelapse.mp4")
+
+
+# ----------------------------------
+# Video and still
+# ----------------------------------
+
+
+# Can you take a video and stills
+def test_video_with_stills(cam):
+    cam.take_video_and_still(filename="abc", duration=12, still_interval=2)
+    assert exists("abc.mp4")
+    assert exists("abc-0.jpg")
+    assert exists("abc-5.jpg")
+    assert not exists("abc-6.jpg")
+
+    cam.take_video_and_still(filename="testvs")
+    assert exists("testvs.mp4")
+    assert exists("testvs-0.jpg")
+    assert exists("testvs-4.jpg")
+    assert not exists("testvs-5.jpg")
