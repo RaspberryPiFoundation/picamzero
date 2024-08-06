@@ -221,17 +221,19 @@ class Camera:
 
         # Use inbuilt function for now
         if duration % still_interval == 0:
+            self.pc2.start_and_record_video(
+                f"{filename}.mp4",
+                config=self._generate_config("VIDEO"),
+                show_preview=True,
+            )
             for i in range(int(duration / still_interval)):
-                self._generate_config("VIDEO")
-                # Auto starts
-                self.pc2.start_and_record_video(f"{filename}.mp4")
                 sleep(still_interval)
                 request = self.pc2.capture_request()
                 # Does this result in a flipped image if set above?
                 request.save("main", f"{filename}-{str(i)}.jpg")
                 request.release()
-
             self.pc2.stop_recording()
+
         else:
             logger.error("Duration must be equally divisible by interval")
             """
