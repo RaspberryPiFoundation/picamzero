@@ -9,7 +9,7 @@ picamzero is a Python 3 library designed to help beginners to easily use the Ras
 Make sure you have installed these packages via Debian package manager
 
 ```
-sudo apt install python3-pytest mkdocs pre-commit
+sudo apt install python3-pytest mkdocs pre-commit python3-opencv
 ```
 
 ### In another environment
@@ -24,6 +24,9 @@ pip install -r requirements.txt
 Note that `picamera2` - the library on which `picamera-zero` depends - is only installable on Linux.
 
 ## Clone the repo
+
+Make sure that you have a SSH key set up in GitHub first.
+
 ```
 git clone git@github.com:RaspberryPiFoundation/picamera-zero.git
 ```
@@ -56,12 +59,11 @@ You can write tests in the tests directory. Each test function, and each file ne
 From the main directory (with `pyproject.toml`) type:
 
 ```
+sudo apt install python3-build
 python -m build
 ```
 
 The distribution will be created in the `dist` directory.
-
-(You might need to `sudo apt install python3-build` I can't remember!)
 
 
 ## Continuous integration

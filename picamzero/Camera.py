@@ -1,12 +1,5 @@
 from picamera2 import Picamera2
-
-# from picamera2 import MappedArray
-
-# from picamera2.encoders import H264Encoder
-# from picamera2.outputs import FfmpegOutput
 from time import sleep
-
-# from time import strftime, localtime
 from .PicameraZeroException import PicameraZeroException
 import cv2
 import logging
@@ -40,12 +33,12 @@ class Camera:
         self.hflip = False
         self.vflip = False
 
-        # Set the current config as the preview config
-        self.preview_config = self.pc2.create_preview_configuration(
-            {"size": self.resolution}
-        )
+        # Set up preview config
+        self.preview_config = self._generate_config("PREVIEW")
+
+        # Set the preview config by default
         self.pc2.configure(self.preview_config)
-        self._started = False
+        self._started_preview = False
 
         # Annotation
         self._text = None
@@ -59,23 +52,48 @@ class Camera:
     # METHODS
     # ----------------------------------
 
+    def _generate_config(self, mode):
+        """
+        Generate a suitable config to use
+        """
+        temp_config = None
+        if mode == "STILL":
+            temp_config = self.pc2.create_still_configuration({"size": self.resolution})
+        elif mode == "VIDEO":
+            temp_config = self.pc2.create_video_configuration({"size": self.resolution})
+        elif mode == "PREVIEW":
+            temp_config = self.pc2.create_preview_configuration(
+                {"size": self.resolution}
+            )
+        # Set any transforms
+        temp_config["transform"] = Transform(hflip=self.hflip, vflip=self.vflip)
+        return temp_config
+
     def flip_camera(self, vflip=False, hflip=False):
         """
         Flip the image horizontally or vertically
         """
         self.vflip = vflip
         self.hflip = hflip
+
+        if self.pc2.started:
+            self.pc2.stop()
+
         self.preview_config["transform"] = Transform(vflip=self.vflip, hflip=self.hflip)
+        self.pc2.configure(self.preview_config)
+
+        # Restart
+        self.pc2.start(show_preview=self._started_preview)
 
     def start_preview(self):
         """
         Show a preview of the camera
         """
-        if not self._started:
+        if not self._started_preview:
             try:
-                self.pc2.configure(self.preview_config)
+                # self.pc2.configure(self.preview_config)
                 self.pc2.start(show_preview=True)
-                self._started = True
+                self._started_preview = True
             except RuntimeError:
                 logger.error("Preview couldn't start")
 
@@ -83,10 +101,10 @@ class Camera:
         """
         Stop the preview
         """
-        if self._started:
+        if self._started_preview:
             try:
                 self.pc2.stop_preview()  # Pete to change to close() later?...
-                self._started = False
+                self._started_preview = False
             except RuntimeError:
                 logger.error("Couldn't stop preview")
 
@@ -194,6 +212,8 @@ class Camera:
         # Use inbuilt function for now
         if duration % still_interval == 0:
             for i in range(int(duration / still_interval)):
+                self._generate_config("VIDEO")
+                # Auto starts
                 self.pc2.start_and_record_video(f"{filename}.mp4")
                 sleep(still_interval)
                 request = self.pc2.capture_request()
@@ -226,8 +246,11 @@ class Camera:
         if file_ext.lower() != ".jpg":
             filename = file_root + ".jpg"
 
-        # Use inbuilt function for now
-        self.pc2.start_and_capture_file(filename)
+        self._generate_config("STILL")
+        # Capture the image
+        self.pc2.start_and_capture_file(
+            name=filename, show_preview=self._started_preview
+        )
 
         # Useful to know what the file is called
         return filename
@@ -259,7 +282,17 @@ class Camera:
                 filename = filename[:-4] + "-{:d}.jpg"
 
         # Use inbuilt function for now
-        self.pc2.start_and_capture_files(filename, num_files=num_images, delay=interval)
+        prev_config = self._generate_config("PREVIEW")
+        seq_config = self._generate_config("STILL")
+        # Auto starts
+        self.pc2.start_and_capture_files(
+            filename,
+            num_files=num_images,
+            delay=interval,
+            capture_mode=seq_config,
+            preview_mode=prev_config,
+        )
+        print(f"-----------Config: {self.pc2.still_configuration}")
 
         if make_video:
             try:
@@ -305,6 +338,8 @@ class Camera:
             filename = filename + ".mp4"
 
         # Use basic inbuilt function
+        self._generate_config("VIDEO")
+        # Auto starts
         self.pc2.start_and_record_video(filename, duration=duration)
 
         return filename
