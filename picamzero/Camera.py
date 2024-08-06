@@ -43,9 +43,6 @@ class Camera:
         # Annotation
         self._annotation = None
 
-        # Is the camera started?
-        self._camera_started = False
-
     # METHODS
     # ----------------------------------
 
@@ -73,15 +70,14 @@ class Camera:
         self.vflip = vflip
         self.hflip = hflip
 
-        if self._camera_started:
+        if self.pc2.started:
             self.pc2.stop()
 
         self.preview_config["transform"] = Transform(vflip=self.vflip, hflip=self.hflip)
         self.pc2.configure(self.preview_config)
 
-        # Restart if previously started
-        if self._camera_started:
-            self.pc2.start()
+        # Restart
+        self.pc2.start(show_preview=self._started_preview)
 
     def start_preview(self):
         """
@@ -89,7 +85,7 @@ class Camera:
         """
         if not self._started_preview:
             try:
-                self.pc2.configure(self.preview_config)
+                # self.pc2.configure(self.preview_config)
                 self.pc2.start(show_preview=True)
                 self._started_preview = True
             except RuntimeError:
@@ -260,12 +256,11 @@ class Camera:
         if file_ext.lower() != ".jpg":
             filename = file_root + ".jpg"
 
-        still_config = self._generate_config("STILL")
-        if not self._camera_started:
-            self.pc2.start()
-            self._camera_started = True
+        self._generate_config("STILL")
         # Capture the image
-        self.pc2.switch_mode_and_capture_file(still_config, filename)
+        self.pc2.start_and_capture_file(
+            name=filename, show_preview=self._started_preview
+        )
 
         # Useful to know what the file is called
         return filename
