@@ -168,24 +168,24 @@ class Camera:
         """
         self._text = text
 
+        def annotation_callback(request):
+            """
+            Annotate before taking a photo etc.
+            """
+
+            with MappedArray(request, "main") as m:
+                cv2.putText(
+                    m.array,
+                    self._text,
+                    self._text_origin,
+                    self._text_font,
+                    self._text_scale,
+                    self._text_color,
+                    self._text_thickness,
+                )
+
         # Add the annotation as a callback when any pics are taken
-        self.pc2.pre_callback = self._annotation_callback
-
-    def _annotation_callback(self, request):
-        """
-        Annotate before taking a photo etc.
-        """
-
-        with MappedArray(request, "main") as m:
-            cv2.putText(
-                m.array,
-                self._text,
-                self._text_origin,
-                self._text_font,
-                self._text_scale,
-                self._text_color,
-                self._text_thickness,
-            )
+        self.pc2.pre_callback = annotation_callback
 
     # Image overlay
     def add_image_overlay(self, image):
