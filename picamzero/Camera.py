@@ -33,7 +33,7 @@ class Camera:
             exit()
 
         # Camera
-        self.resolution = self.pc2.sensor_resolution
+        self.resolution = (800, 600)
         self.hflip = False
         self.vflip = False
 
@@ -53,6 +53,48 @@ class Camera:
         self._text_scale = 3
         self._text_thickness = 3
 
+    # ----------------------------------
+    # PROPERTIES
+    # ----------------------------------
+    @property
+    def brightness(self):
+        """
+        Set the brightness
+        """
+        pass
+
+    @property
+    def contrast(self):
+        """
+        Set the contrast
+        """
+        pass
+
+    # Set exposure
+    @property
+    def exposure(self):
+        """
+        Set the exposure
+        """
+        pass
+
+    # Set gain
+    @property
+    def gain(self):
+        """
+        Set the gain
+        """
+        pass
+
+    # Set white balance
+    @property
+    def white_balance(self):
+        """
+        Set the white balance
+        """
+        pass
+
+    # ----------------------------------
     # METHODS
     # ----------------------------------
 
@@ -118,44 +160,6 @@ class Camera:
             except RuntimeError:
                 logger.error("Couldn't stop preview")
 
-    @property
-    def brightness(self):
-        """
-        Set the brightness
-        """
-        pass
-
-    @property
-    def contrast(self):
-        """
-        Set the contrast
-        """
-        pass
-
-    # Set exposure
-    @property
-    def exposure(self):
-        """
-        Set the exposure
-        """
-        pass
-
-    # Set gain
-    @property
-    def gain(self):
-        """
-        Set the gain
-        """
-        pass
-
-    # Set white balance
-    @property
-    def white_balance(self):
-        """
-        Set the white balance
-        """
-        pass
-
     # Add filter (add synonym method, e.g. set effect - [like sensehat library])
     def add_filter(self, filter):
         """
@@ -163,12 +167,24 @@ class Camera:
         """
         pass
 
-    def annotate(self, text="Default Text", video=False):
+    def annotate(
+        self,
+        text="Default Text",
+        text_color=(255, 255, 255, 255),
+        text_origin=(50, 50),
+        text_scale=3,
+        text_thickness=3,
+        video=False,
+    ):
         """
         Set a text overlay on the preview and on images
-        TODO: video
+        TODO: video, text bgcolor, font?
         """
         self._text = text
+        self._text_color = text_color
+        self._text_origin = text_origin
+        self._text_scale = text_scale
+        self._text_thickness = text_thickness
 
         def annotation_callback(request):
             """
