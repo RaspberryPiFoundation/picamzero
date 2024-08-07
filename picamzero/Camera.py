@@ -219,7 +219,7 @@ class Camera:
                 hint="Check that you specified a name for the video",
             )
             exit()
-        
+
         # Start the video
         self.pc2.start_and_record_video(
             f"{filename}.mp4",
@@ -252,7 +252,6 @@ class Camera:
             sleep(remaining_time)
 
         self.pc2.stop_recording()
-
 
     # Take a picture
     def take_photo(self, filename=None):
