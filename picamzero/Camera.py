@@ -233,17 +233,21 @@ class Camera:
             i * still_interval
             for i in range(1, math.ceil(duration / still_interval) + 1)
         ]
+        # Remove any times that are greater than the duration
+        # (they need to be generated otherwise for durations that are
+        # exactly divisible the final still isn't included)
+        result = list(filter(lambda x: x <= duration, still_times))
 
-        for i, still_time in enumerate(still_times):
+        for i, still_time in enumerate(result):
             sleep(max(0, still_time - (time() - start_time)))
             current_time = time() - start_time
-            if current_time >= duration:
-                break
+            print(f"Current time: {current_time}")
             request = self.pc2.capture_request()
             request.save("main", f"{filename}-{i}.jpg")
             request.release()
 
         remaining_time = duration - (time() - start_time)
+
         if remaining_time > 0:
             sleep(remaining_time)
 
