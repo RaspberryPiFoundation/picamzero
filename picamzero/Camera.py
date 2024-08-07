@@ -33,7 +33,7 @@ class Camera:
             exit()
 
         # Camera
-        self.resolution = (800, 600)
+        self.resolution = self.pc2.sensor_resolution
         self.hflip = False
         self.vflip = False
 
