@@ -1,14 +1,16 @@
-from picamera2 import Picamera2
+from picamera2 import Picamera2, Preview, MappedArray
 from time import sleep
 from .PicameraZeroException import PicameraZeroException
 import cv2
 import logging
 import os
-
-# import numpy as np
 from libcamera import Transform
 
 logger = logging.getLogger(__name__)
+
+# For dev only - suppress Libcamera and Picamera warnings
+# os.environ["LIBCAMERA_LOG_LEVELS"] = "4"
+# Picamera2.set_logging(level=Picamera2.ERROR)
 
 
 class Camera:
@@ -29,7 +31,7 @@ class Camera:
             exit()
 
         # Camera
-        self.resolution = (2592, 1944)
+        self.resolution = (800, 600)
         self.hflip = False
         self.vflip = False
 
@@ -37,11 +39,17 @@ class Camera:
         self.preview_config = self._generate_config("PREVIEW")
 
         # Set the preview config by default
-        self.pc2.configure(self.preview_config)
+        self.pc2.preview_configuration = self.preview_config
         self._started_preview = False
 
         # Annotation
-        self._annotation = None
+        self._text = None
+        self._text_color = (255, 255, 255, 255)
+        self._text_bgcolor = (0, 0, 0, 0)
+        self._text_origin = (50, 50)
+        self._text_font = cv2.FONT_HERSHEY_SIMPLEX
+        self._text_scale = 3
+        self._text_thickness = 3
 
     # METHODS
     # ----------------------------------
@@ -61,6 +69,7 @@ class Camera:
             )
         # Set any transforms
         temp_config["transform"] = Transform(hflip=self.hflip, vflip=self.vflip)
+
         return temp_config
 
     def flip_camera(self, vflip=False, hflip=False):
@@ -74,7 +83,7 @@ class Camera:
             self.pc2.stop()
 
         self.preview_config["transform"] = Transform(vflip=self.vflip, hflip=self.hflip)
-        self.pc2.configure(self.preview_config)
+        self.pc2.preview_configuration = self.preview_config
 
         # Restart
         self.pc2.start(show_preview=self._started_preview)
@@ -85,9 +94,14 @@ class Camera:
         """
         if not self._started_preview:
             try:
-                # self.pc2.configure(self.preview_config)
-                self.pc2.start(show_preview=True)
+                self.pc2.start_preview(
+                    Preview.QTGL,
+                    width=self.resolution[0],
+                    height=self.resolution[1],
+                    transform=Transform(hflip=self.hflip, vflip=self.vflip),
+                )
                 self._started_preview = True
+                self.pc2.start()
             except RuntimeError:
                 logger.error("Preview couldn't start")
 
@@ -147,57 +161,31 @@ class Camera:
         """
         pass
 
-    '''
-    def set_annotation(self, request, text="Default Text"):
+    def annotate(self, text="Default Text", video=False):
         """
-        Text overlays - **need to implement to take note of the
-        current mode (preview or capture)**
+        Set a text overlay on the preview and on images
+        TODO: video
         """
-        self.text_color = (255, 255, 255, 255)
-        self.bg_color = (0, 0, 0, 0)
-        self.origin = (0, 30)
-        self.text_font = cv2.FONT_HERSHEY_SIMPLEX
-        self.scale = 2
-        self.thickness = 2
-        with MappedArray(request, "main") as m:
-            cv2.putText(m.array, text , self.origin, self.text_font, self.scale,
-            self.text_color, self.thickness)
+        self._text = text
 
+        def annotation_callback(request):
+            """
+            Annotate before taking a photo etc.
+            """
 
-    @property
-    def annotation(self):
-        """
-        Return the current annotation
-        """
-        return self._annotation
+            with MappedArray(request, "main") as m:
+                cv2.putText(
+                    m.array,
+                    self._text,
+                    self._text_origin,
+                    self._text_font,
+                    self._text_scale,
+                    self._text_color,
+                    self._text_thickness,
+                )
 
-    ### Implement in each capture method - as a Boolean option?
-    ### Leaving this here for now and we can put our heads together in the morning!
-    @annotation.setter
-    def annotation(self, text):
-        self.pc2.pre_callback = set_annotation
-        self._annotation = text
-        overlay = np.zeros((self._overlay_size[0], self._overlay_size[1], 4),
-        dtype=np.uint8)
-        cv2.putText(
-            overlay,
-            self._annotation,
-            self._text_origin,
-            self._text_font,
-            1, # scale
-            self._text_color,
-            2 # thickness
-        )
-
-        try:
-            self.pc2.set_overlay(overlay)
-        except AttributeError:
-            if not self._started:
-                logger.error("Start the preview before adding an annotation")
-            else:
-                logger.error("Could not add overlay")
-
-    '''
+        # Add the annotation as a callback when any pics are taken
+        self.pc2.pre_callback = annotation_callback
 
     # Image overlay
     def add_image_overlay(self, image):
@@ -258,10 +246,16 @@ class Camera:
         if file_ext.lower() != ".jpg":
             filename = file_root + ".jpg"
 
-        self._generate_config("STILL")
+        still_config = self._generate_config("STILL")
+        if self.pc2.started:
+            self.pc2.stop()
+        self.pc2.still_configuration = still_config
+        self.pc2.start()
+
         # Capture the image
         self.pc2.start_and_capture_file(
-            name=filename, show_preview=self._started_preview
+            name=filename,
+            show_preview=self._started_preview,
         )
 
         # Useful to know what the file is called
