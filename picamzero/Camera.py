@@ -365,15 +365,30 @@ class Camera:
         return filename
 
     # Record a video with option to take a photo
-    def start_recording(self, filename):
+    def start_recording(self, filename=None, preview=False):
         """
-        Record a video with option to take a photo (9.3. Multiple outputs)
+        Record a video of undefined length
         """
-        pass
+        if filename is None:
+            raise PicameraZeroException(
+                "Filename not specified",
+                hint="Check that you specified a name for the video",
+            )
+            exit()
+        elif not filename.lower().endswith(".mp4"):
+            # Check if the filename already has the ".mp4" extension
+            filename = filename + ".mp4"
+
+        # Update the preview variable as the preview may be started
+        self._preview_started = preview
+
+        self.pc2.start_and_record_video(
+            filename, config=self._generate_config("VIDEO"), show_preview=preview
+        )
 
     # Stop recording video
     def stop_recording(self):
         """
         Stop recording video
         """
-        pass
+        self.pc2.stop_recording()
