@@ -1,9 +1,11 @@
 from picamera2 import Picamera2, Preview, MappedArray
-from time import sleep
+from time import sleep, time
 from .PicameraZeroException import PicameraZeroException
 import cv2
 import logging
 import os
+import math
+
 from libcamera import Transform
 
 logger = logging.getLogger(__name__)
@@ -207,26 +209,38 @@ class Camera:
             )
             exit()
 
-        # Use inbuilt function for now
-        if duration % still_interval == 0:
-            self.pc2.start_and_record_video(
-                f"{filename}.mp4",
-                config=self._generate_config("VIDEO"),
-                show_preview=True,
-            )
-            for i in range(int(duration / still_interval)):
-                sleep(still_interval)
-                request = self.pc2.capture_request()
-                # Does this result in a flipped image if set above?
-                request.save("main", f"{filename}-{str(i)}.jpg")
-                request.release()
-            self.pc2.stop_recording()
+        # Start the video
+        self.pc2.start_and_record_video(
+            f"{filename}.mp4",
+            config=self._generate_config("VIDEO"),
+            show_preview=True,
+        )
 
-        else:
-            logger.error("Duration must be equally divisible by interval")
-            """
-            Can also handle this differently using different division?
-            """
+        start_time = time()
+
+        still_times = [
+            i * still_interval
+            for i in range(1, math.ceil(duration / still_interval) + 1)
+        ]
+        # Remove any times that are greater than the duration
+        # (they need to be generated otherwise for durations that are
+        # exactly divisible the final still isn't included)
+        result = list(filter(lambda x: x <= duration, still_times))
+
+        for i, still_time in enumerate(result):
+            sleep(max(0, still_time - (time() - start_time)))
+            current_time = time() - start_time
+            print(f"Current time: {current_time}")
+            request = self.pc2.capture_request()
+            request.save("main", f"{filename}-{i}.jpg")
+            request.release()
+
+        remaining_time = duration - (time() - start_time)
+
+        if remaining_time > 0:
+            sleep(remaining_time)
+
+        self.pc2.stop_recording()
 
     # Take a picture
     def take_photo(self, filename=None):

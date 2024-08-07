@@ -200,3 +200,13 @@ def test_video_with_stills(cam):
     assert exists("testvs-0.jpg")
     assert exists("testvs-4.jpg")
     assert not exists("testvs-5.jpg")
+
+
+# Test whether the correct number of stills are taken
+# if the interval is not exactly divisible by the duration
+def test_video_with_stills_non_divisible(cam):
+    cam.take_video_and_still(filename="xyz", duration=7, still_interval=3)
+    assert exists("xyz-0.jpg")
+    assert exists("xyz-1.jpg")
+    assert not exists("xyz-2.jpg")
+    assert exists("xyz.mp4")
