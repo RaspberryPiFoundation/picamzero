@@ -86,6 +86,17 @@ def test_named_video_no_extension(cam):
 def test_unnamed_video(cam):
     with pytest.raises(PicameraZeroException):
         _ = cam.record_video()
+    with pytest.raises(PicameraZeroException):
+        _ = cam.start_recording()
+
+
+# Test recording an unspecified length video with start and stop
+def test_video_unspecified_length(cam):
+    assert len(cam.pc2.encoders) == 0
+    cam.start_recording("testvideo.mp4")
+    assert len(cam.pc2.encoders) > 0
+    cam.stop_recording()
+    assert len(cam.pc2.encoders) == 0
 
 
 # ----------------------------------
