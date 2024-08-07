@@ -140,12 +140,14 @@ class Camera:
             try:
                 self.pc2.start_preview(
                     Preview.QTGL,
-                    width=self.resolution[0],
-                    height=self.resolution[1],
+                    # These two lines are causing my preview to take over my screen
+                    # width=self.resolution[0],
+                    # height=self.resolution[1],
                     transform=Transform(hflip=self.hflip, vflip=self.vflip),
                 )
                 self._started_preview = True
-                self.pc2.start()
+                # Do we need this line if we have 141 above?
+                # self.pc2.start()
             except RuntimeError:
                 logger.error("Preview couldn't start")
 
