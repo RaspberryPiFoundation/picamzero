@@ -1,6 +1,6 @@
 from picamera2 import Picamera2, Preview, MappedArray
 from time import sleep, time
-from .PicameraZeroException import PicameraZeroException
+from . import utilities as utils
 import cv2
 import logging
 import os
@@ -100,7 +100,7 @@ class Camera:
 
     def _generate_config(self, mode):
         """
-        Generate a suitable config to use
+        Helper method: Generate a suitable config to use
         """
         temp_config = None
         if mode == "STILL":
@@ -217,13 +217,8 @@ class Camera:
         """
         Take video for <duration> and take a still every <interval> seconds?
         """
-
-        if filename is None:
-            raise PicameraZeroException(
-                "Filename not specified",
-                hint="Check that you specified a name for the video",
-            )
-            exit()
+        # Format the filename so that it has no extension
+        filename = utils.format_filename(filename, ext="")
 
         # Start the video
         self.pc2.start_and_record_video(
@@ -245,8 +240,6 @@ class Camera:
 
         for i, still_time in enumerate(result):
             sleep(max(0, still_time - (time() - start_time)))
-            current_time = time() - start_time
-            print(f"Current time: {current_time}")
             request = self.pc2.capture_request()
             request.save("main", f"{filename}-{i}.jpg")
             request.release()
@@ -263,18 +256,7 @@ class Camera:
         """
         Takes a jpeg image using the camera
         """
-        if filename is None:
-            raise PicameraZeroException(
-                "Filename not specified",
-                hint="Check that you specified a name for the photo",
-            )
-            exit()
-
-        file_root, file_ext = os.path.splitext(filename)
-
-        # Check if the extension is valid, if not replace it with ".jpg"
-        if file_ext.lower() != ".jpg":
-            filename = file_root + ".jpg"
+        filename = utils.format_filename(filename, ".jpg")
 
         still_config = self._generate_config("STILL")
         if self.pc2.started:
@@ -303,39 +285,25 @@ class Camera:
         Take a series of <num_images> and save them as
         <filename> with auto-number, also set the interval between
         """
-        if filename is None:
-            raise PicameraZeroException(
-                "Filename not specified",
-                hint="Check that you specified a filename for the burst",
-            )
-            exit()
-        else:
-            file_root, file_ext = os.path.splitext(filename)
-            # Check if the filename already has the ".jpg" extension
-            if file_ext.lower() != ".jpg":
-                filename = file_root + "-{:d}" + ".jpg"
-            else:
-                filename = filename[:-4] + "-{:d}.jpg"
+        # Format the filename
+        img_filename = utils.format_filename(filename, ext="-{:d}.jpg")
 
         # Use inbuilt function for now
         prev_config = self._generate_config("PREVIEW")
         seq_config = self._generate_config("STILL")
         # Auto starts
         self.pc2.start_and_capture_files(
-            filename,
+            img_filename,
             num_files=num_images,
             delay=interval,
             capture_mode=seq_config,
             preview_mode=prev_config,
         )
-        print(f"-----------Config: {self.pc2.still_configuration}")
 
         if make_video:
             try:
-                # Extract base name from filename pattern
-                base_name = filename[:-8]  # Remove the "-{:d}.jpg" part
-                video_name = base_name + "timelapse.mp4"
-                frame = cv2.imread(filename.format(0))
+                video_name = utils.format_filename(filename, ext="-timelapse.mp4")
+                frame = cv2.imread(img_filename.format(0))
                 height, width, layers = frame.shape
 
                 # Define the codec and create VideoWriter object
@@ -345,7 +313,7 @@ class Camera:
                 )
 
                 for i in range(num_images):
-                    img_path = filename.format(i)
+                    img_path = img_filename.format(i)
                     if os.path.exists(img_path):
                         video.write(cv2.imread(img_path))
                     else:
@@ -363,15 +331,7 @@ class Camera:
         """
         Record a video
         """
-        if filename is None:
-            raise PicameraZeroException(
-                "Filename not specified",
-                hint="Check that you specified a name for the video",
-            )
-            exit()
-        elif not filename.lower().endswith(".mp4"):
-            # Check if the filename already has the ".mp4" extension
-            filename = filename + ".mp4"
+        filename = utils.format_filename(filename, ".mp4")
 
         # Use basic inbuilt function
         self._generate_config("VIDEO")
@@ -385,15 +345,7 @@ class Camera:
         """
         Record a video of undefined length
         """
-        if filename is None:
-            raise PicameraZeroException(
-                "Filename not specified",
-                hint="Check that you specified a name for the video",
-            )
-            exit()
-        elif not filename.lower().endswith(".mp4"):
-            # Check if the filename already has the ".mp4" extension
-            filename = filename + ".mp4"
+        filename = utils.format_filename(filename, ".mp4")
 
         # Update the preview variable as the preview may be started
         self._preview_started = preview
