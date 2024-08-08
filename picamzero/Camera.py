@@ -1,6 +1,6 @@
 from picamera2 import Picamera2, Preview, MappedArray
 from time import sleep, time
-from .PicameraZeroException import PicameraZeroException
+from . import utilities as utils
 import cv2
 import logging
 import os
@@ -97,32 +97,6 @@ class Camera:
     # ----------------------------------
     # METHODS
     # ----------------------------------
-
-    def _format_filename(self, filename: str, ext: str):
-        """
-        Helper method: Generate suitable filename/extension
-
-        :param string filename:
-            The text filename the user entered
-
-        :param string ext:
-            The desired extension (as .xxx)
-        """
-        if filename is None:
-            raise PicameraZeroException(
-                "No filename was specified",
-                hint="A filename is required when taking a photo or recording a video",
-            )
-            exit()
-        else:
-
-            file_root, file_ext = os.path.splitext(filename)
-
-            # Check if the extension is valid, if not replace it
-            if file_ext.lower() != ext:
-                filename = file_root + ext
-
-        return filename
 
     def _generate_config(self, mode):
         """
@@ -244,7 +218,7 @@ class Camera:
         Take video for <duration> and take a still every <interval> seconds?
         """
         # Format the filename so that it has no extension
-        filename = self._format_filename(filename, ext="")
+        filename = utils.format_filename(filename, ext="")
 
         # Start the video
         self.pc2.start_and_record_video(
@@ -282,7 +256,7 @@ class Camera:
         """
         Takes a jpeg image using the camera
         """
-        filename = self._format_filename(filename, ".jpg")
+        filename = utils.format_filename(filename, ".jpg")
 
         still_config = self._generate_config("STILL")
         if self.pc2.started:
@@ -312,7 +286,7 @@ class Camera:
         <filename> with auto-number, also set the interval between
         """
         # Format the filename
-        img_filename = self._format_filename(filename, ext="-{:d}.jpg")
+        img_filename = utils.format_filename(filename, ext="-{:d}.jpg")
 
         # Use inbuilt function for now
         prev_config = self._generate_config("PREVIEW")
@@ -328,7 +302,7 @@ class Camera:
 
         if make_video:
             try:
-                video_name = self._format_filename(filename, ext="-timelapse.mp4")
+                video_name = utils.format_filename(filename, ext="-timelapse.mp4")
                 frame = cv2.imread(img_filename.format(0))
                 height, width, layers = frame.shape
 
@@ -357,7 +331,7 @@ class Camera:
         """
         Record a video
         """
-        filename = self._format_filename(filename, ".mp4")
+        filename = utils.format_filename(filename, ".mp4")
 
         # Use basic inbuilt function
         self._generate_config("VIDEO")
@@ -371,7 +345,7 @@ class Camera:
         """
         Record a video of undefined length
         """
-        filename = self._format_filename(filename, ".mp4")
+        filename = utils.format_filename(filename, ".mp4")
 
         # Update the preview variable as the preview may be started
         self._preview_started = preview

@@ -34,24 +34,6 @@ def test_init(cam: Camera):
 
 
 # ----------------------------------
-# Helper functions
-# ----------------------------------
-
-
-# Test that the filename formatter works properly
-def test_filename_format(cam: Camera):
-    assert cam._format_filename("blah.jpg", ".jpg") == "blah.jpg"
-    assert cam._format_filename("blah", ".jpg") == "blah.jpg"
-    assert cam._format_filename("blah.", ".jpg") == "blah.jpg"
-    assert cam._format_filename("a", ".mp4") == "a.mp4"
-    assert cam._format_filename("a.mp4", ".mp4") == "a.mp4"
-    assert cam._format_filename("abc.jpg", ".mp4") == "abc.mp4"
-    assert cam._format_filename("example", "") == "example"
-    with pytest.raises(PicameraZeroException):
-        _ = cam._format_filename(None, ".jpg")
-
-
-# ----------------------------------
 # Preview
 # ----------------------------------
 
