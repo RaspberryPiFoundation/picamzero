@@ -1,4 +1,5 @@
 from picamera2 import Picamera2, Preview, MappedArray
+from .PicameraZeroException import PicameraZeroException
 from time import sleep, time
 from . import utilities as utils
 import cv2
@@ -33,6 +34,12 @@ class Camera:
             exit()
 
         # Camera
+        self._controls = {
+            "Brightness": 0.0,
+            "Contrast": 1.0,
+            "ExposureTime": self.pc2.camera_controls["ExposureTime"][2],
+            "AnalogueGain": self.pc2.camera_controls["AnalogueGain"][2],
+        }
         self.resolution = self.pc2.sensor_resolution
         self.hflip = False
         self.vflip = False
@@ -56,38 +63,119 @@ class Camera:
     # ----------------------------------
     # PROPERTIES
     # ----------------------------------
+    # Brightness
     @property
-    def brightness(self):
+    def brightness(self) -> float:
+        """
+        Get the brightness
+
+        :return float:
+            Brightness value between -1.0 and 1.0
+        """
+        return self._controls["Brightness"]
+
+    @brightness.setter
+    def brightness(self, bvalue: float):
         """
         Set the brightness
-        """
-        pass
 
+        :param float bvalue:
+            Floating point number between -1.0 and 1.0
+        """
+        if bvalue > 1.0 or bvalue < -1.0:
+            raise PicameraZeroException(
+                "Invalid brightness value", "Brightness must be between -1.0 and 1.0"
+            )
+        else:
+            self._controls["Brightness"] = bvalue
+
+    # Contrast
     @property
-    def contrast(self):
+    def contrast(self) -> float:
+        """
+        Get the contrast
+
+        :return float:
+            Contrast value between 0.0 and 32.0
+        """
+        return self._controls["Contrast"]
+
+    @contrast.setter
+    def contrast(self, cvalue: float):
         """
         Set the contrast
-        """
-        pass
 
-    # Set exposure
+        :param float cvalue:
+            Floating point number between 0.0 and 32.0
+            Normal value is 1.0
+        """
+        if cvalue > 32.0 or cvalue < 0.0:
+            raise PicameraZeroException(
+                "Invalid contrast value", "Contrast must be between 0.0 and 32.0"
+            )
+        else:
+            self._controls["Contrast"] = cvalue
+
+    # Exposure
     @property
-    def exposure(self):
+    def exposure(self) -> int:
+        """
+        Get the exposure
+
+        :returns int:
+            Exposure value (max and min depend on mode)
+        """
+        return self._controls["ExposureTime"]
+
+    @exposure.setter
+    def exposure(self, etime: int):
         """
         Set the exposure
+
+        :param int etime:
+            The exposure time (max and min depend on mode)
         """
+        mine, maxe, defaulte = self.pc2.camera_controls["ExposureTime"]
+        if etime > maxe or etime < mine:
+            raise PicameraZeroException(
+                "Invalid exposure value", f"Exposure must be between {mine} and {maxe}"
+            )
+        else:
+            self._controls["ExposureTime"] = etime
+
+    # Gain
+    @property
+    def gain(self) -> float:
+        """
+        Get the gain
+
+        :returns float:
+            Gain value (max and min depend on mode)
+        """
+        return self._controls["AnalogueGain"]
+
+    @gain.setter
+    def gain(self, gvalue: float):
+        """
+        Set the analogue gain
+
+        :param float gvalue:
+            The analogue gain (max and min depend on mode)
+        """
+        ming, maxg, defaultg = self.pc2.camera_controls["AnalogueGain"]
+        if gvalue > maxg or gvalue < ming:
+            raise PicameraZeroException(
+                "Invalid gain value", f"Gain must be between {ming} and {maxg}"
+            )
+        else:
+            self._controls["AnalogueGain"] = gvalue
+
+    # White balance
+    @property
+    def white_balance(self):
         pass
 
-    # Set gain
-    @property
-    def gain(self):
-        """
-        Set the gain
-        """
-        pass
-
-    # Set white balance
-    @property
+    @white_balance.setter
     def white_balance(self):
         """
         Set the white balance
@@ -104,15 +192,24 @@ class Camera:
         """
         temp_config = None
         if mode == "STILL":
-            temp_config = self.pc2.create_still_configuration({"size": self.resolution})
+            temp_config = self.pc2.create_still_configuration(
+                {"size": self.resolution},
+                controls=self._controls,
+                transform=Transform(hflip=self.hflip, vflip=self.vflip),
+            )
         elif mode == "VIDEO":
-            temp_config = self.pc2.create_video_configuration({"size": self.resolution})
+            temp_config = self.pc2.create_video_configuration(
+                {"size": self.resolution},
+                controls=self._controls,
+                transform=Transform(hflip=self.hflip, vflip=self.vflip),
+            )
+
         elif mode == "PREVIEW":
             temp_config = self.pc2.create_preview_configuration(
-                {"size": self.resolution}
+                {"size": self.resolution},
+                controls=self._controls,
+                transform=Transform(hflip=self.hflip, vflip=self.vflip),
             )
-        # Set any transforms
-        temp_config["transform"] = Transform(hflip=self.hflip, vflip=self.vflip)
 
         return temp_config
 
