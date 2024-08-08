@@ -18,6 +18,7 @@ from picamzero import utilities as utils
         ("a.mp4", ".mp4", "a.mp4"),
         ("abc.jpg", ".mp4", "abc.mp4"),
         ("example", "", "example"),
+        ("example", "-{:d}.jpg", "example-{:d}.jpg"),
     ],
 )
 def test_filename_format(filename, ext, expected):
