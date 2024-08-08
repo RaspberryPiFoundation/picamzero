@@ -1,4 +1,4 @@
-from picamera2 import Picamera2, Preview, MappedArray
+from picamera2 import Picamera2, MappedArray
 from time import sleep, time
 from . import utilities as utils
 import cv2
@@ -46,12 +46,13 @@ class Camera:
 
         # Annotation
         self._text = None
-        self._text_color = (255, 255, 255, 255)
-        self._text_bgcolor = (0, 0, 0, 0)
-        self._text_origin = (50, 50)
         self._text_font = cv2.FONT_HERSHEY_SIMPLEX
+        self._text_color = (255, 255, 255, 255)
+        self._text_origin = (50, 50)
         self._text_scale = 3
         self._text_thickness = 3
+        self._text_bgcolor = None
+        self._text_position = (0, 0)
 
     # ----------------------------------
     # PROPERTIES
@@ -139,9 +140,7 @@ class Camera:
         if not self._started_preview:
             try:
                 self.pc2.start_preview(
-                    Preview.QTGL,
-                    width=self.resolution[0],
-                    height=self.resolution[1],
+                    preview=True,
                     transform=Transform(hflip=self.hflip, vflip=self.vflip),
                 )
                 self._started_preview = True
@@ -170,32 +169,50 @@ class Camera:
     def annotate(
         self,
         text="Default Text",
+        text_font=cv2.FONT_HERSHEY_SIMPLEX,
         text_color=(255, 255, 255, 255),
         text_origin=(50, 50),
         text_scale=3,
         text_thickness=3,
+        text_position=(0, 0),
+        text_bgcolor=None,
         video=False,
     ):
         """
         Set a text overlay on the preview and on images
-        TODO: video, text bgcolor, font?
+        TODO: video?
         """
         self._text = text
+        self._text_font = text_font
         self._text_color = text_color
         self._text_origin = text_origin
         self._text_scale = text_scale
         self._text_thickness = text_thickness
+        self._text_bgcolor = text_bgcolor
+        self._text_position = text_position
 
         def annotation_callback(request):
             """
             Annotate before taking a photo etc.
             """
+            # Create the background
+            x, y = text_position
+            text_size, _ = cv2.getTextSize(text, text_font, text_scale, text_thickness)
+            text_w, text_h = text_size
 
             with MappedArray(request, "main") as m:
+                if text_bgcolor is not None:
+                    cv2.rectangle(
+                        m.array,
+                        text_position,
+                        (x + text_w, y + text_h),
+                        text_bgcolor,
+                        -1,
+                    )
                 cv2.putText(
                     m.array,
                     self._text,
-                    self._text_origin,
+                    (x, y + text_h + text_scale - 4),
                     self._text_font,
                     self._text_scale,
                     self._text_color,
