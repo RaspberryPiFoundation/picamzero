@@ -34,12 +34,30 @@ def test_init(cam: Camera):
 
 
 # ----------------------------------
+# Helper functions
+# ----------------------------------
+
+
+# Test that the filename formatter works properly
+def test_filename_format(cam: Camera):
+    assert cam._format_filename("blah.jpg", ".jpg") == "blah.jpg"
+    assert cam._format_filename("blah", ".jpg") == "blah.jpg"
+    assert cam._format_filename("blah.", ".jpg") == "blah.jpg"
+    assert cam._format_filename("a", ".mp4") == "a.mp4"
+    assert cam._format_filename("a.mp4", ".mp4") == "a.mp4"
+    assert cam._format_filename("abc.jpg", ".mp4") == "abc.mp4"
+    assert cam._format_filename("example", "") == "example"
+    with pytest.raises(PicameraZeroException):
+        _ = cam._format_filename(None, ".jpg")
+
+
+# ----------------------------------
 # Preview
 # ----------------------------------
 
 
 # Can you start and stop the preview
-def test_preview_starts_and_stops(cam):
+def test_preview_starts_and_stops(cam: Camera):
     cam.start_preview()
     assert cam._started_preview is True
     cam.stop_preview()
@@ -51,7 +69,7 @@ def test_preview_starts_and_stops(cam):
 # ----------------------------------
 
 
-def test_cam_flip(cam):
+def test_cam_flip(cam: Camera):
     cam.flip_camera(hflip=True)
     assert cam.hflip is True
     assert cam.preview_config["transform"].hflip is True
@@ -70,7 +88,7 @@ def test_cam_flip(cam):
 # ----------------------------------
 
 
-def test_annotation_properties(cam):
+def test_annotation_properties(cam: Camera):
     text = "hello"
     text_color = (255, 255, 0, 255)
     text_origin = (100, 100)
@@ -102,13 +120,13 @@ def test_named_video(cam: Camera):
 
 
 # Record a video with a specific filename
-def test_named_video_no_extension(cam):
+def test_named_video_no_extension(cam: Camera):
     cam.record_video("testvid", 3)
     assert exists("testvid.mp4")
 
 
 # Fail to specify a filename for a video
-def test_unnamed_video(cam):
+def test_unnamed_video(cam: Camera):
     with pytest.raises(PicameraZeroException):
         _ = cam.record_video()
     with pytest.raises(PicameraZeroException):
@@ -116,7 +134,7 @@ def test_unnamed_video(cam):
 
 
 # Test recording an unspecified length video with start and stop
-def test_video_unspecified_length(cam):
+def test_video_unspecified_length(cam: Camera):
     assert len(cam.pc2.encoders) == 0
     cam.start_recording("testvideo.mp4")
     assert len(cam.pc2.encoders) > 0
@@ -130,7 +148,7 @@ def test_video_unspecified_length(cam):
 
 
 # Take a picture with a specific filename
-def test_named_picture(cam):
+def test_named_picture(cam: Camera):
     cam.take_photo("testpic.jpg")
     cam.capture_image("testpic2.jpg")
     cam.take_photo("testpic.jpeg")
@@ -148,7 +166,7 @@ def test_named_picture(cam):
 
 
 # Fail to specify a filename for a picture
-def test_unnamed_picture(cam):
+def test_unnamed_picture(cam: Camera):
     with pytest.raises(PicameraZeroException):
         _ = cam.take_photo()
     with pytest.raises(PicameraZeroException):
@@ -156,7 +174,7 @@ def test_unnamed_picture(cam):
 
 
 # Take a pic with a filename but no extension
-def test_named_picture_no_ext(cam):
+def test_named_picture_no_ext(cam: Camera):
     filename = cam.take_photo("test")
     filename2 = cam.capture_image("test2")
     assert filename == "test.jpg"
@@ -171,27 +189,27 @@ def test_named_picture_no_ext(cam):
 
 
 # Fail to specify a filename for a sequence
-def test_unnamed_sequence(cam):
+def test_unnamed_sequence(cam: Camera):
     with pytest.raises(PicameraZeroException):
         cam.capture_sequence()
 
 
 # Test a sequence capture with a filename but no extension
-def test_named_sequence_no_extension(cam):
+def test_named_sequence_no_extension(cam: Camera):
     cam.capture_sequence("test")
     assert exists("test-0.jpg")
     assert exists("test-9.jpg")
 
 
 # Test a named sequence capture with extension
-def test_named_sequence(cam):
+def test_named_sequence(cam: Camera):
     cam.capture_sequence("testing.jpg")
     assert exists("testing-0.jpg")
     assert exists("testing-9.jpg")
 
 
 # Test whether you can change the number of pics
-def test_sequence_quantity(cam):
+def test_sequence_quantity(cam: Camera):
     cam.capture_sequence(filename="fewer", num_images=2)
     assert exists("fewer-0.jpg")
     assert exists("fewer-1.jpg")
@@ -199,7 +217,7 @@ def test_sequence_quantity(cam):
 
 
 # Test the sequence interval
-def test_sequence_interval(cam):
+def test_sequence_interval(cam: Camera):
     start = datetime.now()
     cam.capture_sequence(filename="longer", interval=1, num_images=3)
     stop = datetime.now()
@@ -213,7 +231,7 @@ def test_sequence_interval(cam):
 
 
 # Test the video gets made when you do a sequence
-def test_sequence_with_video(cam):
+def test_sequence_with_video(cam: Camera):
     cam.capture_sequence(filename="with-vid", make_video=True)
     assert exists("with-vid-timelapse.mp4")
 
@@ -224,7 +242,7 @@ def test_sequence_with_video(cam):
 
 
 # Can you take a video and stills
-def test_video_with_stills(cam):
+def test_video_with_stills(cam: Camera):
     cam.take_video_and_still(filename="abc", duration=12, still_interval=2)
     assert exists("abc.mp4")
     assert exists("abc-0.jpg")
@@ -240,7 +258,7 @@ def test_video_with_stills(cam):
 
 # Test whether the correct number of stills are taken
 # if the interval is not exactly divisible by the duration
-def test_video_with_stills_non_divisible(cam):
+def test_video_with_stills_non_divisible(cam: Camera):
     cam.take_video_and_still(filename="xyz", duration=7, still_interval=3)
     assert exists("xyz-0.jpg")
     assert exists("xyz-1.jpg")
