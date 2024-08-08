@@ -7,7 +7,7 @@ import logging
 import os
 import math
 
-from libcamera import Transform
+from libcamera import Transform, controls
 
 logger = logging.getLogger(__name__)
 
@@ -39,6 +39,7 @@ class Camera:
             "Contrast": 1.0,
             "ExposureTime": self.pc2.camera_controls["ExposureTime"][2],
             "AnalogueGain": self.pc2.camera_controls["AnalogueGain"][2],
+            "AwbMode": None,
         }
         self.resolution = self.pc2.sensor_resolution
         self.hflip = False
@@ -172,15 +173,48 @@ class Camera:
 
     # White balance
     @property
-    def white_balance(self):
-        pass
+    def white_balance(self) -> str:
+        """
+        Get the white balance mode
+
+        :return str:
+            The selected white balance mode as a string
+        """
+        possible_controls = {
+            controls.AwbModeEnum.Auto: "auto",
+            controls.AwbModeEnum.Tungsten: "tungsten",
+            controls.AwbModeEnum.Fluorescent: "fluorescent",
+            controls.AwbModeEnum.Indoor: "indoor",
+            controls.AwbModeEnum.Daylight: "daylight",
+            controls.AwbModeEnum.Cloudy: "cloudy",
+        }
+        return possible_controls[self._controls["AwbMode"]]
 
     @white_balance.setter
-    def white_balance(self):
+    def white_balance(self, wbmode: str):
         """
-        Set the white balance
+        Set the white balance mode
+
+        :param str wbmode:
+            A white balance mode from the allowed list
+            (at present, Custom is not allowed)
         """
-        pass
+        possible_controls = {
+            "auto": controls.AwbModeEnum.Auto,
+            "tungsten": controls.AwbModeEnum.Tungsten,
+            "fluorescent": controls.AwbModeEnum.Fluorescent,
+            "indoor": controls.AwbModeEnum.Indoor,
+            "daylight": controls.AwbModeEnum.Daylight,
+            "cloudy": controls.AwbModeEnum.Cloudy,
+        }
+        if wbmode.lower() not in possible_controls:
+            raise PicameraZeroException(
+                "Invalid white balance mode",
+                "White balance can be auto, tungsten, fluorescent,"
+                "indoor, daylight or cloudy",
+            )
+        else:
+            self._controls["AwbMode"] = possible_controls[wbmode.lower()]
 
     # ----------------------------------
     # METHODS
