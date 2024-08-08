@@ -1,4 +1,4 @@
-from picamera2 import Picamera2, Preview, MappedArray
+from picamera2 import Picamera2, MappedArray
 from time import sleep, time
 from .PicameraZeroException import PicameraZeroException
 import cv2
@@ -139,15 +139,11 @@ class Camera:
         if not self._started_preview:
             try:
                 self.pc2.start_preview(
-                    Preview.QTGL,
-                    # These two lines are causing my preview to take over my screen
-                    # width=self.resolution[0],
-                    # height=self.resolution[1],
+                    preview=True,
                     transform=Transform(hflip=self.hflip, vflip=self.vflip),
                 )
                 self._started_preview = True
-                # Do we need this line if we have 141 above?
-                # self.pc2.start()
+                self.pc2.start()
             except RuntimeError:
                 logger.error("Preview couldn't start")
 
