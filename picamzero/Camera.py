@@ -37,12 +37,7 @@ class Camera:
         self.hflip = False
         self.vflip = False
 
-        # Set up preview config
         self.preview_config = self._generate_config("PREVIEW")
-
-        # Set the preview config by default
-        self.pc2.preview_configuration = self.preview_config
-        self._started_preview = False
 
         # Annotation
         self._text = None
@@ -52,6 +47,8 @@ class Camera:
         self._text_font = cv2.FONT_HERSHEY_SIMPLEX
         self._text_scale = 3
         self._text_thickness = 3
+
+        self.pc2.start()
 
     # ----------------------------------
     # PROPERTIES
@@ -130,19 +127,21 @@ class Camera:
         self.pc2.preview_configuration = self.preview_config
 
         # Restart
-        self.pc2.start(show_preview=self._started_preview)
+        self.pc2.start()
 
     def start_preview(self):
         """
         Show a preview of the camera
         """
-        if not self._started_preview:
+        if not self.pc2._preview:
+            if self.pc2.started:
+                self.pc2.stop()
             try:
                 self.pc2.start_preview(
+                    config=self._generate_config("PREVIEW"),
                     preview=True,
                     transform=Transform(hflip=self.hflip, vflip=self.vflip),
                 )
-                self._started_preview = True
                 self.pc2.start()
             except RuntimeError:
                 logger.error("Preview couldn't start")
@@ -151,10 +150,10 @@ class Camera:
         """
         Stop the preview
         """
-        if self._started_preview:
+        if self.pc2._preview:
             try:
-                self.pc2.stop_preview()  # Pete to change to close() later?...
-                self._started_preview = False
+                self.pc2.stop_preview()
+
             except RuntimeError:
                 logger.error("Couldn't stop preview")
 
@@ -263,10 +262,7 @@ class Camera:
         self.pc2.start()
 
         # Capture the image
-        self.pc2.start_and_capture_file(
-            name=filename,
-            show_preview=self._started_preview,
-        )
+        self.pc2.start_and_capture_file(name=filename)
 
         # Useful to know what the file is called
         return filename
@@ -330,11 +326,9 @@ class Camera:
         Record a video
         """
         filename = utils.format_filename(filename, ".mp4")
-
-        # Use basic inbuilt function
-        self._generate_config("VIDEO")
-        # Auto starts
-        self.pc2.start_and_record_video(filename, duration=duration)
+        self.pc2.start_and_record_video(
+            filename, config=self._generate_config("VIDEO"), duration=duration
+        )
 
         return filename
 
