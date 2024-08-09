@@ -58,7 +58,7 @@ class Camera:
     # ----------------------------------
 
     # Check that the value given for a control is allowed
-    def _check_control_in_range(self, name, value) -> bool:
+    def _check_control_in_range(self, name: str, value: float | int) -> bool:
         try:
             minvalue, maxvalue, defaultvalue = self.pc2.camera_controls[name]
         except Exception as e:
