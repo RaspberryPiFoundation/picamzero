@@ -5,6 +5,7 @@ import cv2
 import logging
 import os
 import math
+from .PicameraZeroException import PicameraZeroException
 
 from libcamera import Transform
 
@@ -35,7 +36,6 @@ class Camera:
         # Camera
         self.hflip = False
         self.vflip = False
-        self.max_size = self.pc2.sensor_resolution
 
         # Set up preview config
         self.preview_config = self._generate_config("PREVIEW")
@@ -66,9 +66,9 @@ class Camera:
         if isinstance(size, tuple) and len(size) == 2:
             h, w = size
             if isinstance(h, int) and isinstance(w, int) and h > 0 and w > 0:
-                max_h, max_w = self.max_size
+                max_h, max_w = self.pc2.sensor_resolution
                 if h > max_h or w > max_w:
-                    print(
+                    logger.error(
                         """Warning: The specified size exceeds the camera's
                             maximum allowed dimensions.
                             The size has been adjusted to fit."""
@@ -78,10 +78,15 @@ class Camera:
 
                 self.pc2.preview.configuration.size = (h, w)
             else:
-                raise ValueError("Height and width must be positive integers.")
+                raise PicameraZeroException(
+                    "The height and width of the image must be positive integers.",
+                    "Example: (640, 480)",
+                )
         else:
-            raise TypeError(
-                "Size must be a tuple of two positive integers (height, width)."
+            raise PicameraZeroException(
+                """The size of the image must be two positive integers,
+                separated by a comma and in brackets.""",
+                "Example: (640, 480).",
             )
 
     @property
