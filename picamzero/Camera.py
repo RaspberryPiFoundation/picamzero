@@ -7,7 +7,7 @@ import logging
 import os
 import math
 
-from libcamera import Transform, controls
+from libcamera import Transform
 
 logger = logging.getLogger(__name__)
 
@@ -58,7 +58,7 @@ class Camera:
     # ----------------------------------
 
     # Check that the value given for a control is allowed
-    def _check_control_in_range(self, name, value):
+    def _check_control_in_range(self, name, value) -> bool:
         try:
             minvalue, maxvalue, defaultvalue = self.pc2.camera_controls[name]
         except Exception as e:
@@ -171,15 +171,7 @@ class Camera:
         :return str:
             The selected white balance mode as a string
         """
-        possible_controls = {
-            controls.AwbModeEnum.Auto: "auto",
-            controls.AwbModeEnum.Tungsten: "tungsten",
-            controls.AwbModeEnum.Fluorescent: "fluorescent",
-            controls.AwbModeEnum.Indoor: "indoor",
-            controls.AwbModeEnum.Daylight: "daylight",
-            controls.AwbModeEnum.Cloudy: "cloudy",
-        }
-        return possible_controls[self.pc2.controls.AwbMode]
+        return utils.possible_controls(reverse_kv=True)[self.pc2.controls.AwbMode]
 
     @white_balance.setter
     def white_balance(self, wbmode: str):
@@ -190,24 +182,24 @@ class Camera:
             A white balance mode from the allowed list
             (at present, Custom is not allowed)
         """
-        possible_controls = {
-            "auto": controls.AwbModeEnum.Auto,
-            "tungsten": controls.AwbModeEnum.Tungsten,
-            "fluorescent": controls.AwbModeEnum.Fluorescent,
-            "indoor": controls.AwbModeEnum.Indoor,
-            "daylight": controls.AwbModeEnum.Daylight,
-            "cloudy": controls.AwbModeEnum.Cloudy,
-        }
-        if wbmode.lower() not in possible_controls:
-            raise PicameraZeroException(
-                "Invalid white balance mode",
-                "White balance can be auto, tungsten, fluorescent,"
-                "indoor, daylight or cloudy",
-            )
+
+        if wbmode.lower() not in utils.possible_controls():
+            if wbmode.lower() == "custom":
+                raise PicameraZeroException(
+                    "Custom white balance is not supported yet",
+                    "White balance can be "
+                    + ", ".join(utils.possible_controls().keys()),
+                )
+            else:
+                raise PicameraZeroException(
+                    "Invalid white balance mode",
+                    "White balance can be "
+                    + ", ".join(utils.possible_controls().keys()),
+                )
         else:
             set_awb_mode = {
                 "AwbEnable": 1,
-                "AwbMode": possible_controls[wbmode.lower()],
+                "AwbMode": utils.possible_controls()[wbmode.lower()],
             }
             self.pc2.set_controls(set_awb_mode)
 

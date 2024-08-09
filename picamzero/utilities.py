@@ -1,5 +1,6 @@
 from .PicameraZeroException import PicameraZeroException
 import os
+from libcamera import controls
 
 
 def format_filename(filename: str, ext: str) -> str:
@@ -29,3 +30,19 @@ def format_filename(filename: str, ext: str) -> str:
             filename = file_root + ext
 
     return filename
+
+
+# Return a dictionary of possible controls
+def possible_controls(reverse_kv=False):
+    poss_controls = {
+        "auto": controls.AwbModeEnum.Auto,
+        "tungsten": controls.AwbModeEnum.Tungsten,
+        "fluorescent": controls.AwbModeEnum.Fluorescent,
+        "indoor": controls.AwbModeEnum.Indoor,
+        "daylight": controls.AwbModeEnum.Daylight,
+        "cloudy": controls.AwbModeEnum.Cloudy,
+    }
+    if reverse_kv:
+        return {v: k for k, v in poss_controls.items()}
+    else:
+        return poss_controls
