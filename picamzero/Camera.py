@@ -1,4 +1,4 @@
-from picamera2 import Picamera2, Preview, MappedArray
+from picamera2 import Picamera2, MappedArray
 from .PicameraZeroException import PicameraZeroException
 from time import sleep, time
 from . import utilities as utils
@@ -33,17 +33,12 @@ class Camera:
             logger.error("Please check all connections")
             exit()
 
-        # Camera
-        self._controls = {
-            "Brightness": 0.0,
-            "Contrast": 1.0,
-            "ExposureTime": self.pc2.camera_controls["ExposureTime"][2],
-            "AnalogueGain": self.pc2.camera_controls["AnalogueGain"][2],
-            "AwbMode": None,
-        }
         self.resolution = self.pc2.sensor_resolution
         self.hflip = False
         self.vflip = False
+
+        # Delete this in a minute
+        self.AwbMode = controls.AwbModeEnum.Auto
 
         # Set up preview config
         self.preview_config = self._generate_config("PREVIEW")
@@ -64,6 +59,23 @@ class Camera:
     # ----------------------------------
     # PROPERTIES
     # ----------------------------------
+
+    # Check that the value given for a control is allowed
+    def _check_control_in_range(self, name, value):
+        try:
+            minvalue, maxvalue, defaultvalue = self.pc2.camera_controls[name]
+        except Exception as e:
+            raise PicameraZeroException(
+                f"The control {e} doesn't exist", "Check for spelling errors?"
+            )
+
+        if value > maxvalue or value < minvalue:
+            raise PicameraZeroException(
+                f"Invalid {name.lower()} value",
+                f"{name} must be between {minvalue} and {maxvalue}",
+            )
+        return True
+
     # Brightness
     @property
     def brightness(self) -> float:
@@ -73,7 +85,7 @@ class Camera:
         :return float:
             Brightness value between -1.0 and 1.0
         """
-        return self._controls["Brightness"]
+        return self.pc2.controls.Brightness
 
     @brightness.setter
     def brightness(self, bvalue: float):
@@ -83,12 +95,8 @@ class Camera:
         :param float bvalue:
             Floating point number between -1.0 and 1.0
         """
-        if bvalue > 1.0 or bvalue < -1.0:
-            raise PicameraZeroException(
-                "Invalid brightness value", "Brightness must be between -1.0 and 1.0"
-            )
-        else:
-            self._controls["Brightness"] = bvalue
+        if self._check_control_in_range("Brightness", bvalue):
+            self.pc2.controls.Brightness = bvalue
 
     # Contrast
     @property
@@ -99,7 +107,7 @@ class Camera:
         :return float:
             Contrast value between 0.0 and 32.0
         """
-        return self._controls["Contrast"]
+        return self.pc2.controls.Contrast
 
     @contrast.setter
     def contrast(self, cvalue: float):
@@ -110,12 +118,8 @@ class Camera:
             Floating point number between 0.0 and 32.0
             Normal value is 1.0
         """
-        if cvalue > 32.0 or cvalue < 0.0:
-            raise PicameraZeroException(
-                "Invalid contrast value", "Contrast must be between 0.0 and 32.0"
-            )
-        else:
-            self._controls["Contrast"] = cvalue
+        if self._check_control_in_range("Contrast", cvalue):
+            self.pc2.controls.Contrast = cvalue
 
     # Exposure
     @property
@@ -126,7 +130,7 @@ class Camera:
         :returns int:
             Exposure value (max and min depend on mode)
         """
-        return self._controls["ExposureTime"]
+        return self.pc2.controls.ExposureTime
 
     @exposure.setter
     def exposure(self, etime: int):
@@ -136,13 +140,8 @@ class Camera:
         :param int etime:
             The exposure time (max and min depend on mode)
         """
-        mine, maxe, defaulte = self.pc2.camera_controls["ExposureTime"]
-        if etime > maxe or etime < mine:
-            raise PicameraZeroException(
-                "Invalid exposure value", f"Exposure must be between {mine} and {maxe}"
-            )
-        else:
-            self._controls["ExposureTime"] = etime
+        if self._check_control_in_range("ExposureTime", etime):
+            self.pc2.controls.ExposureTime = etime
 
     # Gain
     @property
@@ -153,7 +152,7 @@ class Camera:
         :returns float:
             Gain value (max and min depend on mode)
         """
-        return self._controls["AnalogueGain"]
+        return self.pc2.controls.AnalogueGain
 
     @gain.setter
     def gain(self, gvalue: float):
@@ -163,13 +162,8 @@ class Camera:
         :param float gvalue:
             The analogue gain (max and min depend on mode)
         """
-        ming, maxg, defaultg = self.pc2.camera_controls["AnalogueGain"]
-        if gvalue > maxg or gvalue < ming:
-            raise PicameraZeroException(
-                "Invalid gain value", f"Gain must be between {ming} and {maxg}"
-            )
-        else:
-            self._controls["AnalogueGain"] = gvalue
+        if self._check_control_in_range("AnalogueGain", gvalue):
+            self.pc2.controls.AnalogueGain = gvalue
 
     # White balance
     @property
@@ -188,7 +182,7 @@ class Camera:
             controls.AwbModeEnum.Daylight: "daylight",
             controls.AwbModeEnum.Cloudy: "cloudy",
         }
-        return possible_controls[self._controls["AwbMode"]]
+        return possible_controls[self.AwbMode]
 
     @white_balance.setter
     def white_balance(self, wbmode: str):
@@ -214,7 +208,7 @@ class Camera:
                 "indoor, daylight or cloudy",
             )
         else:
-            self._controls["AwbMode"] = possible_controls[wbmode.lower()]
+            self.AwbMode = possible_controls[wbmode.lower()]
 
     # ----------------------------------
     # METHODS
@@ -228,20 +222,17 @@ class Camera:
         if mode == "STILL":
             temp_config = self.pc2.create_still_configuration(
                 {"size": self.resolution},
-                controls=self._controls,
                 transform=Transform(hflip=self.hflip, vflip=self.vflip),
             )
         elif mode == "VIDEO":
             temp_config = self.pc2.create_video_configuration(
                 {"size": self.resolution},
-                controls=self._controls,
                 transform=Transform(hflip=self.hflip, vflip=self.vflip),
             )
 
         elif mode == "PREVIEW":
             temp_config = self.pc2.create_preview_configuration(
                 {"size": self.resolution},
-                controls=self._controls,
                 transform=Transform(hflip=self.hflip, vflip=self.vflip),
             )
 

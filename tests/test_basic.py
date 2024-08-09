@@ -34,6 +34,69 @@ def test_init(cam: Camera):
 
 
 # ----------------------------------
+# Properties
+# ----------------------------------
+
+
+def test_invalid_control(cam: Camera):
+    cam.pc2.start()
+    with pytest.raises(PicameraZeroException):
+        cam._check_control_in_range("ThisDoesntExist", 1)
+
+
+def test_property_brightness(cam: Camera):
+    cam.pc2.start()
+    cam.brightness = 0.5
+    assert cam.pc2.controls.Brightness == 0.5
+
+
+def test_property_invalid_brightness(cam: Camera):
+    cam.pc2.start()
+    with pytest.raises(PicameraZeroException):
+        cam.brightness = 500
+
+
+def test_property_contrast(cam: Camera):
+    cam.contrast = 12.5
+    assert cam.pc2.controls.Contrast == 12.5
+
+
+def test_property_invalid_contrast(cam: Camera):
+    cam.pc2.start()
+    with pytest.raises(PicameraZeroException):
+        cam.contrast = 40.0
+
+
+def test_property_exposure(cam: Camera):
+    cam.pc2.start()
+    cam.exposure = 500
+    assert cam.pc2.controls.ExposureTime == 500
+
+
+def test_property_invalid_exposure(cam: Camera):
+    cam.pc2.start()
+    with pytest.raises(PicameraZeroException):
+        cam.exposure = 50000000
+
+
+def test_property_gain(cam: Camera):
+    cam.pc2.start()
+    cam.gain = 5
+    assert cam.pc2.controls.AnalogueGain == 5
+
+
+def test_property_invalid_gain(cam: Camera):
+    cam.pc2.start()
+    with pytest.raises(PicameraZeroException):
+        cam.gain = 500
+
+
+def test_property_white_balance(cam: Camera):
+
+    pass
+
+
+# ----------------------------------
 # Preview
 # ----------------------------------
 
