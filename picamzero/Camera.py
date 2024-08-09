@@ -37,9 +37,6 @@ class Camera:
         self.hflip = False
         self.vflip = False
 
-        # Delete this in a minute
-        self.AwbMode = controls.AwbModeEnum.Auto
-
         # Set up preview config
         self.preview_config = self._generate_config("PREVIEW")
 
@@ -182,7 +179,7 @@ class Camera:
             controls.AwbModeEnum.Daylight: "daylight",
             controls.AwbModeEnum.Cloudy: "cloudy",
         }
-        return possible_controls[self.AwbMode]
+        return possible_controls[self.pc2.controls.AwbMode]
 
     @white_balance.setter
     def white_balance(self, wbmode: str):
@@ -208,7 +205,11 @@ class Camera:
                 "indoor, daylight or cloudy",
             )
         else:
-            self.AwbMode = possible_controls[wbmode.lower()]
+            set_awb_mode = {
+                "AwbEnable": 1,
+                "AwbMode": possible_controls[wbmode.lower()],
+            }
+            self.pc2.set_controls(set_awb_mode)
 
     # ----------------------------------
     # METHODS

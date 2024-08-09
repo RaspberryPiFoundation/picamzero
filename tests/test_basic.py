@@ -2,6 +2,7 @@ from datetime import datetime
 from os.path import exists
 
 import pytest
+from libcamera import controls
 from picamzero import Camera, PicameraZeroException
 
 
@@ -48,6 +49,7 @@ def test_property_brightness(cam: Camera):
     cam.pc2.start()
     cam.brightness = 0.5
     assert cam.pc2.controls.Brightness == 0.5
+    assert cam.brightness == 0.5
 
 
 def test_property_invalid_brightness(cam: Camera):
@@ -59,6 +61,7 @@ def test_property_invalid_brightness(cam: Camera):
 def test_property_contrast(cam: Camera):
     cam.contrast = 12.5
     assert cam.pc2.controls.Contrast == 12.5
+    assert cam.contrast == 12.5
 
 
 def test_property_invalid_contrast(cam: Camera):
@@ -71,6 +74,7 @@ def test_property_exposure(cam: Camera):
     cam.pc2.start()
     cam.exposure = 500
     assert cam.pc2.controls.ExposureTime == 500
+    assert cam.exposure == 500
 
 
 def test_property_invalid_exposure(cam: Camera):
@@ -83,6 +87,7 @@ def test_property_gain(cam: Camera):
     cam.pc2.start()
     cam.gain = 5
     assert cam.pc2.controls.AnalogueGain == 5
+    assert cam.gain == 5
 
 
 def test_property_invalid_gain(cam: Camera):
@@ -92,8 +97,16 @@ def test_property_invalid_gain(cam: Camera):
 
 
 def test_property_white_balance(cam: Camera):
+    cam.pc2.start()
+    cam.white_balance = "tungsten"
+    assert cam.pc2.controls.AwbMode == controls.AwbModeEnum.Tungsten
+    assert cam.white_balance == "tungsten"
 
-    pass
+
+def test_property_invalid_white_balance(cam: Camera):
+    cam.pc2.start()
+    with pytest.raises(PicameraZeroException):
+        cam.white_balance = "NotAThing"
 
 
 # ----------------------------------
