@@ -1,4 +1,4 @@
-from picamera2 import Picamera2, Preview, MappedArray
+from picamera2 import Picamera2, MappedArray
 from time import sleep, time
 from . import utilities as utils
 import cv2
@@ -139,9 +139,7 @@ class Camera:
         if not self._started_preview:
             try:
                 self.pc2.start_preview(
-                    Preview.QTGL,
-                    width=self.resolution[0],
-                    height=self.resolution[1],
+                    preview=True,
                     transform=Transform(hflip=self.hflip, vflip=self.vflip),
                 )
                 self._started_preview = True
