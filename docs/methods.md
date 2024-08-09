@@ -15,7 +15,7 @@ You can call **methods** to perform particular tasks with your camera.
 
 #### capture_image()
 
-Takes a photograph using the camera and saves it as a `.jpg` image. 
+Takes a photograph using the camera and saves it as a `.jpg` image.
 Returns the filename of the image.
 
 ```
@@ -24,9 +24,9 @@ capture_image(
 ) -> string
 ```
 
-| Parameter   | Type    | Default  | Description | 
-| ----------- | ------- | -------- | ----------- | 
-| filename    | string  | None     | A file name for a .jpg image. This can also be a file path. | 
+| Parameter   | Type    | Default  | Description |
+| ----------- | ------- | -------- | ----------- |
+| filename    | string  | None     | A file name for a .jpg image. This can also be a file path. |
 
 ###### Example
 ```
@@ -50,18 +50,18 @@ Returns **TODO SORT THIS OUT**
 ```
 capture_sequence(
     filename: string,
-    num_images: int, 
-    interval: float, 
+    num_images: int,
+    interval: float,
     make_video: bool
 ) -> string
 ```
 
-| Parameter   | Type    | Default  | Description | 
-| ----------- | ------- | -------- | ----------- | 
-| filename    | string  | None     | A file name for a .jpg image. This can also be a file path. | 
-| num_images  | int     | 10       | How many images to take.| 
-| interval    | float   | 0.01     | How long to wait in between each image, in seconds. | 
-| make_video  | bool    | False    | Whether to make a `.mp4` video of the images. | 
+| Parameter   | Type    | Default  | Description |
+| ----------- | ------- | -------- | ----------- |
+| filename    | string  | None     | A file name for a .jpg image. This can also be a file path. |
+| num_images  | int     | 10       | How many images to take.|
+| interval    | float   | 0.01     | How long to wait in between each image, in seconds. |
+| make_video  | bool    | False    | Whether to make a `.mp4` video of the images. |
 
 
 ###### Example

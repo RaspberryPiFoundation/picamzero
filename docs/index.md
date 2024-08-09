@@ -1,6 +1,6 @@
 # Installation
 
-Picamera zero (picamzero) is designed to allow beginners to control a Raspberry Pi camera with Python. 
+Picamera zero (picamzero) is designed to allow beginners to control a Raspberry Pi camera with Python.
 
 To install the picamzero library:
 

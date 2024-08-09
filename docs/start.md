@@ -3,9 +3,9 @@
 1. With your Raspberry Pi switched off, connect your Raspberry Pi Camera to a camera port.
     ![Connect the camera ribbon](images/connect-camera.gif)
 
-2. Switch on your Raspberry Pi, and make sure you have [installed](index.md) the `picamzero` library. 
+2. Switch on your Raspberry Pi, and make sure you have [installed](index.md) the `picamzero` library.
 
-3. Open a Python editor (e.g. Thonny) on your Raspberry Pi. 
+3. Open a Python editor (e.g. Thonny) on your Raspberry Pi.
 
     ![Open a Python editor](images/open-editor.png)
 
