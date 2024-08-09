@@ -33,9 +33,9 @@ class Camera:
             exit()
 
         # Camera
-        self.resolution = self.pc2.sensor_resolution
         self.hflip = False
         self.vflip = False
+        self.max_size = self.pc2.sensor_resolution
 
         # Set up preview config
         self.preview_config = self._generate_config("PREVIEW")
@@ -56,6 +56,34 @@ class Camera:
     # ----------------------------------
     # PROPERTIES
     # ----------------------------------
+
+    @property
+    def preview_size(self):
+        return self.pc2.preview.configuration.size
+
+    @preview_size.setter
+    def preview_size(self, size):
+        if isinstance(size, tuple) and len(size) == 2:
+            h, w = size
+            if isinstance(h, int) and isinstance(w, int) and h > 0 and w > 0:
+                max_h, max_w = self.max_size
+                if h > max_h or w > max_w:
+                    print(
+                        """Warning: The specified size exceeds the camera's
+                            maximum allowed dimensions.
+                            The size has been adjusted to fit."""
+                    )
+                h = min(h, max_h)
+                w = min(w, max_w)
+
+                self.pc2.preview.configuration.size = (h, w)
+            else:
+                raise ValueError("Height and width must be positive integers.")
+        else:
+            raise TypeError(
+                "Size must be a tuple of two positive integers (height, width)."
+            )
+
     @property
     def brightness(self):
         """
