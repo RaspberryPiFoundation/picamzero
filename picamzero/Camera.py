@@ -70,8 +70,6 @@ class Camera:
             )
         return True
 
-    # Brightness
-
     @property
     def preview_size(self):
         return self.pc2.preview.configuration.size
@@ -168,6 +166,7 @@ class Camera:
                 "Example: (640, 480).",
             )
 
+    # Brightness
     @property
     def brightness(self) -> float:
         """
@@ -370,11 +369,12 @@ class Camera:
                 logger.error("Couldn't stop preview")
 
     # Add filter (add synonym method, e.g. set effect - [like sensehat library])
-    def add_filter(self, filter):
+    def add_filter(self, effect):
         """
         Give choice of effects (greyscale, negative, sketch)
         """
-        pass
+        if effect == "greyscale":
+            self.pc2.controls.Saturation = 0
 
     def annotate(
         self,
