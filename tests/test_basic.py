@@ -72,22 +72,22 @@ def test_cam_flip(cam: Camera):
 
 def test_annotation_properties(cam: Camera):
     text = "hello"
-    text_color = (255, 255, 0, 255)
-    text_origin = (100, 100)
-    text_scale = 4
-    text_thickness = 6
+    color = (255, 255, 0, 255)
+    origin = (100, 100)
+    scale = 4
+    thickness = 6
     cam.annotate(
         text=text,
-        text_color=text_color,
-        text_origin=text_origin,
-        text_scale=text_scale,
-        text_thickness=text_thickness,
+        color=color,
+        origin=origin,
+        scale=scale,
+        thickness=thickness,
     )
     assert cam._text == text
-    assert cam._text_color == text_color
-    assert cam._text_origin == text_origin
-    assert cam._text_scale == text_scale
-    assert cam._text_thickness == text_thickness
+    assert cam._text_properties["color"] == color
+    assert cam._text_properties["origin"] == origin
+    assert cam._text_properties["scale"] == scale
+    assert cam._text_properties["thickness"] == thickness
 
 
 # ----------------------------------
