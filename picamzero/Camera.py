@@ -44,6 +44,19 @@ class Camera:
         self.pc2.preview_configuration = self.preview_config
         self._started_preview = False
 
+        # Dictionary of fonts
+        self.fonts = {
+            "simplex": (cv2.FONT_HERSHEY_SIMPLEX, "Normal size sans-serif font"),
+            "plain": (cv2.FONT_HERSHEY_PLAIN, "Small size sans-serif font"),
+            "duplex": (cv2.FONT_HERSHEY_DUPLEX, "Normal size sans-serif font (more complex)"),
+            "complex": (cv2.FONT_HERSHEY_COMPLEX, "Normal size serif font"),
+            "triplex": (cv2.FONT_HERSHEY_TRIPLEX, "Larger size serif font"),
+            "small": (cv2.FONT_HERSHEY_COMPLEX_SMALL, "Small size serif font"),
+            "script_simplex": (cv2.FONT_HERSHEY_SCRIPT_SIMPLEX, "Handwriting-style font"),
+            "script_complex": (cv2.FONT_HERSHEY_SCRIPT_COMPLEX, "Complex handwriting-style font"),
+            "italic": (cv2.FONT_ITALIC, "Italic version of the current font"),
+        }
+
         # Annotation
         self._text = None
         self._text_properties = {
@@ -171,7 +184,7 @@ class Camera:
     def annotate(
         self,
         text="Default Text",
-        font=cv2.FONT_HERSHEY_SIMPLEX,
+        font="simplex",
         color=(255, 255, 255, 255),
         origin=(50, 50),
         scale=3,
@@ -185,6 +198,14 @@ class Camera:
         TODO: video?
         """
         self._text = text
+        if isinstance(text_font, str):
+            font_entry = self.fonts.get(text_font.lower())
+            if font_entry is None:
+                # Font not found: return the list of available fonts with descriptions
+                available_fonts = "\n".join([f"{name}: {desc}" for name, (_, desc) in self.fonts.items()])
+                logger.warning(f"Invalid font '{text_font}'. Available fonts are:\n{available_fonts}")
+            text_font = font_entry[0]
+
         self._text_properties = {
         'font': font,
         'color': color,
