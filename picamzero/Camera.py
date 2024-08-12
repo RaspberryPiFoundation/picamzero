@@ -215,9 +215,10 @@ class Camera:
                     [f"{name}: {desc}" for name, (_, desc) in self.fonts.items()]
                 )
                 logger.warning(
-                    f"Invalid font '{font}'. Available fonts are:\n{available_fonts}"
+                    f"""Invalid font '{font}'. Available fonts are:\n{available_fonts}
+                    Your font has been set to \'simplex\'"""
                 )
-            font = font_entry[0]
+            font = 0
 
         self._text_properties = {
             "font": font,
