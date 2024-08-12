@@ -90,6 +90,25 @@ def test_annotation_properties(cam: Camera):
     assert cam._text_properties["thickness"] == thickness
 
 
+def test_annotation_invalid_font(cam: Camera):
+    text = "hello"
+    font = "complx"
+    cam.annotate(
+        text=text,
+        font=font,
+    )
+    assert cam._text_prop['font'] == 0
+
+
+def test_annotation_valid_font(cam: Camera):
+    text = "hello"
+    font = "complex"
+    cam.annotate(
+        text=text,
+        font=font,
+    )
+    assert cam._text_prop['font'] == 3
+
 # ----------------------------------
 # Video
 # ----------------------------------
