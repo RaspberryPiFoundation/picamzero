@@ -218,7 +218,9 @@ class Camera:
                     f"""Invalid font '{font}'. Available fonts are:\n{available_fonts}
                     Your font has been set to \'simplex\'"""
                 )
-            font = 0
+                font = 0
+            else:
+                font = font_entry[0]
 
         self._text_properties = {
             "font": font,
