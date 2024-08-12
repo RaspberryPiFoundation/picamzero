@@ -12,8 +12,8 @@ from libcamera import Transform
 logger = logging.getLogger(__name__)
 
 # For dev only - suppress Libcamera and Picamera warnings
-# os.environ["LIBCAMERA_LOG_LEVELS"] = "4"
-# Picamera2.set_logging(level=Picamera2.ERROR)
+os.environ["LIBCAMERA_LOG_LEVELS"] = "4"
+Picamera2.set_logging(level=Picamera2.ERROR)
 
 
 class Camera:
@@ -72,14 +72,14 @@ class Camera:
 
     @property
     def preview_size(self):
-        return self.pc2.preview.configuration.size
+        return self.pc2.preview_configuration.size
 
     @preview_size.setter
     def preview_size(self, size):
         utils.set_camera_size(
-            self.pc2.preview.configuration,
-            size,
+            self.pc2.preview_configuration,
             self.pc2.sensor_resolution,
+            size,
             logger,
             error_msg_type="preview",
             example_msg="(640, 480)",
@@ -87,14 +87,14 @@ class Camera:
 
     @property
     def still_size(self):
-        return self.pc2.still.configuration.size
+        return self.pc2.still_configuration.size
 
     @still_size.setter
     def still_size(self, size):
         utils.set_camera_size(
-            self.pc2.still.configuration,
-            size,
+            self.pc2.still_configuration,
             self.pc2.sensor_resolution,
+            size,
             logger,
             error_msg_type="image",
             example_msg="(3280, 2464)",
@@ -102,14 +102,14 @@ class Camera:
 
     @property
     def video_size(self):
-        return self.pc2.video.configuration.size
+        return self.pc2.video_configuration.size
 
     @video_size.setter
     def video_size(self, size):
         utils.set_camera_size(
-            self.pc2.video.configuration,
-            size,
+            self.pc2.video_configuration,
             self.pc2.sensor_resolution,
+            size,
             logger,
             error_msg_type="video",
             example_msg="(1920, 1080)",
