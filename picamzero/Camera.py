@@ -70,8 +70,6 @@ class Camera:
             )
         return True
 
-    # Brightness
-
     @property
     def preview_size(self):
         return self.pc2.preview.configuration.size
@@ -168,6 +166,7 @@ class Camera:
                 "Example: (640, 480).",
             )
 
+    # Brightness
     @property
     def brightness(self) -> float:
         """
@@ -345,18 +344,22 @@ class Camera:
         """
         Show a preview of the camera
         """
-        if not self.pc2._preview:
-            if self.pc2.started:
-                self.pc2.stop()
-            try:
-                self.pc2.start_preview(
-                    config=self._generate_config("PREVIEW"),
-                    preview=True,
-                    transform=Transform(hflip=self.hflip, vflip=self.vflip),
-                )
-                self.pc2.start()
-            except RuntimeError:
-                logger.error("Preview couldn't start")
+        # At this point, null preview is probably running still...
+        # (but that is OK!)
+        self.pc2.stop()
+
+        try:
+            config = self.pc2.create_preview_configuration(
+                {"size": self.pc2.sensor_resolution},
+                transform=Transform(hflip=self.hflip, vflip=self.vflip),
+            )
+            self.pc2.configure(config)
+            self.pc2.start()
+            self.pc2.stop_preview()  # Stop null preview
+            self.pc2.start_preview(True)  # Start the not null preview
+
+        except RuntimeError as e:
+            logger.error(f"Preview couldn't start: {e}")
 
     def stop_preview(self):
         """
@@ -370,7 +373,7 @@ class Camera:
                 logger.error("Couldn't stop preview")
 
     # Add filter (add synonym method, e.g. set effect - [like sensehat library])
-    def add_filter(self, filter):
+    def add_filter(self, effect):
         """
         Give choice of effects (greyscale, negative, sketch)
         """
