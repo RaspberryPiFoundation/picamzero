@@ -337,5 +337,7 @@ def test_video_with_stills_non_divisible(cam: Camera):
 
 def test_greyscale_filter(cam: Camera):
     cam.start_preview()
-    cam.add_filter("greyscale")
-    assert cam.pc2.controls.Saturation == 0
+    cam.greyscale = True
+    assert cam.pc2.controls.Saturation == 0.0
+    cam.greyscale = False
+    assert cam.pc2.controls.Saturation == 1.0

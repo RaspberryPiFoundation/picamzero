@@ -296,6 +296,29 @@ class Camera:
             }
             self.pc2.set_controls(set_awb_mode)
 
+    @property
+    def greyscale(self) -> bool:
+        if self.pc2.controls.Saturation == 0:
+            return True
+        else:
+            # Any saturation above 0 results in greyscale off?
+            return False
+
+    @greyscale.setter
+    def greyscale(self, on: bool) -> None:
+        """
+        Apply greyscale to the preview and image
+        You have to call this _after_ the preview has started or it wont apply
+        Does NOT apply to video
+
+        :param bool on:
+            Whether greyscale should be on
+        """
+        if on:
+            self.pc2.controls.Saturation = 0.0
+        else:
+            self.pc2.controls.Saturation = 1.0
+
     # ----------------------------------
     # METHODS
     # ----------------------------------
@@ -371,23 +394,6 @@ class Camera:
 
             except RuntimeError:
                 logger.error("Couldn't stop preview")
-
-    # Add effect
-    def add_filter(self, effect: str) -> None:
-        """
-        Apply effects to the preview and image
-        You have to call this _after_ the preview has started or it wont apply
-        Does NOT apply to video
-
-        :param str effect:
-            The effect to apply (currently only greyscale)
-        """
-        if effect == "greyscale":
-            self.pc2.controls.Saturation = 0
-        else:
-            raise PicameraZeroException(
-                "Filter effect not supported", "Currently supported effects: greyscale"
-            )
 
     def annotate(
         self,
