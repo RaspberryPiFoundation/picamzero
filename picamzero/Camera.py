@@ -1,11 +1,11 @@
 from picamera2 import Picamera2, MappedArray
+from .PicameraZeroException import PicameraZeroException
 from time import sleep, time
 from . import utilities as utils
 import cv2
 import logging
 import os
 import math
-from .PicameraZeroException import PicameraZeroException
 
 from libcamera import Transform
 
@@ -53,6 +53,24 @@ class Camera:
     # ----------------------------------
     # PROPERTIES
     # ----------------------------------
+
+    # Check that the value given for a control is allowed
+    def _check_control_in_range(self, name: str, value: float | int) -> bool:
+        try:
+            minvalue, maxvalue, defaultvalue = self.pc2.camera_controls[name]
+        except Exception as e:
+            raise PicameraZeroException(
+                f"The control {e} doesn't exist", "Check for spelling errors?"
+            )
+
+        if value > maxvalue or value < minvalue:
+            raise PicameraZeroException(
+                f"Invalid {name.lower()} value",
+                f"{name} must be between {minvalue} and {maxvalue}",
+            )
+        return True
+
+    # Brightness
 
     @property
     def preview_size(self):
@@ -151,42 +169,133 @@ class Camera:
             )
 
     @property
-    def brightness(self):
+    def brightness(self) -> float:
+        """
+        Get the brightness
+
+        :return float:
+            Brightness value between -1.0 and 1.0
+        """
+        return self.pc2.controls.Brightness
+
+    @brightness.setter
+    def brightness(self, bvalue: float):
         """
         Set the brightness
-        """
-        pass
 
+        :param float bvalue:
+            Floating point number between -1.0 and 1.0
+        """
+        if self._check_control_in_range("Brightness", bvalue):
+            self.pc2.controls.Brightness = bvalue
+
+    # Contrast
     @property
-    def contrast(self):
+    def contrast(self) -> float:
+        """
+        Get the contrast
+
+        :return float:
+            Contrast value between 0.0 and 32.0
+        """
+        return self.pc2.controls.Contrast
+
+    @contrast.setter
+    def contrast(self, cvalue: float):
         """
         Set the contrast
-        """
-        pass
 
-    # Set exposure
+        :param float cvalue:
+            Floating point number between 0.0 and 32.0
+            Normal value is 1.0
+        """
+        if self._check_control_in_range("Contrast", cvalue):
+            self.pc2.controls.Contrast = cvalue
+
+    # Exposure
     @property
-    def exposure(self):
+    def exposure(self) -> int:
+        """
+        Get the exposure
+
+        :returns int:
+            Exposure value (max and min depend on mode)
+        """
+        return self.pc2.controls.ExposureTime
+
+    @exposure.setter
+    def exposure(self, etime: int):
         """
         Set the exposure
-        """
-        pass
 
-    # Set gain
-    @property
-    def gain(self):
+        :param int etime:
+            The exposure time (max and min depend on mode)
         """
-        Set the gain
-        """
-        pass
+        if self._check_control_in_range("ExposureTime", etime):
+            self.pc2.controls.ExposureTime = etime
 
-    # Set white balance
+    # Gain
     @property
-    def white_balance(self):
+    def gain(self) -> float:
         """
-        Set the white balance
+        Get the gain
+
+        :returns float:
+            Gain value (max and min depend on mode)
         """
-        pass
+        return self.pc2.controls.AnalogueGain
+
+    @gain.setter
+    def gain(self, gvalue: float):
+        """
+        Set the analogue gain
+
+        :param float gvalue:
+            The analogue gain (max and min depend on mode)
+        """
+        if self._check_control_in_range("AnalogueGain", gvalue):
+            self.pc2.controls.AnalogueGain = gvalue
+
+    # White balance
+    @property
+    def white_balance(self) -> str:
+        """
+        Get the white balance mode
+
+        :return str:
+            The selected white balance mode as a string
+        """
+        return utils.possible_controls(reverse_kv=True)[self.pc2.controls.AwbMode]
+
+    @white_balance.setter
+    def white_balance(self, wbmode: str):
+        """
+        Set the white balance mode
+
+        :param str wbmode:
+            A white balance mode from the allowed list
+            (at present, Custom is not allowed)
+        """
+
+        if wbmode.lower() not in utils.possible_controls():
+            if wbmode.lower() == "custom":
+                raise PicameraZeroException(
+                    "Custom white balance is not supported yet",
+                    "White balance can be "
+                    + ", ".join(utils.possible_controls().keys()),
+                )
+            else:
+                raise PicameraZeroException(
+                    "Invalid white balance mode",
+                    "White balance can be "
+                    + ", ".join(utils.possible_controls().keys()),
+                )
+        else:
+            set_awb_mode = {
+                "AwbEnable": 1,
+                "AwbMode": utils.possible_controls()[wbmode.lower()],
+            }
+            self.pc2.set_controls(set_awb_mode)
 
     # ----------------------------------
     # METHODS
@@ -198,15 +307,21 @@ class Camera:
         """
         temp_config = None
         if mode == "STILL":
-            temp_config = self.pc2.create_still_configuration({"size": self.resolution})
+            temp_config = self.pc2.create_still_configuration(
+                {"size": self.resolution},
+                transform=Transform(hflip=self.hflip, vflip=self.vflip),
+            )
         elif mode == "VIDEO":
-            temp_config = self.pc2.create_video_configuration({"size": self.resolution})
+            temp_config = self.pc2.create_video_configuration(
+                {"size": self.resolution},
+                transform=Transform(hflip=self.hflip, vflip=self.vflip),
+            )
+
         elif mode == "PREVIEW":
             temp_config = self.pc2.create_preview_configuration(
-                {"size": self.resolution}
+                {"size": self.resolution},
+                transform=Transform(hflip=self.hflip, vflip=self.vflip),
             )
-        # Set any transforms
-        temp_config["transform"] = Transform(hflip=self.hflip, vflip=self.vflip)
 
         return temp_config
 
