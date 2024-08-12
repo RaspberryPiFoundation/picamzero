@@ -97,7 +97,7 @@ def test_annotation_invalid_font(cam: Camera):
         text=text,
         font=font,
     )
-    assert cam._text_prop['font'] == 0
+    assert cam._text_properties["font"] == 0
 
 
 def test_annotation_valid_font(cam: Camera):
@@ -107,7 +107,8 @@ def test_annotation_valid_font(cam: Camera):
         text=text,
         font=font,
     )
-    assert cam._text_prop['font'] == 3
+    assert cam._text_properties["font"] == cam.fonts.get(font.lower())[0]
+
 
 # ----------------------------------
 # Video
