@@ -257,18 +257,18 @@ class Camera:
         temp_config = None
         if mode == "STILL":
             temp_config = self.pc2.create_still_configuration(
-                {"size": self.resolution},
+                {"size": self.pc2.sensor_resolution},
                 transform=Transform(hflip=self.hflip, vflip=self.vflip),
             )
         elif mode == "VIDEO":
             temp_config = self.pc2.create_video_configuration(
-                {"size": self.resolution},
+                {"size": self.pc2.sensor_resolution},
                 transform=Transform(hflip=self.hflip, vflip=self.vflip),
             )
 
         elif mode == "PREVIEW":
             temp_config = self.pc2.create_preview_configuration(
-                {"size": self.resolution},
+                {"size": self.pc2.sensor_resolution},
                 transform=Transform(hflip=self.hflip, vflip=self.vflip),
             )
 
