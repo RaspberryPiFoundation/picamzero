@@ -307,18 +307,18 @@ class Camera:
         temp_config = None
         if mode == "STILL":
             temp_config = self.pc2.create_still_configuration(
-                {"size": self.resolution},
+                {"size": self.pc2.sensor_resolution},
                 transform=Transform(hflip=self.hflip, vflip=self.vflip),
             )
         elif mode == "VIDEO":
             temp_config = self.pc2.create_video_configuration(
-                {"size": self.resolution},
+                {"size": self.pc2.sensor_resolution},
                 transform=Transform(hflip=self.hflip, vflip=self.vflip),
             )
 
         elif mode == "PREVIEW":
             temp_config = self.pc2.create_preview_configuration(
-                {"size": self.resolution},
+                {"size": self.pc2.sensor_resolution},
                 transform=Transform(hflip=self.hflip, vflip=self.vflip),
             )
 
@@ -344,18 +344,22 @@ class Camera:
         """
         Show a preview of the camera
         """
-        if not self.pc2._preview:
-            if self.pc2.started:
-                self.pc2.stop()
-            try:
-                self.pc2.start_preview(
-                    config=self._generate_config("PREVIEW"),
-                    preview=True,
-                    transform=Transform(hflip=self.hflip, vflip=self.vflip),
-                )
-                self.pc2.start()
-            except RuntimeError:
-                logger.error("Preview couldn't start")
+        # At this point, null preview is probably running still...
+        # (but that is OK!)
+        self.pc2.stop()
+
+        try:
+            config = self.pc2.create_preview_configuration(
+                {"size": self.pc2.sensor_resolution},
+                transform=Transform(hflip=self.hflip, vflip=self.vflip),
+            )
+            self.pc2.configure(config)
+            self.pc2.start()
+            self.pc2.stop_preview()  # Stop null preview
+            self.pc2.start_preview(True)  # Start the not null preview
+
+        except RuntimeError as e:
+            logger.error(f"Preview couldn't start: {e}")
 
     def stop_preview(self):
         """
@@ -373,8 +377,7 @@ class Camera:
         """
         Give choice of effects (greyscale, negative, sketch)
         """
-        if effect == "greyscale":
-            self.pc2.controls.Saturation = 0
+        pass
 
     def annotate(
         self,
