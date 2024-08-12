@@ -1,6 +1,7 @@
 from datetime import datetime
 from os.path import exists
 
+import numpy as np
 import pytest
 from libcamera import Transform, controls
 from picamzero import Camera, PicameraZeroException
@@ -245,6 +246,13 @@ def test_named_picture_no_ext(cam: Camera):
     assert filename2 == "test2.jpg"
     assert exists(filename)
     assert exists(filename2)
+
+
+def test_capture_array(cam: Camera):
+    arr = cam.capture_array()
+    expected_width, expected_height = cam.pc2.sensor_resolution
+    assert arr.shape == (expected_height, expected_width, 3)
+    assert arr.dtype == np.uint8
 
 
 # ----------------------------------

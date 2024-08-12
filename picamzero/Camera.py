@@ -6,6 +6,7 @@ import cv2
 import logging
 import os
 import math
+import numpy as np
 
 from libcamera import Transform
 
@@ -462,6 +463,21 @@ class Camera:
             sleep(remaining_time)
 
         self.pc2.stop_recording()
+
+    def capture_array(self) -> np.ndarray:
+        """
+        Takes a photo at full resolution and saves it as an
+        (RGB) numpy array.
+
+        This can be used in further processing using libraries
+        like opencv.
+
+        :return np.ndarray:
+            A full resolution image as a raw RGB numpy array
+        """
+        # Switch to high quality mode temporarily for array capture
+        still_config = self._generate_config("STILL")
+        return self.pc2.switch_mode_and_capture_array(still_config)
 
     # Take a picture
     def take_photo(self, filename=None):
