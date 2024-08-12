@@ -78,31 +78,14 @@ class Camera:
 
     @preview_size.setter
     def preview_size(self, size):
-        if isinstance(size, tuple) and len(size) == 2:
-            h, w = size
-            if isinstance(h, int) and isinstance(w, int) and h > 0 and w > 0:
-                max_h, max_w = self.pc2.sensor_resolution
-                if h > max_h or w > max_w:
-                    logger.error(
-                        """Warning: The specified size exceeds the camera's
-                            maximum allowed dimensions.
-                            The size has been adjusted to fit."""
-                    )
-                h = min(h, max_h)
-                w = min(w, max_w)
-
-                self.pc2.preview.configuration.size = (h, w)
-            else:
-                raise PicameraZeroException(
-                    "The height and width of the preview must be positive integers.",
-                    "Example: (640, 480)",
-                )
-        else:
-            raise PicameraZeroException(
-                """The size of the preview must be two positive integers,
-                separated by a comma and in brackets.""",
-                "Example: (640, 480).",
-            )
+        utils.set_camera_size(
+            self.pc2.preview.configuration,
+            size,
+            self.pc2.sensor_resolution,
+            logger,
+            error_msg_type="preview",
+            example_msg="(640, 480)",
+        )
 
     @property
     def still_size(self):
@@ -110,31 +93,14 @@ class Camera:
 
     @still_size.setter
     def still_size(self, size):
-        if isinstance(size, tuple) and len(size) == 2:
-            h, w = size
-            if isinstance(h, int) and isinstance(w, int) and h > 0 and w > 0:
-                max_h, max_w = self.pc2.sensor_resolution
-                if h > max_h or w > max_w:
-                    logger.error(
-                        """Warning: The specified size exceeds the camera's
-                            maximum allowed dimensions.
-                            The size has been adjusted to fit."""
-                    )
-                h = min(h, max_h)
-                w = min(w, max_w)
-
-                self.pc2.still.configuration.size = (h, w)
-            else:
-                raise PicameraZeroException(
-                    "The height and width of the image must be positive integers.",
-                    "Example: (640, 480)",
-                )
-        else:
-            raise PicameraZeroException(
-                """The size of the image must be two positive integers,
-                separated by a comma and in brackets.""",
-                "Example: (3280, 2464).",
-            )
+        utils.set_camera_size(
+            self.pc2.still.configuration,
+            size,
+            self.pc2.sensor_resolution,
+            logger,
+            error_msg_type="image",
+            example_msg="(3280, 2464)",
+        )
 
     @property
     def video_size(self):
@@ -142,31 +108,14 @@ class Camera:
 
     @video_size.setter
     def video_size(self, size):
-        if isinstance(size, tuple) and len(size) == 2:
-            h, w = size
-            if isinstance(h, int) and isinstance(w, int) and h > 0 and w > 0:
-                max_h, max_w = self.pc2.sensor_resolution
-                if h > max_h or w > max_w:
-                    logger.error(
-                        """Warning: The specified size exceeds the camera's
-                            maximum allowed dimensions.
-                            The size has been adjusted to fit."""
-                    )
-                h = min(h, max_h)
-                w = min(w, max_w)
-
-                self.pc2.video.configuration.size = (h, w)
-            else:
-                raise PicameraZeroException(
-                    "The height and width of the video must be positive integers.",
-                    "Example: (1920, 1080)",
-                )
-        else:
-            raise PicameraZeroException(
-                """The size of the video must be two positive integers,
-                separated by a comma and in brackets.""",
-                "Example: (640, 480).",
-            )
+        utils.set_camera_size(
+            self.pc2.video.configuration,
+            size,
+            self.pc2.sensor_resolution,
+            logger,
+            error_msg_type="video",
+            example_msg="(1920, 1080)",
+        )
 
     @property
     def brightness(self) -> float:
