@@ -48,25 +48,34 @@ class Camera:
         self.fonts = {
             "simplex": (cv2.FONT_HERSHEY_SIMPLEX, "Normal size sans-serif font"),
             "plain": (cv2.FONT_HERSHEY_PLAIN, "Small size sans-serif font"),
-            "duplex": (cv2.FONT_HERSHEY_DUPLEX, "Normal size sans-serif font (more complex)"),
+            "duplex": (
+                cv2.FONT_HERSHEY_DUPLEX,
+                "Normal size sans-serif font (more complex)",
+            ),
             "complex": (cv2.FONT_HERSHEY_COMPLEX, "Normal size serif font"),
             "triplex": (cv2.FONT_HERSHEY_TRIPLEX, "Larger size serif font"),
             "small": (cv2.FONT_HERSHEY_COMPLEX_SMALL, "Small size serif font"),
-            "script_simplex": (cv2.FONT_HERSHEY_SCRIPT_SIMPLEX, "Handwriting-style font"),
-            "script_complex": (cv2.FONT_HERSHEY_SCRIPT_COMPLEX, "Complex handwriting-style font"),
+            "script_simplex": (
+                cv2.FONT_HERSHEY_SCRIPT_SIMPLEX,
+                "Handwriting-style font",
+            ),
+            "script_complex": (
+                cv2.FONT_HERSHEY_SCRIPT_COMPLEX,
+                "Complex handwriting-style font",
+            ),
             "italic": (cv2.FONT_ITALIC, "Italic version of the current font"),
         }
 
         # Annotation
         self._text = None
         self._text_properties = {
-        'font': cv2.FONT_HERSHEY_SIMPLEX,
-        'color': (255, 255, 255, 255),
-        'origin': (50, 50),
-        'scale': 3,
-        'thickness': 3,
-        'bgcolor': None,
-        'position': (0, 0),
+            "font": cv2.FONT_HERSHEY_SIMPLEX,
+            "color": (255, 255, 255, 255),
+            "origin": (50, 50),
+            "scale": 3,
+            "thickness": 3,
+            "bgcolor": None,
+            "position": (0, 0),
         }
 
     # ----------------------------------
@@ -198,22 +207,26 @@ class Camera:
         TODO: video?
         """
         self._text = text
-        if isinstance(text_font, str):
-            font_entry = self.fonts.get(text_font.lower())
+        if isinstance(font, str):
+            font_entry = self.fonts.get(font.lower())
             if font_entry is None:
                 # Font not found: return the list of available fonts with descriptions
-                available_fonts = "\n".join([f"{name}: {desc}" for name, (_, desc) in self.fonts.items()])
-                logger.warning(f"Invalid font '{text_font}'. Available fonts are:\n{available_fonts}")
-            text_font = font_entry[0]
+                available_fonts = "\n".join(
+                    [f"{name}: {desc}" for name, (_, desc) in self.fonts.items()]
+                )
+                logger.warning(
+                    f"Invalid font '{font}'. Available fonts are:\n{available_fonts}"
+                )
+            font = font_entry[0]
 
         self._text_properties = {
-        'font': font,
-        'color': color,
-        'origin': origin,
-        'scale': scale,
-        'thickness': thickness,
-        'bgcolor': bgcolor,
-        'position': position,
+            "font": font,
+            "color": color,
+            "origin": origin,
+            "scale": scale,
+            "thickness": thickness,
+            "bgcolor": bgcolor,
+            "position": position,
         }
 
         def annotation_callback(request):
@@ -222,27 +235,29 @@ class Camera:
             """
             text_prop = self._text_properties
             # Create the background
-            x, y = text_prop['position']
-            text_size, _ = cv2.getTextSize(text, text_prop['font'], text_prop['scale'], text_prop['thickness'])
+            x, y = text_prop["position"]
+            text_size, _ = cv2.getTextSize(
+                text, text_prop["font"], text_prop["scale"], text_prop["thickness"]
+            )
             text_w, text_h = text_size
 
             with MappedArray(request, "main") as m:
-                if text_prop['bgcolor'] is not None:
+                if text_prop["bgcolor"] is not None:
                     cv2.rectangle(
                         m.array,
-                        text_prop['position'],
+                        text_prop["position"],
                         (x + text_w, y + text_h),
-                        text_prop['bgcolor'],
+                        text_prop["bgcolor"],
                         -1,
                     )
                 cv2.putText(
                     m.array,
                     self._text,
-                    (x, y + text_h + text_prop['scale'] - 4),
-                    text_prop['font'], 
-                    text_prop['scale'], 
-                    text_prop['color']
-                    text_prop['thickness']
+                    (x, y + text_h + text_prop["scale"] - 4),
+                    text_prop["font"],
+                    text_prop["scale"],
+                    text_prop["color"],
+                    text_prop["thickness"],
                 )
 
         # Add the annotation as a callback when any pics are taken
