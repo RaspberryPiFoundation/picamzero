@@ -2,7 +2,7 @@ from datetime import datetime
 from os.path import exists
 
 import pytest
-from libcamera import controls
+from libcamera import controls, Transform
 from picamzero import Camera, PicameraZeroException
 
 
@@ -117,9 +117,9 @@ def test_property_invalid_white_balance(cam: Camera):
 # Can you start and stop the preview
 def test_preview_starts_and_stops(cam: Camera):
     cam.start_preview()
-    assert cam._started_preview is True
+    assert cam.pc2._preview is not None
     cam.stop_preview()
-    assert cam._started_preview is False
+    assert cam.pc2._preview is None
 
 
 # ----------------------------------
@@ -130,15 +130,21 @@ def test_preview_starts_and_stops(cam: Camera):
 def test_cam_flip(cam: Camera):
     cam.flip_camera(hflip=True)
     assert cam.hflip is True
-    assert cam.preview_config["transform"].hflip is True
+    assert cam.preview_config["transform"] == Transform(hflip=1)
+
     cam.flip_camera(vflip=True)
     assert cam.vflip is True
-    assert cam.preview_config["transform"].vflip is True
+    assert cam.preview_config["transform"] == Transform(vflip=1)
+
+    cam.flip_camera(hflip=True, vflip=True)
+    assert cam.hflip is True
+    assert cam.vflip is True
+    assert cam.preview_config["transform"] == Transform(hflip=1, vflip=1)
+
     cam.flip_camera(hflip=False, vflip=False)
-    assert cam.hflip is False
-    assert cam.preview_config["transform"].hflip is False
     assert cam.vflip is False
-    assert cam.preview_config["transform"].vflip is False
+    assert cam.hflip is False
+    assert cam.preview_config["transform"] == Transform()
 
 
 # ----------------------------------

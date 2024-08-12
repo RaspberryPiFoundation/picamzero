@@ -6,6 +6,7 @@ import cv2
 import logging
 import os
 import math
+from .PicameraZeroException import PicameraZeroException
 
 from libcamera import Transform
 
@@ -33,16 +34,11 @@ class Camera:
             logger.error("Please check all connections")
             exit()
 
-        self.resolution = self.pc2.sensor_resolution
+        # Camera
         self.hflip = False
         self.vflip = False
 
-        # Set up preview config
         self.preview_config = self._generate_config("PREVIEW")
-
-        # Set the preview config by default
-        self.pc2.preview_configuration = self.preview_config
-        self._started_preview = False
 
         # Annotation
         self._text = None
@@ -53,9 +49,12 @@ class Camera:
         self._text_scale = 3
         self._text_thickness = 3
 
+        self.pc2.start()
+
     # ----------------------------------
     # PROPERTIES
     # ----------------------------------
+
 
     # Check that the value given for a control is allowed
     def _check_control_in_range(self, name: str, value: float | int) -> bool:
@@ -74,6 +73,102 @@ class Camera:
         return True
 
     # Brightness
+
+    @property
+    def preview_size(self):
+        return self.pc2.preview.configuration.size
+
+    @preview_size.setter
+    def preview_size(self, size):
+        if isinstance(size, tuple) and len(size) == 2:
+            h, w = size
+            if isinstance(h, int) and isinstance(w, int) and h > 0 and w > 0:
+                max_h, max_w = self.pc2.sensor_resolution
+                if h > max_h or w > max_w:
+                    logger.error(
+                        """Warning: The specified size exceeds the camera's
+                            maximum allowed dimensions.
+                            The size has been adjusted to fit."""
+                    )
+                h = min(h, max_h)
+                w = min(w, max_w)
+
+                self.pc2.preview.configuration.size = (h, w)
+            else:
+                raise PicameraZeroException(
+                    "The height and width of the preview must be positive integers.",
+                    "Example: (640, 480)",
+                )
+        else:
+            raise PicameraZeroException(
+                """The size of the preview must be two positive integers,
+                separated by a comma and in brackets.""",
+                "Example: (640, 480).",
+            )
+
+    @property
+    def still_size(self):
+        return self.pc2.still.configuration.size
+
+    @still_size.setter
+    def still_size(self, size):
+        if isinstance(size, tuple) and len(size) == 2:
+            h, w = size
+            if isinstance(h, int) and isinstance(w, int) and h > 0 and w > 0:
+                max_h, max_w = self.pc2.sensor_resolution
+                if h > max_h or w > max_w:
+                    logger.error(
+                        """Warning: The specified size exceeds the camera's
+                            maximum allowed dimensions.
+                            The size has been adjusted to fit."""
+                    )
+                h = min(h, max_h)
+                w = min(w, max_w)
+
+                self.pc2.still.configuration.size = (h, w)
+            else:
+                raise PicameraZeroException(
+                    "The height and width of the image must be positive integers.",
+                    "Example: (640, 480)",
+                )
+        else:
+            raise PicameraZeroException(
+                """The size of the image must be two positive integers,
+                separated by a comma and in brackets.""",
+                "Example: (3280, 2464).",
+            )
+
+    @property
+    def video_size(self):
+        return self.pc2.video.configuration.size
+
+    @video_size.setter
+    def video_size(self, size):
+        if isinstance(size, tuple) and len(size) == 2:
+            h, w = size
+            if isinstance(h, int) and isinstance(w, int) and h > 0 and w > 0:
+                max_h, max_w = self.pc2.sensor_resolution
+                if h > max_h or w > max_w:
+                    logger.error(
+                        """Warning: The specified size exceeds the camera's
+                            maximum allowed dimensions.
+                            The size has been adjusted to fit."""
+                    )
+                h = min(h, max_h)
+                w = min(w, max_w)
+
+                self.pc2.video.configuration.size = (h, w)
+            else:
+                raise PicameraZeroException(
+                    "The height and width of the video must be positive integers.",
+                    "Example: (1920, 1080)",
+                )
+        else:
+            raise PicameraZeroException(
+                """The size of the video must be two positive integers,
+                separated by a comma and in brackets.""",
+                "Example: (640, 480).",
+            )
     @property
     def brightness(self) -> float:
         """
@@ -245,19 +340,21 @@ class Camera:
         self.pc2.preview_configuration = self.preview_config
 
         # Restart
-        self.pc2.start(show_preview=self._started_preview)
+        self.pc2.start()
 
     def start_preview(self):
         """
         Show a preview of the camera
         """
-        if not self._started_preview:
+        if not self.pc2._preview:
+            if self.pc2.started:
+                self.pc2.stop()
             try:
                 self.pc2.start_preview(
+                    config=self._generate_config("PREVIEW"),
                     preview=True,
                     transform=Transform(hflip=self.hflip, vflip=self.vflip),
                 )
-                self._started_preview = True
                 self.pc2.start()
             except RuntimeError:
                 logger.error("Preview couldn't start")
@@ -266,10 +363,10 @@ class Camera:
         """
         Stop the preview
         """
-        if self._started_preview:
+        if self.pc2._preview:
             try:
-                self.pc2.stop_preview()  # Pete to change to close() later?...
-                self._started_preview = False
+                self.pc2.stop_preview()
+
             except RuntimeError:
                 logger.error("Couldn't stop preview")
 
@@ -378,10 +475,7 @@ class Camera:
         self.pc2.start()
 
         # Capture the image
-        self.pc2.start_and_capture_file(
-            name=filename,
-            show_preview=self._started_preview,
-        )
+        self.pc2.start_and_capture_file(name=filename)
 
         # Useful to know what the file is called
         return filename
@@ -445,11 +539,9 @@ class Camera:
         Record a video
         """
         filename = utils.format_filename(filename, ".mp4")
-
-        # Use basic inbuilt function
-        self._generate_config("VIDEO")
-        # Auto starts
-        self.pc2.start_and_record_video(filename, duration=duration)
+        self.pc2.start_and_record_video(
+            filename, config=self._generate_config("VIDEO"), duration=duration
+        )
 
         return filename
 
