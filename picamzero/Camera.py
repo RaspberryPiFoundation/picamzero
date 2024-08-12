@@ -6,7 +6,6 @@ import cv2
 import logging
 import os
 import math
-from .PicameraZeroException import PicameraZeroException
 
 from libcamera import Transform
 
@@ -54,7 +53,6 @@ class Camera:
     # ----------------------------------
     # PROPERTIES
     # ----------------------------------
-
 
     # Check that the value given for a control is allowed
     def _check_control_in_range(self, name: str, value: float | int) -> bool:
@@ -169,6 +167,7 @@ class Camera:
                 separated by a comma and in brackets.""",
                 "Example: (640, 480).",
             )
+
     @property
     def brightness(self) -> float:
         """

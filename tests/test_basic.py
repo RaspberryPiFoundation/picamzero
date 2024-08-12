@@ -2,7 +2,7 @@ from datetime import datetime
 from os.path import exists
 
 import pytest
-from libcamera import controls, Transform
+from libcamera import Transform, controls
 from picamzero import Camera, PicameraZeroException
 
 
