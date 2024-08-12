@@ -328,3 +328,14 @@ def test_video_with_stills_non_divisible(cam: Camera):
     assert exists("xyz-1.jpg")
     assert not exists("xyz-2.jpg")
     assert exists("xyz.mp4")
+
+
+# ----------------------------------
+# Filters
+# ----------------------------------
+
+
+def test_greyscale_filter(cam: Camera):
+    cam.start_preview()
+    cam.add_filter("greyscale")
+    assert cam.pc2.controls.Saturation == 0

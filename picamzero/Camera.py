@@ -372,12 +372,22 @@ class Camera:
             except RuntimeError:
                 logger.error("Couldn't stop preview")
 
-    # Add filter (add synonym method, e.g. set effect - [like sensehat library])
-    def add_filter(self, effect):
+    # Add effect
+    def add_filter(self, effect: str) -> None:
         """
-        Give choice of effects (greyscale, negative, sketch)
+        Apply effects to the preview and image
+        You have to call this _after_ the preview has started or it wont apply
+        Does NOT apply to video
+
+        :param str effect:
+            The effect to apply (currently only greyscale)
         """
-        pass
+        if effect == "greyscale":
+            self.pc2.controls.Saturation = 0
+        else:
+            raise PicameraZeroException(
+                "Filter effect not supported", "Currently supported effects: greyscale"
+            )
 
     def annotate(
         self,
