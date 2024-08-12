@@ -377,8 +377,7 @@ class Camera:
         """
         Give choice of effects (greyscale, negative, sketch)
         """
-        if effect == "greyscale":
-            self.pc2.controls.Saturation = 0
+        pass
 
     def annotate(
         self,
