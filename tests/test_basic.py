@@ -169,7 +169,7 @@ def test_annotation_properties(cam: Camera):
 
 def test_annotation_invalid_font(cam: Camera):
     text = "hello"
-    font = "complx"
+    font = "compl"
     cam.annotate(
         text=text,
         font=font,

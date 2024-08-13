@@ -51,6 +51,7 @@ def possible_controls(reverse_kv=False):
     else:
         return poss_controls
 
+
 # Return a dictionary of fonts
 def font_dict(reverse_kv=False):
     fonts = {
