@@ -1,0 +1,11 @@
+name: Test runner
+
+on:
+  workflow_dispatch:
+
+jobs:
+  test:
+    runs-on: self-hosted
+    steps:
+      - name: Debugging
+        run: pwd && ls -la
