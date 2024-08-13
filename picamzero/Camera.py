@@ -15,6 +15,7 @@ logger = logging.getLogger(__name__)
 # os.environ["LIBCAMERA_LOG_LEVELS"] = "4"
 # Picamera2.set_logging(level=Picamera2.ERROR)
 
+
 class Camera:
     def __init__(self):
         """
