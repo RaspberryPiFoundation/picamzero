@@ -95,4 +95,3 @@ def check_font_in_dict(font):
         else:
             font = 2
         return font
-    
