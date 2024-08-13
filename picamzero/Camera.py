@@ -13,8 +13,8 @@ from libcamera import Transform
 logger = logging.getLogger(__name__)
 
 # For dev only - suppress Libcamera and Picamera warnings
-# os.environ["LIBCAMERA_LOG_LEVELS"] = "4"
-# Picamera2.set_logging(level=Picamera2.ERROR)
+os.environ["LIBCAMERA_LOG_LEVELS"] = "4"
+Picamera2.set_logging(level=Picamera2.ERROR)
 
 
 class Camera:
@@ -37,8 +37,6 @@ class Camera:
         # Camera
         self.hflip = False
         self.vflip = False
-
-        self.preview_config = self._generate_config("PREVIEW")
 
         # Annotation
         self._text = None
@@ -73,7 +71,7 @@ class Camera:
 
     @property
     def preview_size(self):
-        return self.pc2.preview.configuration.size
+        return self.pc2.preview_configuration.size
 
     @preview_size.setter
     def preview_size(self, size):
@@ -90,7 +88,7 @@ class Camera:
                 h = min(h, max_h)
                 w = min(w, max_w)
 
-                self.pc2.preview.configuration.size = (h, w)
+                self.pc2.preview_configuration.size = (h, w)
             else:
                 raise PicameraZeroException(
                     "The height and width of the preview must be positive integers.",
@@ -324,30 +322,6 @@ class Camera:
     # METHODS
     # ----------------------------------
 
-    def _generate_config(self, mode):
-        """
-        Helper method: Generate a suitable config to use
-        """
-        temp_config = None
-        if mode == "STILL":
-            temp_config = self.pc2.create_still_configuration(
-                {"size": self.pc2.sensor_resolution},
-                transform=Transform(hflip=self.hflip, vflip=self.vflip),
-            )
-        elif mode == "VIDEO":
-            temp_config = self.pc2.create_video_configuration(
-                {"size": self.pc2.sensor_resolution},
-                transform=Transform(hflip=self.hflip, vflip=self.vflip),
-            )
-
-        elif mode == "PREVIEW":
-            temp_config = self.pc2.create_preview_configuration(
-                {"size": self.pc2.sensor_resolution},
-                transform=Transform(hflip=self.hflip, vflip=self.vflip),
-            )
-
-        return temp_config
-
     def flip_camera(self, vflip=False, hflip=False):
         """
         Flip the image horizontally or vertically
@@ -355,32 +329,29 @@ class Camera:
         self.vflip = vflip
         self.hflip = hflip
 
-        if self.pc2.started:
-            self.pc2.stop()
-
-        self.preview_config["transform"] = Transform(vflip=self.vflip, hflip=self.hflip)
-        self.pc2.preview_configuration = self.preview_config
-
-        # Restart
-        self.pc2.start()
-
     def start_preview(self):
         """
         Show a preview of the camera
         """
         # At this point, null preview is probably running still...
         # (but that is OK!)
-        self.pc2.stop()
-
         try:
-            config = self.pc2.create_preview_configuration(
-                {"size": self.pc2.sensor_resolution},
-                transform=Transform(hflip=self.hflip, vflip=self.vflip),
-            )
-            self.pc2.configure(config)
-            self.pc2.start()
+            # Make a note of the old size and controls
+            old_size = self.pc2.preview_configuration.size
+            old_controls = self.pc2.controls.make_dict()
+
             self.pc2.stop_preview()  # Stop null preview
-            self.pc2.start_preview(True)  # Start the not null preview
+
+            self.pc2.start_preview(
+                preview=True,
+                transform=Transform(
+                    hflip=self.hflip, vflip=self.vflip
+                ),  # Why is this not applied??
+            )
+
+            # Reset the controls and size
+            self.preview_size = old_size
+            self.pc2.set_controls(old_controls)
 
         except RuntimeError as e:
             logger.error(f"Preview couldn't start: {e}")
@@ -450,11 +421,8 @@ class Camera:
         filename = utils.format_filename(filename, ext="")
 
         # Start the video
-        self.pc2.start_and_record_video(
-            f"{filename}.mp4",
-            config=self._generate_config("VIDEO"),
-            show_preview=True,
-        )
+        # DON'T specify a config here, it will use video config by default
+        self.pc2.start_and_record_video(f"{filename}.mp4")
 
         start_time = time()
 
@@ -492,8 +460,7 @@ class Camera:
             A full resolution image as a raw RGB numpy array
         """
         # Switch to high quality mode temporarily for array capture
-        still_config = self._generate_config("STILL")
-        return self.pc2.switch_mode_and_capture_array(still_config)
+        return self.pc2.switch_mode_and_capture_array(self.pc2.still_configuration)
 
     # Take a picture
     def take_photo(self, filename=None):
@@ -502,13 +469,12 @@ class Camera:
         """
         filename = utils.format_filename(filename, ".jpg")
 
-        still_config = self._generate_config("STILL")
         if self.pc2.started:
             self.pc2.stop()
-        self.pc2.still_configuration = still_config
         self.pc2.start()
 
         # Capture the image
+        # No need to specify a config, default is still
         self.pc2.start_and_capture_file(name=filename)
 
         # Useful to know what the file is called
@@ -529,16 +495,9 @@ class Camera:
         # Format the filename
         img_filename = utils.format_filename(filename, ext="-{:d}.jpg")
 
-        # Use inbuilt function for now
-        prev_config = self._generate_config("PREVIEW")
-        seq_config = self._generate_config("STILL")
-        # Auto starts
+        # DON'T specify configs here, the defaults are fine
         self.pc2.start_and_capture_files(
-            img_filename,
-            num_files=num_images,
-            delay=interval,
-            capture_mode=seq_config,
-            preview_mode=prev_config,
+            img_filename, num_files=num_images, delay=interval
         )
 
         if make_video:
@@ -574,7 +533,7 @@ class Camera:
         """
         filename = utils.format_filename(filename, ".mp4")
         self.pc2.start_and_record_video(
-            filename, config=self._generate_config("VIDEO"), duration=duration
+            filename, config=self.pc2.video_configuration, duration=duration
         )
 
         return filename
@@ -586,11 +545,8 @@ class Camera:
         """
         filename = utils.format_filename(filename, ".mp4")
 
-        # Update the preview variable as the preview may be started
-        self._preview_started = preview
-
         self.pc2.start_and_record_video(
-            filename, config=self._generate_config("VIDEO"), show_preview=preview
+            filename, config=self.pc2.video_configuration, show_preview=preview
         )
 
     # Stop recording video
