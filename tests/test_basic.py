@@ -3,9 +3,7 @@ from os.path import exists
 
 import numpy as np
 import pytest
-
-# from libcamera import Transform, controls
-from libcamera import controls
+from libcamera import Transform, controls
 from picamzero import Camera, PicameraZeroException
 
 
@@ -131,15 +129,12 @@ def test_preview_starts_and_stops(cam: Camera):
 
 
 def test_cam_flip_h(cam: Camera):
-    pass
-    # Known to fail
-    """
+
     cam.flip_camera(hflip=True)
     assert cam.hflip is True
-
     # The transform should be retained after starting the preview
     cam.start_preview()
-    assert cam.pc2.preview_configuration.make_dict()['transform'] == Transform(hflip=1)
+    assert cam.pc2.preview_configuration.make_dict()["transform"] == Transform(hflip=1)
     cam.stop_preview()
 
 
@@ -147,26 +142,28 @@ def test_cam_flip_v(cam: Camera):
     cam.flip_camera(vflip=True)
     assert cam.vflip is True
     cam.start_preview()
-    assert cam.pc2.preview_configuration.make_dict()['transform'] == Transform(vflip=1)
+    assert cam.pc2.preview_configuration.make_dict()["transform"] == Transform(vflip=1)
     cam.stop_preview()
+
 
 def test_cam_flip_v_and_h(cam: Camera):
     cam.flip_camera(hflip=True, vflip=True)
     assert cam.hflip is True
     assert cam.vflip is True
     cam.start_preview()
-    assert cam.pc2.preview_configuration.make_dict()['transform'] ==
-    Transform(hflip=1, vflip=1)
+    assert cam.pc2.preview_configuration.make_dict()["transform"] == Transform(
+        hflip=1, vflip=1
+    )
     cam.stop_preview()
+
 
 def test_cam_flip_none(cam: Camera):
     cam.flip_camera(hflip=False, vflip=False)
     assert cam.vflip is False
     assert cam.hflip is False
     cam.start_preview()
-    assert cam.pc2.preview_configuration.make_dict()['transform'] == Transform()
+    assert cam.pc2.preview_configuration.make_dict()["transform"] == Transform()
     cam.stop_preview()
-"""
 
 
 # ----------------------------------

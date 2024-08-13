@@ -342,14 +342,11 @@ class Camera:
 
             self.pc2.stop_preview()  # Stop null preview
 
-            self.pc2.start_preview(
-                preview=True,
-                transform=Transform(
-                    hflip=self.hflip, vflip=self.vflip
-                ),  # Why is this not applied??
-            )
+            self.pc2.start_preview(preview=True)
 
             # Reset the controls and size
+            trans = {"transform": Transform(hflip=self.hflip, vflip=self.vflip)}
+            self.pc2.preview_configuration.update(trans)
             self.preview_size = old_size
             self.pc2.set_controls(old_controls)
 
