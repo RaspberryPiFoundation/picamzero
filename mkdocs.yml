@@ -1,5 +1,7 @@
 site_name: picamzero
 nav:
- - Home: index.md
- - Camera: camera.md
+  - Home: index.md
+  - Getting started: start.md
+  - Methods: methods.md
+
 theme: readthedocs
