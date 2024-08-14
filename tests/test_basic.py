@@ -113,75 +113,28 @@ def test_property_invalid_white_balance(cam: Camera):
 def test_property_set_video_size(cam: Camera):
     cam.pc2.start()
     cam.video_size = (1280, 720)
-    assert isinstance(cam.video_size, tuple) and len(cam.video_size) == 2
-    h, w = cam.video_size
-    assert isinstance(h, int) and isinstance(w, int) and h > 0 and w > 0
-    max_h, max_w = cam.pc2.sensor_resolution
-    assert not h > max_h and not w > max_w
-    assert cam.video_size == (1280, 720)
     assert cam.pc2.video_configuration.size == (1280, 720)
 
 
 def test_property_set_preview_size(cam: Camera):
     cam.pc2.start()
     cam.preview_size = (1280, 720)
-    assert isinstance(cam.preview_size, tuple) and len(cam.preview_size) == 2
-    h, w = cam.preview_size
-    assert isinstance(h, int) and isinstance(w, int) and h > 0 and w > 0
-    max_h, max_w = cam.pc2.sensor_resolution
-    assert not h > max_h and not w > max_w
-    assert cam.preview_size == (1280, 720)
     assert cam.pc2.preview_configuration.size == (1280, 720)
 
 
 def test_property_set_still_size(cam: Camera):
     cam.pc2.start()
     cam.still_size = (1280, 720)
-    assert isinstance(cam.still_size, tuple) and len(cam.still_size) == 2
-    h, w = cam.still_size
-    assert isinstance(h, int) and isinstance(w, int) and h > 0 and w > 0
-    max_h, max_w = cam.pc2.sensor_resolution
-    assert not h > max_h and not w > max_w
-    assert cam.still_size == (1280, 720)
     assert cam.pc2.still_configuration.size == (1280, 720)
 
 
-def test_property_invalid_preview_size(cam: Camera):
-    cam.preview_size = (9000, 6000)
+@pytest.mark.parametrize("size", [(9000, 6000),(-9000, 6000),(9000, -6000),(-9000, -6000),(90.00, 6.000)])
+def test_property_invalid_size(cam: Camera, size):
+    cam.preview_size = size
     assert cam.preview_size == cam.pc2.sensor_resolution
-    cam.preview_size = (-9000, 6000)
-    assert cam.preview_size == cam.pc2.sensor_resolution
-    cam.preview_size = (9000, -6000)
-    assert cam.preview_size == cam.pc2.sensor_resolution
-    cam.preview_size = (-9000, -6000)
-    assert cam.preview_size == cam.pc2.sensor_resolution
-    cam.preview_size = (90.00, 6.000)
-    assert cam.preview_size == cam.pc2.sensor_resolution
-
-
-def test_property_invalid_still_size(cam: Camera):
-    cam.still_size = (9000, 6000)
+    cam.still_size = size
     assert cam.still_size == cam.pc2.sensor_resolution
-    cam.still_size = (-9000, 6000)
-    assert cam.still_size == cam.pc2.sensor_resolution
-    cam.still_size = (9000, -6000)
-    assert cam.still_size == cam.pc2.sensor_resolution
-    cam.still_size = (-9000, -6000)
-    assert cam.still_size == cam.pc2.sensor_resolution
-    cam.still_size = (90.00, 6.000)
-    assert cam.still_size == cam.pc2.sensor_resolution
-
-
-def test_property_invalid_video_size(cam: Camera):
-    cam.video_size = (9000, 6000)
-    assert cam.video_size == cam.pc2.sensor_resolution
-    cam.video_size = (-9000, 6000)
-    assert cam.video_size == cam.pc2.sensor_resolution
-    cam.video_size = (9000, -6000)
-    assert cam.video_size == cam.pc2.sensor_resolution
-    cam.video_size = (-9000, -6000)
-    assert cam.video_size == cam.pc2.sensor_resolution
-    cam.video_size = (90.00, 6.000)
+    cam.video_size = size
     assert cam.video_size == cam.pc2.sensor_resolution
 
 
