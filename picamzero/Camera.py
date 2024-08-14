@@ -357,12 +357,12 @@ class Camera:
         """
         Stop the preview
         """
-        if self.pc2._preview:
-            try:
-                self.pc2.stop_preview()
+        try:
+            # Picam2 method should handle whether there actually is one
+            self.pc2.stop_preview()
 
-            except RuntimeError:
-                logger.error("Couldn't stop preview")
+        except RuntimeError:
+            logger.error("Couldn't stop preview")
 
     def annotate(
         self,
@@ -417,12 +417,7 @@ class Camera:
         # Format the filename so that it has no extension
         filename = utils.format_filename(filename, ext="")
 
-        # Start the video
-        # DON'T specify a config here, it will use video config by default
-        self.pc2.start_and_record_video(f"{filename}.mp4")
-
-        start_time = time()
-
+        # Calculate when to take stills
         still_times = [
             i * still_interval
             for i in range(1, math.ceil(duration / still_interval) + 1)
@@ -432,11 +427,18 @@ class Camera:
         # exactly divisible the final still isn't included)
         result = list(filter(lambda x: x <= duration, still_times))
 
+        # Start the video
+        self.pc2.start_and_record_video(f"{filename}.mp4", config="video")
+        start_time = time()
+
         for i, still_time in enumerate(result):
             sleep(max(0, still_time - (time() - start_time)))
+
             request = self.pc2.capture_request()
             request.save("main", f"{filename}-{i}.jpg")
             request.release()
+
+            logger.info(f"Capturing a still {i}")
 
         remaining_time = duration - (time() - start_time)
 
