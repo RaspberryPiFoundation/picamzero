@@ -52,10 +52,10 @@ def possible_controls(reverse_kv=False):
         return poss_controls
 
 
-def set_camera_size(config, max_resolution, size, logger, error_msg_type, example_msg):
+def set_camera_size(config, max_resolution, size, error_msg_type, example_msg):
+    max_h, max_w = max_resolution
     if isinstance(size, tuple) and len(size) == 2:
         h, w = size
-        max_h, max_w = max_resolution
         if isinstance(h, int) and isinstance(w, int) and h > 0 and w > 0:
             if h > max_h or w > max_w:
                 config.size = (max_h, max_w)

@@ -8,6 +8,7 @@ import os
 import math
 import numpy as np
 
+
 from libcamera import Transform
 
 logger = logging.getLogger(__name__)
@@ -88,7 +89,6 @@ class Camera:
             self.pc2.preview_configuration,
             self.pc2.sensor_resolution,
             size,
-            logger,
             error_msg_type="preview",
             example_msg="(640, 480)",
         )
@@ -103,7 +103,6 @@ class Camera:
             self.pc2.still_configuration,
             self.pc2.sensor_resolution,
             size,
-            logger,
             error_msg_type="image",
             example_msg="(3280, 2464)",
         )
@@ -118,7 +117,6 @@ class Camera:
             self.pc2.video_configuration,
             self.pc2.sensor_resolution,
             size,
-            logger,
             error_msg_type="video",
             example_msg="(1920, 1080)",
         )
