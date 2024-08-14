@@ -82,6 +82,7 @@ def set_camera_size(config, max_resolution, size, logger, error_msg_type, exampl
             f"The size has been adjusted to {max_h}, {max_w}."
         )
 
+
 # Return a dictionary of fonts
 def font_dict(reverse_kv=False):
     fonts = {
