@@ -128,7 +128,9 @@ def test_property_set_still_size(cam: Camera):
     assert cam.pc2.still_configuration.size == (1280, 720)
 
 
-@pytest.mark.parametrize("size", [(9000, 6000),(-9000, 6000),(9000, -6000),(-9000, -6000),(90.00, 6.000)])
+@pytest.mark.parametrize(
+    "size", [(9000, 6000), (-9000, 6000), (9000, -6000), (-9000, -6000), (90.00, 6.000)]
+)
 def test_property_invalid_size(cam: Camera, size):
     cam.preview_size = size
     assert cam.preview_size == cam.pc2.sensor_resolution

@@ -79,7 +79,7 @@ def set_camera_size(config, max_resolution, size, error_msg_type, example_msg):
             f"""The size of the {error_msg_type} must be two positive integers,
             separated by a comma and in brackets.""",
             f"Example: {example_msg}.",
-            f"The size has been adjusted to {max_h}, {max_w}."
+            f"The size has been adjusted to {max_h}, {max_w}.",
         )
 
 
