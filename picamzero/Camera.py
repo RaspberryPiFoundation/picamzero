@@ -322,6 +322,39 @@ class Camera:
     # METHODS
     # ----------------------------------
 
+    def retain_controls(method):
+        """
+        Decorator to note the controls status before a method
+        and return to that state after the method ends.
+
+        Apply by adding @retain_controls before method definition.
+        """
+
+        def wrapper(self, *args, **kwargs):
+
+            # Make a note of the old size and controls
+            configs = [
+                self.pc2.preview_configuration,
+                self.pc2.still_configuration,
+                self.pc2.video_configuration,
+            ]
+            old_sizes = [config.size for config in configs]
+            old_controls = self.pc2.controls.make_dict()
+
+            # Do whatever it is you're doing
+            method(self, *args, **kwargs)
+
+            # Reset the controls
+            self.pc2.set_controls(old_controls)
+
+            # Reapply the transform and size
+            trans = {"transform": Transform(hflip=self.hflip, vflip=self.vflip)}
+            for i, config in enumerate(configs):
+                config.update(trans)
+                config.size = old_sizes[i]
+
+        return wrapper
+
     def flip_camera(self, vflip=False, hflip=False):
         """
         Flip the image horizontally or vertically
@@ -329,6 +362,7 @@ class Camera:
         self.vflip = vflip
         self.hflip = hflip
 
+    @retain_controls
     def start_preview(self):
         """
         Show a preview of the camera
@@ -336,23 +370,13 @@ class Camera:
         # At this point, null preview is probably running still...
         # (but that is OK!)
         try:
-            # Make a note of the old size and controls
-            old_size = self.pc2.preview_configuration.size
-            old_controls = self.pc2.controls.make_dict()
-
             self.pc2.stop_preview()  # Stop null preview
-
             self.pc2.start_preview(preview=True)
-
-            # Reset the controls and size
-            trans = {"transform": Transform(hflip=self.hflip, vflip=self.vflip)}
-            self.pc2.preview_configuration.update(trans)
-            self.preview_size = old_size
-            self.pc2.set_controls(old_controls)
 
         except RuntimeError as e:
             logger.error(f"Preview couldn't start: {e}")
 
+    @retain_controls
     def stop_preview(self):
         """
         Stop the preview
@@ -410,6 +434,7 @@ class Camera:
         pass
 
     # Take video and take still
+    @retain_controls
     def take_video_and_still(self, filename=None, duration=20, still_interval=4):
         """
         Take video for <duration> and take a still every <interval> seconds?
@@ -445,6 +470,7 @@ class Camera:
 
         self.pc2.stop_recording()
 
+    @retain_controls
     def capture_array(self) -> np.ndarray:
         """
         Takes a photo at full resolution and saves it as an
@@ -460,6 +486,7 @@ class Camera:
         return self.pc2.switch_mode_and_capture_array(self.pc2.still_configuration)
 
     # Take a picture
+    @retain_controls
     def take_photo(self, filename=None):
         """
         Takes a jpeg image using the camera
@@ -482,6 +509,7 @@ class Camera:
         return self.take_photo(filename)
 
     # Take a sequence
+    @retain_controls
     def capture_sequence(
         self, filename=None, num_images=10, interval=0.01, make_video=False
     ):
@@ -524,6 +552,7 @@ class Camera:
                 return f"Error creating video: {e}"
 
     # Record a video
+    @retain_controls
     def record_video(self, filename=None, duration=5):
         """
         Record a video
@@ -536,6 +565,7 @@ class Camera:
         return filename
 
     # Record a video with option to take a photo
+    @retain_controls
     def start_recording(self, filename=None, preview=False):
         """
         Record a video of undefined length
@@ -547,6 +577,7 @@ class Camera:
         )
 
     # Stop recording video
+    @retain_controls
     def stop_recording(self):
         """
         Stop recording video

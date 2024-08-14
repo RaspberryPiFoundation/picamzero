@@ -129,7 +129,6 @@ def test_property_invalid_white_balance(cam: Camera):
 def test_controls_retained_after_preview(cam_with_controls: Camera):
 
     cam = cam_with_controls
-
     cam.start_preview()
 
     assert cam.brightness == 0.7
@@ -140,7 +139,31 @@ def test_controls_retained_after_preview(cam_with_controls: Camera):
     assert cam.greyscale is True
 
 
-# def test_controls_retained
+def test_controls_retained_after_photo(cam_with_controls: Camera):
+
+    cam = cam_with_controls
+    cam.take_photo("meh.jpg")
+
+    assert cam.brightness == 0.7
+    assert cam.contrast == 11.2
+    assert cam.exposure == 600
+    assert cam.gain == 2
+    assert cam.white_balance == "indoor"
+    assert cam.greyscale is True
+
+
+def test_controls_retained_after_video(cam_with_controls: Camera):
+
+    cam = cam_with_controls
+    cam.record_video("meh.mp4", duration=3)
+
+    assert cam.brightness == 0.7
+    assert cam.contrast == 11.2
+    assert cam.exposure == 600
+    assert cam.gain == 2
+    assert cam.white_balance == "indoor"
+    assert cam.greyscale is True
+
 
 # ----------------------------------
 # Preview
