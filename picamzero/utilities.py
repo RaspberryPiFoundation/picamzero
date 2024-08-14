@@ -119,7 +119,7 @@ def check_font_in_dict(font):
             )
             logger.warning(
                 f"""Invalid font '{font}'. Available fonts are:\n{available_fonts}
-                Your font has been set to \'simplex\'"""
+                Your font has been set to \'simplex\'."""
             )
             font = cv2.FONT_HERSHEY_SIMPLEX
         else:
