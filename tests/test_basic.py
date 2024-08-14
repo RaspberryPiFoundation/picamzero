@@ -33,6 +33,10 @@ def cam_with_controls(cam: Camera):
     cam.gain = 2
     cam.white_balance = "indoor"
     cam.greyscale = True
+    cam.preview_size = (800, 600)
+    cam.still_size = (800, 600)
+    cam.video_size = (800, 600)
+    cam.flip_camera(vflip=True, hflip=True)
     yield cam
 
 
@@ -137,6 +141,18 @@ def test_controls_retained_after_preview(cam_with_controls: Camera):
     assert cam.gain == 2
     assert cam.white_balance == "indoor"
     assert cam.greyscale is True
+    assert cam.preview_size == (800, 600)
+    assert cam.still_size == (800, 600)
+    assert cam.video_size == (800, 600)
+    assert cam.pc2.preview_configuration.make_dict()["transform"] == Transform(
+        hflip=1, vflip=1
+    )
+    assert cam.pc2.still_configuration.make_dict()["transform"] == Transform(
+        hflip=1, vflip=1
+    )
+    assert cam.pc2.video_configuration.make_dict()["transform"] == Transform(
+        hflip=1, vflip=1
+    )
 
 
 def test_controls_retained_after_photo(cam_with_controls: Camera):
@@ -150,6 +166,18 @@ def test_controls_retained_after_photo(cam_with_controls: Camera):
     assert cam.gain == 2
     assert cam.white_balance == "indoor"
     assert cam.greyscale is True
+    assert cam.preview_size == (800, 600)
+    assert cam.still_size == (800, 600)
+    assert cam.video_size == (800, 600)
+    assert cam.pc2.preview_configuration.make_dict()["transform"] == Transform(
+        hflip=1, vflip=1
+    )
+    assert cam.pc2.still_configuration.make_dict()["transform"] == Transform(
+        hflip=1, vflip=1
+    )
+    assert cam.pc2.video_configuration.make_dict()["transform"] == Transform(
+        hflip=1, vflip=1
+    )
 
 
 def test_controls_retained_after_video(cam_with_controls: Camera):
@@ -163,6 +191,18 @@ def test_controls_retained_after_video(cam_with_controls: Camera):
     assert cam.gain == 2
     assert cam.white_balance == "indoor"
     assert cam.greyscale is True
+    assert cam.preview_size == (800, 600)
+    assert cam.still_size == (800, 600)
+    assert cam.video_size == (800, 600)
+    assert cam.pc2.preview_configuration.make_dict()["transform"] == Transform(
+        hflip=1, vflip=1
+    )
+    assert cam.pc2.still_configuration.make_dict()["transform"] == Transform(
+        hflip=1, vflip=1
+    )
+    assert cam.pc2.video_configuration.make_dict()["transform"] == Transform(
+        hflip=1, vflip=1
+    )
 
 
 # ----------------------------------

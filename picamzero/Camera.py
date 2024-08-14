@@ -103,7 +103,7 @@ class Camera:
 
     @property
     def still_size(self):
-        return self.pc2.still.configuration.size
+        return self.pc2.still_configuration.size
 
     @still_size.setter
     def still_size(self, size):
@@ -120,7 +120,7 @@ class Camera:
                 h = min(h, max_h)
                 w = min(w, max_w)
 
-                self.pc2.still.configuration.size = (h, w)
+                self.pc2.still_configuration.size = (h, w)
             else:
                 raise PicameraZeroException(
                     "The height and width of the image must be positive integers.",
@@ -135,7 +135,7 @@ class Camera:
 
     @property
     def video_size(self):
-        return self.pc2.video.configuration.size
+        return self.pc2.video_configuration.size
 
     @video_size.setter
     def video_size(self, size):
@@ -152,7 +152,7 @@ class Camera:
                 h = min(h, max_h)
                 w = min(w, max_w)
 
-                self.pc2.video.configuration.size = (h, w)
+                self.pc2.video_configuration.size = (h, w)
             else:
                 raise PicameraZeroException(
                     "The height and width of the video must be positive integers.",
@@ -342,7 +342,7 @@ class Camera:
             old_controls = self.pc2.controls.make_dict()
 
             # Do whatever it is you're doing
-            method(self, *args, **kwargs)
+            returnvalue = method(self, *args, **kwargs)
 
             # Reset the controls
             self.pc2.set_controls(old_controls)
@@ -352,6 +352,9 @@ class Camera:
             for i, config in enumerate(configs):
                 config.update(trans)
                 config.size = old_sizes[i]
+
+            if returnvalue is not None:
+                return returnvalue
 
         return wrapper
 
@@ -470,7 +473,6 @@ class Camera:
 
         self.pc2.stop_recording()
 
-    @retain_controls
     def capture_array(self) -> np.ndarray:
         """
         Takes a photo at full resolution and saves it as an
