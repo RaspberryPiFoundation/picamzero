@@ -1,6 +1,10 @@
 from .PicameraZeroException import PicameraZeroException
 import os
 from libcamera import controls
+import cv2
+import logging
+
+logger = logging.getLogger(__name__)
 
 
 def format_filename(filename: str, ext: str) -> str:
@@ -77,3 +81,47 @@ def set_camera_size(config, max_resolution, size, logger, error_msg_type, exampl
             f"Example: {example_msg}.",
             f"The size has been adjusted to {max_h}, {max_w}."
         )
+
+# Return a dictionary of fonts
+def font_dict(reverse_kv=False):
+    fonts = {
+        "simplex": (cv2.FONT_HERSHEY_SIMPLEX, "Normal size sans-serif font"),
+        "plain": (cv2.FONT_HERSHEY_PLAIN, "Small size sans-serif font"),
+        "duplex": (
+            cv2.FONT_HERSHEY_DUPLEX,
+            "Normal size sans-serif font (more complex)",
+        ),
+        "complex": (cv2.FONT_HERSHEY_COMPLEX, "Normal size serif font"),
+        "triplex": (cv2.FONT_HERSHEY_TRIPLEX, "Larger size serif font"),
+        "small": (cv2.FONT_HERSHEY_COMPLEX_SMALL, "Small size serif font"),
+        "script_simplex": (
+            cv2.FONT_HERSHEY_SCRIPT_SIMPLEX,
+            "Handwriting-style font",
+        ),
+        "script_complex": (
+            cv2.FONT_HERSHEY_SCRIPT_COMPLEX,
+            "Complex handwriting-style font",
+        ),
+        "italic": (cv2.FONT_ITALIC, "Italic version of the current font"),
+    }
+    if reverse_kv:
+        return {v: k for k, v in fonts.items()}
+    else:
+        return fonts
+
+
+def check_font_in_dict(font):
+    if isinstance(font, str):
+        if font not in font_dict():
+            # Font not found: return the list of available fonts with descriptions
+            available_fonts = "\n".join(
+                [f"{name}: {desc}" for name, (_, desc) in font_dict().items()]
+            )
+            logger.warning(
+                f"""Invalid font '{font}'. Available fonts are:\n{available_fonts}
+                Your font has been set to \'simplex\'"""
+            )
+            font = cv2.FONT_HERSHEY_SIMPLEX
+        else:
+            font = font_dict()[font][0]
+        return font

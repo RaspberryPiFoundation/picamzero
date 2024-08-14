@@ -1,10 +1,13 @@
-# picamzero
+# Installation
 
-This is the documentation for the picamzero library
+Picamera zero (picamzero) is designed to allow beginners to control a Raspberry Pi camera with Python.
 
-Test
+To install the picamzero library:
 
-## Commands
+1. Open a terminal on your Raspberry Pi
 
-* `mkdocs serve` - Start the live-reloading docs server.
-* `mkdocs build` - Build the documentation site.
+2. TODO: insert install instructions here once known>
+
+Now you can [get started](start.md)!
+
+
