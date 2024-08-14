@@ -7,8 +7,8 @@ import logging
 import os
 import math
 import numpy as np
-
 from libcamera import Transform
+from functools import wraps
 
 logger = logging.getLogger(__name__)
 
@@ -333,6 +333,7 @@ class Camera:
         Apply by adding @retain_controls before method definition.
         """
 
+        @wraps(method)
         def wrapper(self, *args, **kwargs):
 
             # Make a note of the old size and controls
