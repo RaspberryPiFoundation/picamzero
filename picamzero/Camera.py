@@ -7,7 +7,7 @@ import logging
 import os
 import math
 import numpy as np
-from .utilities import signed_dms_coordinates_to_exif_dict
+from . import utilities
 
 from libcamera import Transform
 
@@ -535,8 +535,10 @@ class Camera:
     def take_photo(self, filename=None, gps_coordinates=None):
         """
         Takes a jpeg image using the camera
+        :param str filename: The name of the file to save the photo.
+        If it doesn't end with '.jpg', the ending '.jpg' is added.
         :param tuple[tuple[float, float, float, float],
-                     tuple[float, float, float, float]] gps_coordinate -
+                     tuple[float, float, float, float]] gps_coordinate:
         The gps coordinates to be associated
         with the image, specified as a (latitude, longitude) tuple where
         both latitude and longitude are themselves tuples of the
@@ -555,7 +557,9 @@ class Camera:
         # Capture the image
         kwargs: dict = {}
         if gps_coordinates is not None:
-            kwargs["exif_data"] = signed_dms_coordinates_to_exif_dict(gps_coordinates)
+            kwargs["exif_data"] = utilities.signed_dms_coordinates_to_exif_dict(
+                gps_coordinates
+            )
 
         # Use inbuilt function for now
         self.pc2.start_and_capture_file(name=filename, **kwargs)
