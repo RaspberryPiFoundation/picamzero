@@ -25,6 +25,17 @@ def cam():
     camera.pc2.close()
 
 
+@pytest.fixture
+def cam_with_controls(cam: Camera):
+    cam.brightness = 0.7
+    cam.contrast = 11.2
+    cam.exposure = 600
+    cam.gain = 2
+    cam.white_balance = "indoor"
+    cam.greyscale = True
+    yield cam
+
+
 # ----------------------------------
 # Initialise camera
 # ----------------------------------
@@ -110,6 +121,27 @@ def test_property_invalid_white_balance(cam: Camera):
         cam.white_balance = "NotAThing"
 
 
+# -------------------------------------
+# Test controls and transform retained
+# -------------------------------------
+
+
+def test_controls_retained_after_preview(cam_with_controls: Camera):
+
+    cam = cam_with_controls
+
+    cam.start_preview()
+
+    assert cam.brightness == 0.7
+    assert cam.contrast == 11.2
+    assert cam.exposure == 600
+    assert cam.gain == 2
+    assert cam.white_balance == "indoor"
+    assert cam.greyscale is True
+
+
+# def test_controls_retained
+
 # ----------------------------------
 # Preview
 # ----------------------------------
@@ -129,7 +161,6 @@ def test_preview_starts_and_stops(cam: Camera):
 
 
 def test_cam_flip_h(cam: Camera):
-
     cam.flip_camera(hflip=True)
     assert cam.hflip is True
     # The transform should be retained after starting the preview

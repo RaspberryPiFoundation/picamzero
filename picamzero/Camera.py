@@ -438,8 +438,6 @@ class Camera:
             request.save("main", f"{filename}-{i}.jpg")
             request.release()
 
-            logger.info(f"Capturing a still {i}")
-
         remaining_time = duration - (time() - start_time)
 
         if remaining_time > 0:
