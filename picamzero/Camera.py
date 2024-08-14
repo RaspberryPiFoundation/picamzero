@@ -40,14 +40,21 @@ class Camera:
 
         self.preview_config = self._generate_config("PREVIEW")
 
+        # Set the preview config by default
+        self.pc2.preview_configuration = self.preview_config
+        self._started_preview = False
+
         # Annotation
         self._text = None
-        self._text_color = (255, 255, 255, 255)
-        self._text_bgcolor = (0, 0, 0, 0)
-        self._text_origin = (50, 50)
-        self._text_font = cv2.FONT_HERSHEY_SIMPLEX
-        self._text_scale = 3
-        self._text_thickness = 3
+        self._text_properties = {
+            "font": utils.font_dict()["simplex"][0],
+            "color": (255, 255, 255, 255),
+            "origin": (50, 50),
+            "scale": 3,
+            "thickness": 3,
+            "bgcolor": None,
+            "position": (0, 0),
+        }
 
         self.pc2.start()
 
@@ -368,6 +375,7 @@ class Camera:
         """
         Show a preview of the camera
         """
+
         # At this point, null preview is probably running still...
         # (but that is OK!)
         self.pc2.stop()
@@ -399,36 +407,62 @@ class Camera:
     def annotate(
         self,
         text="Default Text",
-        text_color=(255, 255, 255, 255),
-        text_origin=(50, 50),
-        text_scale=3,
-        text_thickness=3,
+        font="simplex",
+        color=(255, 255, 255, 255),
+        origin=(50, 50),
+        scale=3,
+        thickness=3,
+        position=(0, 0),
+        bgcolor=None,
         video=False,
     ):
         """
         Set a text overlay on the preview and on images
-        TODO: video, text bgcolor, font?
+        TODO: video?
         """
         self._text = text
-        self._text_color = text_color
-        self._text_origin = text_origin
-        self._text_scale = text_scale
-        self._text_thickness = text_thickness
+
+        font = utils.check_font_in_dict(font)
+
+        self._text_properties = {
+            "font": font,
+            "color": color,
+            "origin": origin,
+            "scale": scale,
+            "thickness": thickness,
+            "bgcolor": bgcolor,
+            "position": position,
+        }
 
         def annotation_callback(request):
             """
             Annotate before taking a photo etc.
             """
+            text_prop = self._text_properties
+            # Create the background
+            x, y = text_prop["position"]
+            text_size, _ = cv2.getTextSize(
+                text, text_prop["font"], text_prop["scale"], text_prop["thickness"]
+            )
+            text_w, text_h = text_size
 
             with MappedArray(request, "main") as m:
+                if text_prop["bgcolor"] is not None:
+                    cv2.rectangle(
+                        m.array,
+                        text_prop["position"],
+                        (x + text_w, y + text_h),
+                        text_prop["bgcolor"],
+                        -1,
+                    )
                 cv2.putText(
                     m.array,
                     self._text,
-                    self._text_origin,
-                    self._text_font,
-                    self._text_scale,
-                    self._text_color,
-                    self._text_thickness,
+                    (x, y + text_h + text_prop["scale"] - 4),
+                    text_prop["font"],
+                    text_prop["scale"],
+                    text_prop["color"],
+                    text_prop["thickness"],
                 )
 
         # Add the annotation as a callback when any pics are taken
