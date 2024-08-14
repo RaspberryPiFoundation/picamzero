@@ -4,7 +4,7 @@ from os.path import exists
 import numpy as np
 import pytest
 from libcamera import Transform, controls
-from picamzero import Camera, PicameraZeroException
+from picamzero import Camera, PicameraZeroException, utilities
 
 
 @pytest.fixture(autouse=True)
@@ -266,23 +266,38 @@ def test_cam_flip_none(cam: Camera):
 
 
 def test_annotation_properties(cam: Camera):
+    cam.annotate(
+        text="hello",
+        color=(255, 255, 0, 255),
+        origin=(100, 100),
+        scale=4,
+        thickness=6,
+    )
+    assert cam._text == "hello"
+    assert cam._text_properties["color"] == (255, 255, 0, 255)
+    assert cam._text_properties["origin"] == (100, 100)
+    assert cam._text_properties["scale"] == 4
+    assert cam._text_properties["thickness"] == 6
+
+
+def test_annotation_invalid_font(cam: Camera):
     text = "hello"
-    text_color = (255, 255, 0, 255)
-    text_origin = (100, 100)
-    text_scale = 4
-    text_thickness = 6
+    font = "compl"
     cam.annotate(
         text=text,
-        text_color=text_color,
-        text_origin=text_origin,
-        text_scale=text_scale,
-        text_thickness=text_thickness,
+        font=font,
     )
-    assert cam._text == text
-    assert cam._text_color == text_color
-    assert cam._text_origin == text_origin
-    assert cam._text_scale == text_scale
-    assert cam._text_thickness == text_thickness
+    assert cam._text_properties["font"] == 0
+
+
+def test_annotation_valid_font(cam: Camera):
+    text = "hello"
+    font = "complex"
+    cam.annotate(
+        text=text,
+        font=font,
+    )
+    assert cam._text_properties["font"] == utilities.check_font_in_dict(font)
 
 
 # ----------------------------------

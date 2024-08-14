@@ -1,0 +1,15 @@
+name: Test runner
+
+on:
+  workflow_dispatch:
+
+jobs:
+  test:
+    runs-on: [self-hosted,picamera2]
+    steps:
+      - name: Debugging
+        run: pwd && ls -la
+      - name: Try and take photo
+        run: |
+          python3 -c 'from picamera2 import Picamera2; cam = Picamera2(); cam.configure(cam.create_still_configuration()); cam.start(); cam.capture_file("photo.jpg"); cam.stop()'
+          ls -la
