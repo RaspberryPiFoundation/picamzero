@@ -478,7 +478,8 @@ class Camera:
         if remaining_time > 0:
             sleep(remaining_time)
 
-        self.pc2.stop_recording()
+        self.stop_recording()
+        self.pc2.start()
 
     def capture_array(self) -> np.ndarray:
         """
@@ -510,6 +511,8 @@ class Camera:
 
         # Capture the image
         self.pc2.start_and_capture_file(name=filename)
+
+        self.pc2.start()
 
         # Useful to know what the file is called
         return filename
@@ -563,9 +566,10 @@ class Camera:
                         )
 
                 video.release()
-                return video_name
+
             except Exception as e:
                 return f"Error creating video: {e}"
+        self.pc2.start()  # Restart camera
 
     # Record a video
     def record_video(self, filename=None, duration=5):
@@ -576,7 +580,7 @@ class Camera:
         self.pc2.start_and_record_video(
             filename, config=self._generate_config("VIDEO"), duration=duration
         )
-
+        self.pc2.start()
         return filename
 
     # Record a video with option to take a photo
@@ -599,3 +603,4 @@ class Camera:
         Stop recording video
         """
         self.pc2.stop_recording()
+        self.pc2.start()
