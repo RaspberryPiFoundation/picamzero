@@ -123,10 +123,10 @@ def setup(args):
     # setup venv
     if not VENV.exists():
         logger.info("Initialising venv...")
-        args = ["python3", "-m", "venv", VENV.name]
+        cmd = ["python3", "-m", "venv", VENV.name]
         if is_running_on_raspberry_pi():
-            args.insert(3, "--system-site-packages")
-        run(args, text=True)
+            cmd.insert(3, "--system-site-packages")
+        run(cmd, text=True)
 
     logger.info("Installing dependencies into venv...")
     run(
