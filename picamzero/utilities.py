@@ -51,26 +51,61 @@ def possible_controls(reverse_kv=False):
 def set_camera_size(config, max_resolution, size, logger, error_msg_type, example_msg):
     if isinstance(size, tuple) and len(size) == 2:
         h, w = size
+        max_h, max_w = max_resolution
         if isinstance(h, int) and isinstance(w, int) and h > 0 and w > 0:
-            max_h, max_w = max_resolution
             if h > max_h or w > max_w:
+                config.size = (max_h, max_w)
                 logger.warning(
-                    """Warning: The specified size exceeds the camera's
-                    maximum allowed dimensions. The size has been adjusted to fit."""
+                    f"""You specified an invalid size for the camera.
+                    The size has been adjusted to {max_h}, {max_w}."""
                 )
-            h = min(h, max_h)
-            w = min(w, max_w)
-
-            config.size = (h, w)
+            else:
+                config.size = (h, w)
         else:
-            raise PicameraZeroException(
+            config.size = (max_h, max_w)
+            logger.warning(
                 f"""The height and width of the {error_msg_type} must
-                be two positive integers.""",
-                f"Example: {example_msg}",
+                be two positive integers.
+                Example: {example_msg}.
+                The size has been adjusted to {max_h}, {max_w}."""
             )
     else:
-        raise PicameraZeroException(
+        config.size = (max_h, max_w)
+        logger.warning(
             f"""The size of the {error_msg_type} must be two positive integers,
             separated by a comma and in brackets.""",
             f"Example: {example_msg}.",
+            f"The size has been adjusted to {max_h}, {max_w}."
         )
+
+
+'''
+def set_camera_size(config, max_resolution, size, logger, error_msg_type, example_msg):
+    if isinstance(size, tuple) and len(size) == 2:
+        h, w = size
+        max_h, max_w = max_resolution
+        logger.warning(max_resolution)
+        if isinstance(h, int) and isinstance(w, int) and h > 0 and w > 0:
+            if h > max_h or w > max_w:
+                config.size = (max_h, max_w)
+            logger.warning(
+                f"""Warning: You specified an invalid size for the camera.
+                The size has been adjusted to {max_h}, {max_w}."""
+            )
+        else:
+            config.size = (max_h, max_w)
+            logger.warning(
+                f"""The height and width of the {error_msg_type} must
+                be two positive integers.
+                Example: {example_msg}.
+                The size has been adjusted to {max_h}, {max_w}."""
+            )
+    else:
+        config.size = (max_h, max_w)
+        logger.warning(
+            f"""The size of the {error_msg_type} must be two positive integers,
+            separated by a comma and in brackets.""",
+            f"Example: {example_msg}.",
+            f"The size has been adjusted to {max_h}, {max_w}."
+        )
+'''
