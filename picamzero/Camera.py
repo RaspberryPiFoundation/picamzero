@@ -423,8 +423,7 @@ class Camera:
             """
             text_prop = self._text_properties
             # Create the background
-            if text_prop["bgcolor"] is not None:
-                x, y = text_prop["position"]
+            x, y = text_prop["position"]
             text_size, _ = cv2.getTextSize(
                 text, text_prop["font"], text_prop["scale"], text_prop["thickness"]
             )

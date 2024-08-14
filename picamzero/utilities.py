@@ -91,7 +91,7 @@ def check_font_in_dict(font):
                 f"""Invalid font '{font}'. Available fonts are:\n{available_fonts}
                 Your font has been set to \'simplex\'"""
             )
-            font = 0
+            font = cv2.FONT_HERSHEY_SIMPLEX
         else:
-            font = 2
+            font = font_dict()[font][0]
         return font
