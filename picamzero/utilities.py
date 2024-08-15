@@ -1,6 +1,6 @@
 from .PicameraZeroException import PicameraZeroException
 import os
-from libcamera import controls
+from libcamera import controls, CameraConfiguration
 import cv2
 import logging
 import piexif
@@ -53,6 +53,43 @@ def possible_controls(reverse_kv=False):
         return poss_controls
 
 
+def set_camera_size(
+    config: CameraConfiguration,
+    max_resolution: tuple[int, int],
+    size: tuple[int, int],
+    error_msg_type: str,
+    example_msg: str,
+):
+    max_h, max_w = max_resolution
+    if isinstance(size, tuple) and len(size) == 2:
+        h, w = size
+        if isinstance(h, int) and isinstance(w, int) and h > 0 and w > 0:
+            if h > max_h or w > max_w:
+                config.size = (max_h, max_w)
+                logger.warning(
+                    f"""You specified an invalid size for the camera.
+                    The size has been adjusted to {max_h}, {max_w}."""
+                )
+            else:
+                config.size = (h, w)
+        else:
+            config.size = (max_h, max_w)
+            logger.warning(
+                f"""The height and width of the {error_msg_type} must
+                be two positive integers.
+                Example: {example_msg}.
+                The size has been adjusted to {max_h}, {max_w}."""
+            )
+    else:
+        config.size = (max_h, max_w)
+        logger.warning(
+            f"""The size of the {error_msg_type} must be two positive integers,
+            separated by a comma and in brackets.""",
+            f"Example: {example_msg}.",
+            f"The size has been adjusted to {max_h}, {max_w}.",
+        )
+
+
 # Return a dictionary of fonts
 def font_dict(reverse_kv=False):
     fonts = {
@@ -90,7 +127,7 @@ def check_font_in_dict(font):
             )
             logger.warning(
                 f"""Invalid font '{font}'. Available fonts are:\n{available_fonts}
-                Your font has been set to \'simplex\'"""
+                Your font has been set to \'simplex\'."""
             )
             font = cv2.FONT_HERSHEY_SIMPLEX
         else:

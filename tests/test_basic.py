@@ -6,6 +6,7 @@ import piexif
 import pytest
 from libcamera import Transform, controls
 from picamzero import Camera, PicameraZeroException, utilities
+from picamzero.Camera import MAX_VIDEO_SIZE
 
 
 @pytest.fixture(autouse=True)
@@ -124,6 +125,36 @@ def test_property_invalid_white_balance(cam: Camera):
     cam.pc2.start()
     with pytest.raises(PicameraZeroException):
         cam.white_balance = "NotAThing"
+
+
+def test_property_set_video_size(cam: Camera):
+    cam.pc2.start()
+    cam.video_size = (1280, 720)
+    assert cam.pc2.video_configuration.size == (1280, 720)
+
+
+def test_property_set_preview_size(cam: Camera):
+    cam.pc2.start()
+    cam.preview_size = (1280, 720)
+    assert cam.pc2.preview_configuration.size == (1280, 720)
+
+
+def test_property_set_still_size(cam: Camera):
+    cam.pc2.start()
+    cam.still_size = (1280, 720)
+    assert cam.pc2.still_configuration.size == (1280, 720)
+
+
+@pytest.mark.parametrize(
+    "size", [(9000, 6000), (-9000, 6000), (9000, -6000), (-9000, -6000), (90.00, 6.000)]
+)
+def test_property_invalid_size(cam: Camera, size):
+    cam.preview_size = size
+    assert cam.preview_size == cam.pc2.sensor_resolution
+    cam.still_size = size
+    assert cam.still_size == cam.pc2.sensor_resolution
+    cam.video_size = size
+    assert cam.video_size == MAX_VIDEO_SIZE
 
 
 # -------------------------------------
