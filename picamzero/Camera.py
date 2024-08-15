@@ -598,7 +598,7 @@ class Camera:
                 video.release()
 
             except Exception as e:
-                return f"Error creating video: {e}"
+                logger.error(f"Error creating video: {e}")
         self.pc2.start()  # Restart camera
 
     # Record a video
