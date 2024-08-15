@@ -97,7 +97,7 @@ def test_property_exposure(cam: Camera):
 def test_property_invalid_exposure(cam: Camera):
     cam.pc2.start()
     with pytest.raises(PicameraZeroException):
-        cam.exposure = 50000000
+        cam.exposure = cam.pc2.camera_controls["ExposureTime"][0] - 1
 
 
 def test_property_gain(cam: Camera):
