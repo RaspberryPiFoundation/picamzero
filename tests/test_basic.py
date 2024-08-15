@@ -5,6 +5,7 @@ import numpy as np
 import pytest
 from libcamera import Transform, controls
 from picamzero import Camera, PicameraZeroException, utilities
+from picamzero.Camera import MAX_VIDEO_SIZE
 
 
 @pytest.fixture(autouse=True)
@@ -152,7 +153,7 @@ def test_property_invalid_size(cam: Camera, size):
     cam.still_size = size
     assert cam.still_size == cam.pc2.sensor_resolution
     cam.video_size = size
-    assert cam.video_size == cam.pc2.sensor_resolution
+    assert cam.video_size == MAX_VIDEO_SIZE
 
 
 # -------------------------------------

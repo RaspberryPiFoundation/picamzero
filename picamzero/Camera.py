@@ -16,6 +16,11 @@ logger = logging.getLogger(__name__)
 os.environ["LIBCAMERA_LOG_LEVELS"] = "4"
 Picamera2.set_logging(level=Picamera2.ERROR)
 
+# Different camera and processor combinations
+# support a different range of resolutions.
+# This is the minimum 'maximum' for all combinations
+MAX_VIDEO_SIZE: tuple[int, int] = (1920, 1080)
+
 
 class Camera:
     def __init__(self):
@@ -108,14 +113,10 @@ class Camera:
     def video_size(self, size):
         utils.set_camera_size(
             self.pc2.video_configuration,
-            # Different resolutions are supported
-            # on different camera and processor hardware.
-            # This is the minimum 'maximum' for all, but
-            # ideally we could give users a range of options.
-            (1920, 1080),
+            MAX_VIDEO_SIZE,
             size,
             error_msg_type="video",
-            example_msg="(1920, 1080)",
+            example_msg=str(MAX_VIDEO_SIZE),
         )
 
     # Brightness
