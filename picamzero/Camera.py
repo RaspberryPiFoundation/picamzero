@@ -49,7 +49,6 @@ class Camera:
         self._text_properties = {
             "font": utils.font_dict()["simplex"][0],
             "color": (255, 255, 255, 255),
-            "origin": (50, 50),
             "scale": 3,
             "thickness": 3,
             "bgcolor": None,
