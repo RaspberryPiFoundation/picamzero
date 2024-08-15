@@ -154,6 +154,7 @@ def test_property_invalid_size(cam: Camera, size):
     cam.video_size = size
     assert cam.video_size == cam.pc2.sensor_resolution
 
+
 # -------------------------------------
 # Test controls and transform retained
 # -------------------------------------
