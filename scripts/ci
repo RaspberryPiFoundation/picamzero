@@ -16,6 +16,7 @@ PROJECT_DIR = CURRENT_DIR.parent
 VENV = PROJECT_DIR / "venv"
 VENV_PIP = VENV / "bin" / "pip"
 VENV_PYTHON = VENV / "bin" / "python"
+VENV_PYTEST = VENV / "bin" / "pytest"
 VENV_PRECOMMIT = VENV / "bin" / "pre-commit"
 VENV_TWINE = VENV / "bin" / "twine"
 DIST = PROJECT_DIR / "dist"
@@ -122,11 +123,14 @@ def setup(args):
     # setup venv
     if not VENV.exists():
         logger.info("Initialising venv...")
-        run(["python3", "-m", "venv", VENV.name], text=True)
+        cmd = ["python3", "-m", "venv", VENV.name]
+        if is_running_on_raspberry_pi():
+            cmd.insert(3, "--system-site-packages")
+        run(cmd, text=True)
 
     logger.info("Installing dependencies into venv...")
     run(
-        [str(VENV_PIP), "install", "-r", str(PROJECT_DIR / "requirements.txt")],
+        [str(VENV_PIP), "install", "-r", str(PROJECT_DIR / "requirements.dev.txt")],
         stdout=subprocess.DEVNULL if args.version else None,
         text=True,
     )
@@ -134,7 +138,7 @@ def setup(args):
 
 def build():
     if is_running_on_raspberry_pi():
-        run(["pytest"], text=True)
+        run([str(VENV_PYTEST)], text=True)
     else:
         logger.warning("Skipping tests since not running on a Raspberry Pi")
     run([str(VENV_PYTHON), "-m", "build"], text=True)

@@ -7,15 +7,14 @@ import logging
 import os
 import math
 import numpy as np
-
-
 from libcamera import Transform
+from functools import wraps
 
 logger = logging.getLogger(__name__)
 
 # For dev only - suppress Libcamera and Picamera warnings
-# os.environ["LIBCAMERA_LOG_LEVELS"] = "4"
-# Picamera2.set_logging(level=Picamera2.ERROR)
+os.environ["LIBCAMERA_LOG_LEVELS"] = "4"
+Picamera2.set_logging(level=Picamera2.ERROR)
 
 
 class Camera:
@@ -39,18 +38,12 @@ class Camera:
         self.hflip = False
         self.vflip = False
 
-        self.preview_config = self._generate_config("PREVIEW")
-
-        # Set the preview config by default
-        self.pc2.preview_configuration = self.preview_config
-        self._started_preview = False
-
         # Annotation
         self._text = None
         self._text_properties = {
             "font": utils.font_dict()["simplex"][0],
             "color": (255, 255, 255, 255),
-            "origin": (50, 50),
+            "position": (0, 0),
             "scale": 3,
             "thickness": 3,
             "bgcolor": None,
@@ -278,29 +271,42 @@ class Camera:
     # METHODS
     # ----------------------------------
 
-    def _generate_config(self, mode):
+    def retain_controls(method):
         """
-        Helper method: Generate a suitable config to use
+        Decorator to note the controls status before a method
+        and return to that state after the method ends.
+
+        Apply by adding @retain_controls before method definition.
         """
-        temp_config = None
-        if mode == "STILL":
-            temp_config = self.pc2.create_still_configuration(
-                {"size": self.pc2.sensor_resolution},
-                transform=Transform(hflip=self.hflip, vflip=self.vflip),
-            )
-        elif mode == "VIDEO":
-            temp_config = self.pc2.create_video_configuration(
-                {"size": self.pc2.sensor_resolution},
-                transform=Transform(hflip=self.hflip, vflip=self.vflip),
-            )
 
-        elif mode == "PREVIEW":
-            temp_config = self.pc2.create_preview_configuration(
-                {"size": self.pc2.sensor_resolution},
-                transform=Transform(hflip=self.hflip, vflip=self.vflip),
-            )
+        @wraps(method)
+        def wrapper(self, *args, **kwargs):
 
-        return temp_config
+            # Make a note of the old size and controls
+            configs = [
+                self.pc2.preview_configuration,
+                self.pc2.still_configuration,
+                self.pc2.video_configuration,
+            ]
+            old_sizes = [config.size for config in configs]
+            old_controls = self.pc2.controls.make_dict()
+
+            # Do whatever it is you're doing
+            returnvalue = method(self, *args, **kwargs)
+
+            # Reset the controls
+            self.pc2.set_controls(old_controls)
+
+            # Reapply the transform and size
+            trans = {"transform": Transform(hflip=self.hflip, vflip=self.vflip)}
+            for i, config in enumerate(configs):
+                config.update(trans)
+                config.size = old_sizes[i]
+
+            if returnvalue is not None:
+                return returnvalue
+
+        return wrapper
 
     def flip_camera(self, vflip=False, hflip=False):
         """
@@ -309,15 +315,7 @@ class Camera:
         self.vflip = vflip
         self.hflip = hflip
 
-        if self.pc2.started:
-            self.pc2.stop()
-
-        self.preview_config["transform"] = Transform(vflip=self.vflip, hflip=self.hflip)
-        self.pc2.preview_configuration = self.preview_config
-
-        # Restart
-        self.pc2.start()
-
+    @retain_controls
     def start_preview(self):
         """
         Show a preview of the camera
@@ -325,47 +323,37 @@ class Camera:
 
         # At this point, null preview is probably running still...
         # (but that is OK!)
-        self.pc2.stop()
-
         try:
-            config = self.pc2.create_preview_configuration(
-                {"size": self.pc2.sensor_resolution},
-                transform=Transform(hflip=self.hflip, vflip=self.vflip),
-            )
-            self.pc2.configure(config)
-            self.pc2.start()
             self.pc2.stop_preview()  # Stop null preview
-            self.pc2.start_preview(True)  # Start the not null preview
+            self.pc2.start_preview(preview=True)
 
         except RuntimeError as e:
             logger.error(f"Preview couldn't start: {e}")
 
+    @retain_controls
     def stop_preview(self):
         """
         Stop the preview
         """
-        if self.pc2._preview:
-            try:
-                self.pc2.stop_preview()
+        try:
+            # Picam2 method should handle whether there actually is one
+            self.pc2.stop_preview()
 
-            except RuntimeError:
-                logger.error("Couldn't stop preview")
+        except RuntimeError:
+            logger.error("Couldn't stop preview")
 
     def annotate(
         self,
         text="Default Text",
         font="simplex",
         color=(255, 255, 255, 255),
-        origin=(50, 50),
         scale=3,
         thickness=3,
         position=(0, 0),
         bgcolor=None,
-        video=False,
     ):
         """
         Set a text overlay on the preview and on images
-        TODO: video?
         """
         self._text = text
 
@@ -374,7 +362,6 @@ class Camera:
         self._text_properties = {
             "font": font,
             "color": color,
-            "origin": origin,
             "scale": scale,
             "thickness": thickness,
             "bgcolor": bgcolor,
@@ -423,6 +410,7 @@ class Camera:
         pass
 
     # Take video and take still
+    @retain_controls
     def take_video_and_still(self, filename=None, duration=20, still_interval=4):
         """
         Take video for <duration> and take a still every <interval> seconds?
@@ -430,15 +418,7 @@ class Camera:
         # Format the filename so that it has no extension
         filename = utils.format_filename(filename, ext="")
 
-        # Start the video
-        self.pc2.start_and_record_video(
-            f"{filename}.mp4",
-            config=self._generate_config("VIDEO"),
-            show_preview=True,
-        )
-
-        start_time = time()
-
+        # Calculate when to take stills
         still_times = [
             i * still_interval
             for i in range(1, math.ceil(duration / still_interval) + 1)
@@ -448,8 +428,13 @@ class Camera:
         # exactly divisible the final still isn't included)
         result = list(filter(lambda x: x <= duration, still_times))
 
+        # Start the video
+        self.pc2.start_and_record_video(f"{filename}.mp4", config="video")
+        start_time = time()
+
         for i, still_time in enumerate(result):
             sleep(max(0, still_time - (time() - start_time)))
+
             request = self.pc2.capture_request()
             request.save("main", f"{filename}-{i}.jpg")
             request.release()
@@ -474,23 +459,22 @@ class Camera:
             A full resolution image as a raw RGB numpy array
         """
         # Switch to high quality mode temporarily for array capture
-        still_config = self._generate_config("STILL")
-        return self.pc2.switch_mode_and_capture_array(still_config)
+        return self.pc2.switch_mode_and_capture_array(self.pc2.still_configuration)
 
     # Take a picture
+    @retain_controls
     def take_photo(self, filename=None):
         """
         Takes a jpeg image using the camera
         """
         filename = utils.format_filename(filename, ".jpg")
 
-        still_config = self._generate_config("STILL")
         if self.pc2.started:
             self.pc2.stop()
-        self.pc2.still_configuration = still_config
         self.pc2.start()
 
         # Capture the image
+        # No need to specify a config, default is still
         self.pc2.start_and_capture_file(name=filename)
 
         self.pc2.start()
@@ -503,6 +487,7 @@ class Camera:
         return self.take_photo(filename)
 
     # Take a sequence
+    @retain_controls
     def capture_sequence(
         self, filename=None, num_images=10, interval=0.01, make_video=False
     ):
@@ -513,16 +498,9 @@ class Camera:
         # Format the filename
         img_filename = utils.format_filename(filename, ext="-{:d}.jpg")
 
-        # Use inbuilt function for now
-        prev_config = self._generate_config("PREVIEW")
-        seq_config = self._generate_config("STILL")
-        # Auto starts
+        # DON'T specify configs here, the defaults are fine
         self.pc2.start_and_capture_files(
-            img_filename,
-            num_files=num_images,
-            delay=interval,
-            capture_mode=seq_config,
-            preview_mode=prev_config,
+            img_filename, num_files=num_images, delay=interval
         )
 
         if make_video:
@@ -553,32 +531,32 @@ class Camera:
         self.pc2.start()  # Restart camera
 
     # Record a video
+    @retain_controls
     def record_video(self, filename=None, duration=5):
         """
         Record a video
         """
         filename = utils.format_filename(filename, ".mp4")
         self.pc2.start_and_record_video(
-            filename, config=self._generate_config("VIDEO"), duration=duration
+            filename, config=self.pc2.video_configuration, duration=duration
         )
         self.pc2.start()
         return filename
 
     # Record a video with option to take a photo
+    @retain_controls
     def start_recording(self, filename=None, preview=False):
         """
         Record a video of undefined length
         """
         filename = utils.format_filename(filename, ".mp4")
 
-        # Update the preview variable as the preview may be started
-        self._preview_started = preview
-
         self.pc2.start_and_record_video(
-            filename, config=self._generate_config("VIDEO"), show_preview=preview
+            filename, config=self.pc2.video_configuration, show_preview=preview
         )
 
     # Stop recording video
+    @retain_controls
     def stop_recording(self):
         """
         Stop recording video

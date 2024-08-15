@@ -2,6 +2,9 @@ site_name: picamzero
 nav:
   - Home: index.md
   - Getting started: start.md
-  - Methods: methods.md
+  - Camera: camera.md
+  - Photo methods: photo_methods.md
+  - Preview methods: preview_methods.md
+  - Video methods: video_methods.md
 
 theme: readthedocs
