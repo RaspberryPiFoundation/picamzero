@@ -46,7 +46,7 @@ class Camera:
         # Annotation
         self._text = None
         self._text_properties = {
-            "font": utils.font_dict()["simplex"][0],
+            "font": utils.check_font_in_dict("plain1"),
             "color": (255, 255, 255, 255),
             "position": (0, 0),
             "scale": 3,
@@ -350,7 +350,7 @@ class Camera:
     def annotate(
         self,
         text="Default Text",
-        font="simplex",
+        font="plain1",
         color=(255, 255, 255, 255),
         scale=3,
         thickness=3,

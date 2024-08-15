@@ -93,24 +93,14 @@ def set_camera_size(
 # Return a dictionary of fonts
 def font_dict(reverse_kv=False):
     fonts = {
-        "simplex": (cv2.FONT_HERSHEY_SIMPLEX, "Normal size sans-serif font"),
-        "plain": (cv2.FONT_HERSHEY_PLAIN, "Small size sans-serif font"),
-        "duplex": (
-            cv2.FONT_HERSHEY_DUPLEX,
-            "Normal size sans-serif font (more complex)",
-        ),
-        "complex": (cv2.FONT_HERSHEY_COMPLEX, "Normal size serif font"),
-        "triplex": (cv2.FONT_HERSHEY_TRIPLEX, "Larger size serif font"),
-        "small": (cv2.FONT_HERSHEY_COMPLEX_SMALL, "Small size serif font"),
-        "script_simplex": (
-            cv2.FONT_HERSHEY_SCRIPT_SIMPLEX,
-            "Handwriting-style font",
-        ),
-        "script_complex": (
-            cv2.FONT_HERSHEY_SCRIPT_COMPLEX,
-            "Complex handwriting-style font",
-        ),
-        "italic": (cv2.FONT_ITALIC, "Italic version of the current font"),
+        "plain1": cv2.FONT_HERSHEY_SIMPLEX,
+        "plain2": cv2.FONT_HERSHEY_DUPLEX,
+        "plain-small": cv2.FONT_HERSHEY_PLAIN,
+        "serif1": cv2.FONT_HERSHEY_COMPLEX,
+        "serif2": cv2.FONT_HERSHEY_TRIPLEX,
+        "serif-small": cv2.FONT_HERSHEY_COMPLEX_SMALL,
+        "handwriting1": cv2.FONT_HERSHEY_SCRIPT_SIMPLEX,
+        "handwriting2": cv2.FONT_HERSHEY_SCRIPT_COMPLEX,
     }
     if reverse_kv:
         return {v: k for k, v in fonts.items()}
@@ -122,16 +112,15 @@ def check_font_in_dict(font):
     if isinstance(font, str):
         if font not in font_dict():
             # Font not found: return the list of available fonts with descriptions
-            available_fonts = "\n".join(
-                [f"{name}: {desc}" for name, (_, desc) in font_dict().items()]
-            )
+            available_fonts = ", ".join([key for key in font_dict().keys()])
             logger.warning(
-                f"""Invalid font '{font}'. Available fonts are:\n{available_fonts}
-                Your font has been set to \'simplex\'."""
+                f"The font '{font}' is not available. Available fonts are:"
+                f"\n{available_fonts}."
             )
+            logger.warning("Your font has been set to 'plain1'")
             font = cv2.FONT_HERSHEY_SIMPLEX
         else:
-            font = font_dict()[font][0]
+            font = font_dict()[font]
         return font
 
 

@@ -331,7 +331,7 @@ def test_annotation_invalid_font(cam: Camera):
 
 def test_annotation_valid_font(cam: Camera):
     text = "hello"
-    font = "complex"
+    font = "plain2"
     cam.annotate(
         text=text,
         font=font,
