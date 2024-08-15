@@ -1,6 +1,6 @@
 from .PicameraZeroException import PicameraZeroException
 import os
-from libcamera import controls
+from libcamera import controls, CameraConfiguration
 import cv2
 import logging
 
@@ -52,7 +52,13 @@ def possible_controls(reverse_kv=False):
         return poss_controls
 
 
-def set_camera_size(config, max_resolution, size, error_msg_type, example_msg):
+def set_camera_size(
+    config: CameraConfiguration,
+    max_resolution: tuple[int, int],
+    size: tuple[int, int],
+    error_msg_type: str,
+    example_msg: str,
+):
     max_h, max_w = max_resolution
     if isinstance(size, tuple) and len(size) == 2:
         h, w = size
