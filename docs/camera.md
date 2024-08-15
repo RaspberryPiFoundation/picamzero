@@ -9,7 +9,7 @@ cam = Camera()
 
 The `Camera` object we have created in the example is called `cam`, but you can call yours something different if you prefer.
 
-The camera can do three basic things: 
+The camera can do three basic things:
 
 - show a **preview**
 - take a **still** image (photo)
@@ -36,9 +36,9 @@ You can also change the size of the three modes (preview, still and video):
 | `still_size`      | tuple   | Depends* | The height and width, in pixels, of any still images. Both the height and width must be even numbers. |
 | `video_size`      | tuple   | Depends* | The height and width, in pixels, of any video captured. Both the height and width must be even numbers. |
 
-*The default size will depend on which Raspberry Pi camera you are using. 
+*The default size will depend on which Raspberry Pi camera you are using.
 
-The defaults will be set to make the best use of your camera, so there is no need to change them unless you want to do something specific. 
+The defaults will be set to make the best use of your camera, so there is no need to change them unless you want to do something specific.
 
 Change a property by giving it a value, for example:
 

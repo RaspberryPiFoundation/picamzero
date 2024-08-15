@@ -22,7 +22,7 @@ record_video(
 cam.record_video("test_video.mp4", 10)
 ```
 
-A 10 second video will be recorded and saved into the same folder as the Python script, unless a path is specified. 
+A 10 second video will be recorded and saved into the same folder as the Python script, unless a path is specified.
 
 ---
 
@@ -70,7 +70,7 @@ cam.stop_recording()
 
 ####  Record a video and take photos (`take_video_and_still`)
 
-Record a video for a fixed `duration`, and while the video is running also take a photo at a specified `still_interval`. 
+Record a video for a fixed `duration`, and while the video is running also take a photo at a specified `still_interval`.
 
 ```
 take_video_and_still(

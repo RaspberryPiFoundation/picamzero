@@ -59,7 +59,7 @@ capture_sequence(
 cam.capture_sequence("mysequence.jpg", 12, 0.5, True)
 ```
 
-This will take a sequence of 12 images, at an interval of half a second (0.5), and then make a timelapse video of the images. The video will be called `mysequence.mp4`. 
+This will take a sequence of 12 images, at an interval of half a second (0.5), and then make a timelapse video of the images. The video will be called `mysequence.mp4`.
 
 ---
 
