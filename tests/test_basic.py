@@ -25,6 +25,21 @@ def cam():
     camera.pc2.close()
 
 
+@pytest.fixture
+def cam_with_controls(cam: Camera):
+    cam.brightness = 0.7
+    cam.contrast = 11.2
+    cam.exposure = 600
+    cam.gain = 2
+    cam.white_balance = "indoor"
+    cam.greyscale = True
+    cam.preview_size = (800, 600)
+    cam.still_size = (800, 600)
+    cam.video_size = (800, 600)
+    cam.flip_camera(vflip=True, hflip=True)
+    yield cam
+
+
 # ----------------------------------
 # Initialise camera
 # ----------------------------------
@@ -110,6 +125,93 @@ def test_property_invalid_white_balance(cam: Camera):
         cam.white_balance = "NotAThing"
 
 
+# -------------------------------------
+# Test controls and transform retained
+# -------------------------------------
+
+
+@pytest.mark.parametrize(
+    "method_to_call,prop,expected",
+    [
+        ("start_preview", "brightness", 0.7),
+        ("start_preview", "contrast", 11.2),
+        ("start_preview", "exposure", 600),
+        ("start_preview", "gain", 2),
+        ("start_preview", "white_balance", "indoor"),
+        ("start_preview", "greyscale", True),
+        ("start_preview", "preview_size", (800, 600)),
+        ("start_preview", "still_size", (800, 600)),
+        ("start_preview", "video_size", (800, 600)),
+        ("take_photo", "brightness", 0.7),
+        ("take_photo", "contrast", 11.2),
+        ("take_photo", "exposure", 600),
+        ("take_photo", "gain", 2),
+        ("take_photo", "white_balance", "indoor"),
+        ("take_photo", "greyscale", True),
+        ("take_photo", "preview_size", (800, 600)),
+        ("take_photo", "still_size", (800, 600)),
+        ("take_photo", "video_size", (800, 600)),
+        ("record_video", "brightness", 0.7),
+        ("record_video", "contrast", 11.2),
+        ("record_video", "exposure", 600),
+        ("record_video", "gain", 2),
+        ("record_video", "white_balance", "indoor"),
+        ("record_video", "greyscale", True),
+        ("record_video", "preview_size", (800, 600)),
+        ("record_video", "still_size", (800, 600)),
+        ("record_video", "video_size", (800, 600)),
+    ],
+)
+def test_controls_retained(
+    cam_with_controls: Camera, method_to_call: str, prop: str, expected
+):
+
+    cam = cam_with_controls
+
+    # Get the method to call
+    run_method = getattr(cam, method_to_call)
+
+    # Add an arg if it's take photo or record video
+    if method_to_call in ["take_photo", "record_video"]:
+        run_method("example")
+    else:
+        run_method()
+
+    assert getattr(cam, prop) == expected
+
+
+@pytest.mark.parametrize(
+    "method_to_call,mode,expected",
+    [
+        ("start_preview", "preview_configuration", Transform(hflip=1, vflip=1)),
+        ("start_preview", "still_configuration", Transform(hflip=1, vflip=1)),
+        ("start_preview", "video_configuration", Transform(hflip=1, vflip=1)),
+        ("take_photo", "preview_configuration", Transform(hflip=1, vflip=1)),
+        ("take_photo", "still_configuration", Transform(hflip=1, vflip=1)),
+        ("take_photo", "video_configuration", Transform(hflip=1, vflip=1)),
+        ("record_video", "preview_configuration", Transform(hflip=1, vflip=1)),
+        ("record_video", "still_configuration", Transform(hflip=1, vflip=1)),
+        ("record_video", "video_configuration", Transform(hflip=1, vflip=1)),
+    ],
+)
+def test_transforms_retained(
+    cam_with_controls: Camera, method_to_call: str, mode: str, expected
+):
+
+    cam = cam_with_controls
+
+    # Get the method to call
+    run_method = getattr(cam, method_to_call)
+
+    # Add an arg if it's take photo or record video
+    if method_to_call in ["take_photo", "record_video"]:
+        run_method("example")
+    else:
+        run_method()
+
+    assert getattr(cam.pc2, mode).make_dict()["transform"] == expected
+
+
 # ----------------------------------
 # Preview
 # ----------------------------------
@@ -128,24 +230,41 @@ def test_preview_starts_and_stops(cam: Camera):
 # ----------------------------------
 
 
-def test_cam_flip(cam: Camera):
+def test_cam_flip_h(cam: Camera):
     cam.flip_camera(hflip=True)
     assert cam.hflip is True
-    assert cam.preview_config["transform"] == Transform(hflip=1)
+    # The transform should be retained after starting the preview
+    cam.start_preview()
+    assert cam.pc2.preview_configuration.make_dict()["transform"] == Transform(hflip=1)
+    cam.stop_preview()
 
+
+def test_cam_flip_v(cam: Camera):
     cam.flip_camera(vflip=True)
     assert cam.vflip is True
-    assert cam.preview_config["transform"] == Transform(vflip=1)
+    cam.start_preview()
+    assert cam.pc2.preview_configuration.make_dict()["transform"] == Transform(vflip=1)
+    cam.stop_preview()
 
+
+def test_cam_flip_v_and_h(cam: Camera):
     cam.flip_camera(hflip=True, vflip=True)
     assert cam.hflip is True
     assert cam.vflip is True
-    assert cam.preview_config["transform"] == Transform(hflip=1, vflip=1)
+    cam.start_preview()
+    assert cam.pc2.preview_configuration.make_dict()["transform"] == Transform(
+        hflip=1, vflip=1
+    )
+    cam.stop_preview()
 
+
+def test_cam_flip_none(cam: Camera):
     cam.flip_camera(hflip=False, vflip=False)
     assert cam.vflip is False
     assert cam.hflip is False
-    assert cam.preview_config["transform"] == Transform()
+    cam.start_preview()
+    assert cam.pc2.preview_configuration.make_dict()["transform"] == Transform()
+    cam.stop_preview()
 
 
 # ----------------------------------
