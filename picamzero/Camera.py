@@ -43,7 +43,7 @@ class Camera:
         self._text_properties = {
             "font": utils.font_dict()["simplex"][0],
             "color": (255, 255, 255, 255),
-            "origin": (50, 50),
+            "position": (0, 0),
             "scale": 3,
             "thickness": 3,
             "bgcolor": None,
@@ -401,16 +401,13 @@ class Camera:
         text="Default Text",
         font="simplex",
         color=(255, 255, 255, 255),
-        origin=(50, 50),
         scale=3,
         thickness=3,
         position=(0, 0),
         bgcolor=None,
-        video=False,
     ):
         """
         Set a text overlay on the preview and on images
-        TODO: video?
         """
         self._text = text
 
@@ -419,7 +416,6 @@ class Camera:
         self._text_properties = {
             "font": font,
             "color": color,
-            "origin": origin,
             "scale": scale,
             "thickness": thickness,
             "bgcolor": bgcolor,

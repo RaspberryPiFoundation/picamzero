@@ -276,13 +276,13 @@ def test_annotation_properties(cam: Camera):
     cam.annotate(
         text="hello",
         color=(255, 255, 0, 255),
-        origin=(100, 100),
+        position=(100, 100),
         scale=4,
         thickness=6,
     )
     assert cam._text == "hello"
     assert cam._text_properties["color"] == (255, 255, 0, 255)
-    assert cam._text_properties["origin"] == (100, 100)
+    assert cam._text_properties["position"] == (100, 100)
     assert cam._text_properties["scale"] == 4
     assert cam._text_properties["thickness"] == 6
 
