@@ -13,7 +13,7 @@ start_preview() -> None
 cam.start_preview()
 ```
 
-Note that if you start a preview but then the program ends, there will not be enough time to see the preview window. If you only want to see a preview, use Python's built in `sleep()` method once you have started the preview to keep it open.
+Note that if you start a preview but then the program ends, there will not be enough time to see the preview window. If you only want to see a preview, use python's built in `sleep()` method once you have started the preview to keep it open.
 
 ```
 from picamzero import Camera
