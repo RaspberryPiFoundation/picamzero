@@ -516,10 +516,21 @@ class Camera:
         return self.pc2.switch_mode_and_capture_array(self.pc2.still_configuration)
 
     # Take a picture
+
     @retain_controls
-    def take_photo(self, filename=None):
+    def take_photo(self, filename=None, gps_coordinates=None):
         """
         Takes a jpeg image using the camera
+        :param str filename: The name of the file to save the photo.
+        If it doesn't end with '.jpg', the ending '.jpg' is added.
+        :param tuple[tuple[float, float, float, float],
+                     tuple[float, float, float, float]] gps_coordinate:
+        The gps coordinates to be associated
+        with the image, specified as a (latitude, longitude) tuple where
+        both latitude and longitude are themselves tuples of the
+        form (sign, degrees, minutes, seconds). This format
+        can be generated from the skyfield library's signed_dms
+        function.
         """
         filename = utils.format_filename(filename, ".jpg")
 
@@ -528,8 +539,14 @@ class Camera:
         self.pc2.start()
 
         # Capture the image
-        # No need to specify a config, default is still
-        self.pc2.start_and_capture_file(name=filename)
+        kwargs: dict = {}
+        if gps_coordinates is not None:
+            kwargs["exif_data"] = utils.signed_dms_coordinates_to_exif_dict(
+                gps_coordinates
+            )
+
+        # Use inbuilt function for now
+        self.pc2.start_and_capture_file(name=filename, **kwargs)
 
         self.pc2.start()
 
