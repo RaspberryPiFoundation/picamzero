@@ -519,7 +519,6 @@ class Camera:
 
     @retain_controls
     def take_photo(self, filename=None, gps_coordinates=None):
-
         """
         Takes a jpeg image using the camera
         :param str filename: The name of the file to save the photo.
