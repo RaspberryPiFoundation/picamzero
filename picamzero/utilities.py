@@ -124,6 +124,47 @@ def check_font_in_dict(font):
         return font
 
 
+def check_image_overlay(image_path, position, transparency):
+    if not os.path.exists(image_path):
+        raise PicameraZeroException(f"The file does not exist: {image_path}")
+
+    if not os.path.isfile(image_path):
+        raise PicameraZeroException(f"The path is not a file: {image_path}")
+
+    valid_extensions = (".png", ".jpg", ".jpeg", ".bmp")
+    if not image_path.lower().endswith(valid_extensions):
+        logger.error(
+            f"""Invalid file extension: {image_path}.
+            Supported extensions are: {valid_extensions}"""
+        )
+
+    # Attempt to read the image
+    overlay_img = cv2.imread(image_path, cv2.IMREAD_UNCHANGED)
+    if overlay_img is None:
+        raise PicameraZeroException(
+            f"Could not load the overlay image from {image_path}"
+        )
+
+    if not isinstance(position, tuple) or not len(position) == 2:
+        position = (0, 0)
+        logger.warning(
+            """You have specified an invalid position for the overlay image.
+            The position must be two positive integers, separated by a comma
+            and in brackets.
+            The position has been set to (0, 0) - the top left."""
+        )
+
+    if not isinstance(transparency, float) or not (0.0 <= transparency <= 1.0):
+        transparency = 0.5
+        logger.warning(
+            """You have specified an invalid transparency for the overlay image.
+            The transparency must be a float between 0.0 and 1.0.
+            The transparency has been set to 0.5"""
+        )
+
+    return overlay_img, position, transparency
+
+
 def signed_dms_coordinates_to_exif_dict(gps_coordinates) -> dict:
     """
     :param gps_coordinates: A (latitude, longitude) tuple where

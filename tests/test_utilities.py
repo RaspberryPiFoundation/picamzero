@@ -28,6 +28,34 @@ def test_filename_format(filename, ext, expected):
     assert utils.format_filename(filename, ext) == expected
 
 
+# Test that the image overlay checker
+@pytest.mark.parametrize(
+    "image_path,position,transparency,expected_pos,expected_trans",
+    [
+        # position tests
+        ("blah.jpg", (0, 0), 1.0, (0, 0), 1.0),
+        ("blah.jpg", (0, 0, 0), 1.0, (0, 0), 1.0),
+        ("blah.jpg", "100, 100", 1.0, (0, 0), 1.0),
+        # transparency tests
+        ("blah.jpg", (0, 0), 1.0, (0, 0), 1.0),
+        ("blah.jpg", (0, 0), 1.01, (0, 0), 0.5),
+        ("blah.jpg", (0, 0), -0.1, (0, 0), 0.5),
+        ("blah.jpg", (0, 0), 0, (0, 0), 0.5),
+        ("blah.jpg", (0, 0), -1, (0, 0), 0.5),
+        ("blah.jpg", (0, 0), -2, (0, 0), 0.5),
+        ("blah.jpg", (0, 0), 3, (0, 0), 0.5),
+        ("blah.jpg", (0, 0), -2.3, (0, 0), 0.5),
+        ("blah.jpg", (0, 0), 3.3, (0, 0), 0.5),
+    ],
+)
+def test_image_overlay_transparency(
+    image_path, position, transparency, expected_pos, expected_trans
+):
+    image, pos, trans = utils.check_image_overlay(image_path, position, transparency)
+    assert pos == expected_pos
+    assert trans == expected_trans
+
+
 # Test that you can't specify no filename
 def test_filename_none():
     with pytest.raises(PicameraZeroException):

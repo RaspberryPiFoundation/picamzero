@@ -409,11 +409,41 @@ class Camera:
         self.pc2.pre_callback = annotation_callback
 
     # Image overlay
-    def add_image_overlay(self, image):
-        """
-        Image overlays
-        """
-        pass
+    def add_image_overlay(self, image_path, position=(0, 0), transparency=0.5):
+        overlay_img, position, transparency = utils.check_image_overlay(
+            image_path, position, transparency
+        )
+
+        # Ensure the image is in BGRA format (with alpha channel)
+        if overlay_img.shape[2] == 3:  # If no alpha channel, add one
+            overlay_img = cv2.cvtColor(overlay_img, cv2.COLOR_BGR2BGRA)
+
+        overlay_h, overlay_w = overlay_img.shape[:2]
+
+        def overlay_callback(request):
+            with MappedArray(request, "main") as m:
+                frame_h, frame_w = m.array.shape[:2]
+
+                x, y = position
+
+                # Ensure the region we overlay onto matches the overlay image's size
+                roi = m.array[y : y + overlay_h, x : x + overlay_w]
+
+                # Combine the images
+                overlay_img_resized = cv2.resize(
+                    overlay_img, (roi.shape[1], roi.shape[0])
+                )
+                overlay_alpha = overlay_img_resized[:, :, 3] / 255.0 * transparency
+                background_alpha = 1.0 - overlay_alpha
+
+                for c in range(0, 3):
+                    roi[:, :, c] = (
+                        overlay_alpha * overlay_img_resized[:, :, c]
+                        + background_alpha * roi[:, :, c]
+                    )
+
+        # Add the overlay as a callback when any pics are taken or preview is shown
+        self.pc2.pre_callback = overlay_callback
 
     # Take video and take still
     @retain_controls
