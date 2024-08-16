@@ -1,6 +1,12 @@
+from pathlib import Path
+
 import pytest
 from picamzero import PicameraZeroException
 from picamzero import utilities as utils
+
+tests_dir: Path = Path(__file__).parent
+
+blah_path: Path = tests_dir / "blah.jpg"
 
 # --------------------------------------------------
 # Tests for functions that don't require PiCamera2
@@ -33,25 +39,27 @@ def test_filename_format(filename, ext, expected):
     "image_path,position,transparency,expected_pos,expected_trans",
     [
         # position tests
-        ("blah.jpg", (0, 0), 1.0, (0, 0), 1.0),
-        ("blah.jpg", (0, 0, 0), 1.0, (0, 0), 1.0),
-        ("blah.jpg", "100, 100", 1.0, (0, 0), 1.0),
+        (blah_path, (0, 0), 1.0, (0, 0), 1.0),
+        (blah_path, (0, 0, 0), 1.0, (0, 0), 1.0),
+        (blah_path, "100, 100", 1.0, (0, 0), 1.0),
         # transparency tests
-        ("blah.jpg", (0, 0), 1.0, (0, 0), 1.0),
-        ("blah.jpg", (0, 0), 1.01, (0, 0), 0.5),
-        ("blah.jpg", (0, 0), -0.1, (0, 0), 0.5),
-        ("blah.jpg", (0, 0), 0, (0, 0), 0.5),
-        ("blah.jpg", (0, 0), -1, (0, 0), 0.5),
-        ("blah.jpg", (0, 0), -2, (0, 0), 0.5),
-        ("blah.jpg", (0, 0), 3, (0, 0), 0.5),
-        ("blah.jpg", (0, 0), -2.3, (0, 0), 0.5),
-        ("blah.jpg", (0, 0), 3.3, (0, 0), 0.5),
+        (blah_path, (0, 0), 1.0, (0, 0), 1.0),
+        (blah_path, (0, 0), 1.01, (0, 0), 0.5),
+        (blah_path, (0, 0), -0.1, (0, 0), 0.5),
+        (blah_path, (0, 0), 0, (0, 0), 0.5),
+        (blah_path, (0, 0), -1, (0, 0), 0.5),
+        (blah_path, (0, 0), -2, (0, 0), 0.5),
+        (blah_path, (0, 0), 3, (0, 0), 0.5),
+        (blah_path, (0, 0), -2.3, (0, 0), 0.5),
+        (blah_path, (0, 0), 3.3, (0, 0), 0.5),
     ],
 )
-def test_image_overlay_transparency(
+def test_image_overlay_position_and_transparency(
     image_path, position, transparency, expected_pos, expected_trans
 ):
-    image, pos, trans = utils.check_image_overlay(image_path, position, transparency)
+    image, pos, trans = utils.check_image_overlay(
+        str(image_path), position, transparency
+    )
     assert pos == expected_pos
     assert trans == expected_trans
 

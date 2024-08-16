@@ -133,9 +133,9 @@ def check_image_overlay(image_path, position, transparency):
 
     valid_extensions = (".png", ".jpg", ".jpeg", ".bmp")
     if not image_path.lower().endswith(valid_extensions):
-        logger.error(
-            f"""Invalid file extension: {image_path}.
-            Supported extensions are: {valid_extensions}"""
+        raise PicameraZeroException(
+            f"Invalid file extension: {image_path}",
+            hint=f"Supported extensions are: {valid_extensions}",
         )
 
     # Attempt to read the image
