@@ -364,6 +364,7 @@ class Camera:
         self._text = text
 
         font = utils.check_font_in_dict(font)
+        color = utils.convert_color(color)
 
         self._text_properties = {
             "font": font,

@@ -124,6 +124,124 @@ def check_font_in_dict(font):
         return font
 
 
+def convert_color(color):
+    """
+    Converts a color from a string (e.g., "#ffffff", "#ffffff00", "blue")
+    or a tuple (255, 255, 255, 255) into a 4-tuple (R, G, B, A).
+    """
+
+    color_names = {
+        "white": (255, 255, 255, 255),
+        "silver": (192, 192, 192, 255),
+        "gray": (128, 128, 128, 255),
+        "black": (0, 0, 0, 255),
+        "red": (255, 0, 0, 255),
+        "maroon": (128, 0, 0, 255),
+        "yellow": (255, 255, 0, 255),
+        "olive": (128, 128, 0, 255),
+        "lime": (0, 255, 0, 255),
+        "green": (0, 128, 0, 255),
+        "aqua": (0, 255, 255, 255),
+        "teal": (0, 128, 128, 255),
+        "blue": (0, 0, 255, 255),
+        "navy": (0, 0, 128, 255),
+        "fuchsia": (255, 0, 255, 255),
+        "purple": (128, 0, 128, 255),
+    }
+
+    if color is not None:
+
+        if isinstance(color, str):
+            color = color.strip().lower()
+
+            if color in color_names:
+                return color_names[color]
+
+            if color.startswith("#"):
+
+                # Check length for RGB (#RRGGBB) or RGBA (#RRGGBBAA)
+                if len(color) == 7:
+                    color += "ff"  # Add alpha value if not provided
+                elif len(color) != 9:
+                    logger.warning(
+                        f"""{color} is not a valid hex color.
+                        It must be in the format #RRGGBB or #RRGGBBAA.
+                        The font color has been set to black (#000000ff)"""
+                    )
+                    return None
+
+                # Split the color into its hex values
+                hex_colors = (
+                    color[1:3],  # Red
+                    color[3:5],  # Green
+                    color[5:7],  # Blue
+                    color[7:9],  # Alpha
+                )
+
+                # Convert hex to integers and validate
+                rgba_values = []
+                for hex_color in hex_colors:
+                    try:
+                        int_color = int(hex_color, 16)
+                    except ValueError:
+                        logger.warning(
+                            f"""{color} contains an invalid hex value.
+                            Each part must be a valid hex value
+                            between 00 and ff.
+                            The font color has been set to black (#000000ff)"""
+                        )
+                        return None
+                    if not (0 <= int_color <= 255):
+                        logger.warning(
+                            f"""{color} contains a value out of range.
+                            Each part must be between 00 and ff.
+                            The font color has been set to black (#000000ff)"""
+                        )
+                        return None
+                    rgba_values.append(int_color)
+
+                return tuple(rgba_values)
+
+        # If the color is not a string, treat it as an iterable (tuple or list)
+        else:
+            try:
+                no_of_colors = len(color)
+            except TypeError:
+                logger.warning(
+                    "A color must be a list or tuple of 3 or 4 values.",
+                    "The font color has been set to black (0, 0, 0, 255)",
+                )
+                return None
+
+            if no_of_colors not in (3, 4):
+                logger.warning(
+                    "A color must contain 3 or 4 values.",
+                    "Example: (red, green, blue) or (red, green, blue, alpha)."
+                    "The font color has been set to black (0, 0, 0, 255)",
+                )
+                return None
+
+            # Default alpha value if not provided
+            if no_of_colors == 3:
+                color = (*color, 255)
+
+            for c in color:
+                if not (0 <= c <= 255):
+                    logger.warning(
+                        f"""{c} is not a valid color value.
+                    The font color has been set to black (0, 0, 0, 255)"""
+                    )
+                    None
+            return tuple(color)
+
+    logger.warning(
+        """
+        The font color you specified was not in the expected format.
+        It will be set to \"black\""""
+    )
+    return None
+
+
 def check_image_overlay(image_path, position, transparency):
     if not os.path.exists(image_path):
         raise PicameraZeroException(f"The file does not exist: {image_path}")

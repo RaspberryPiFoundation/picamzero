@@ -34,7 +34,25 @@ def test_filename_format(filename, ext, expected):
     assert utils.format_filename(filename, ext) == expected
 
 
-# Test that the image overlay checker
+# Test the color converter
+@pytest.mark.parametrize(
+    "color,expected",
+    [
+        ("black", (0, 0, 0, 255)),
+        ("white", (255, 255, 255, 255)),
+        ("#ffffff", (255, 255, 255, 255)),
+        ((0, 0, 0, 0), (0, 0, 0, 0)),
+        ((255, 255, 255, 255), (255, 255, 255, 255)),
+        ("blu", None),
+        ("fff333", None),
+        ("", None),
+    ],
+)
+def test_color_converter(color, expected):
+    assert utils.convert_color(color) == expected
+
+
+# Test the image overlay checker
 @pytest.mark.parametrize(
     "image_path,position,transparency,expected_pos,expected_trans",
     [
