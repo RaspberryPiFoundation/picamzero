@@ -29,12 +29,13 @@ class PicameraZeroException(Exception):
         This function is called to 'render' the exception
         """
         lines: list[str] = [
-            "Uh oh! It looks like there was a problem.",
-            "The error was: ",
+            "******************************************",
+            "An error occurred: ",
             f"\t{self.message}",
         ]
         if self.hint:
-            lines.append(self.hint)
+            lines.append("Hint: ")
+            lines.append(f"\t{self.hint}")
         return os.linesep.join(lines)
 
     def __str__(self) -> str:
@@ -56,12 +57,24 @@ def override_sys_except_hook():
     """
 
     def on_exception(exctype, value, stacktrace: TracebackType):
-        with tempfile.NamedTemporaryFile("w") as f:
+        with tempfile.NamedTemporaryFile("w", delete=False) as f:
             traceback.print_tb(stacktrace, file=f)
-        logger.error(value)
-        logger.error(f"To fix this, start by looking at line {stacktrace.tb_lineno}")
-        # TODO print file name to look at from the stacktrace object
-        logger.error("")
-        logger.error(f"The full stacktrace has been written to: {f.name}")
+
+        # Extract the filename
+        tb: traceback.StackSummary = traceback.extract_tb(stacktrace)
+        err_filename: str = tb[0].filename
+
+        # Add details
+        error_msg = "\nTo fix this, look at: \n"
+        error_msg += f"\tFile: {err_filename}\n"
+        error_msg += f"\tLine: {stacktrace.tb_lineno}"
+
+        logger.error(
+            str(value)
+            + error_msg
+            + f"\nTo see the full stack trace, type this terminal command:\n"
+            f"\t nano {f.name}"
+            "\n*************************************************"
+        )
 
     sys.excepthook = on_exception

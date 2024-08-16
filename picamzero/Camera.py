@@ -11,8 +11,9 @@ from libcamera import Transform
 from functools import wraps
 
 logger = logging.getLogger(__name__)
+logging.basicConfig(format="%(levelname)s:%(message)s", level=logging.WARN)
 
-# For dev only - suppress Libcamera and Picamera warnings
+# Suppress Libcamera and Picamera warnings
 os.environ["LIBCAMERA_LOG_LEVELS"] = "4"
 Picamera2.set_logging(level=Picamera2.ERROR)
 
