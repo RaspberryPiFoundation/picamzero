@@ -9,24 +9,6 @@ from picamzero import Camera, PicameraZeroException, utilities
 from picamzero.Camera import MAX_VIDEO_SIZE
 
 
-@pytest.fixture(autouse=True)
-def cwd(tmpdir, monkeypatch):
-    """
-    This fixture changes the current working directory before
-    each test in this file to to a temporary directory so that
-    image / video clean up is taken care of by the OS.
-    """
-    monkeypatch.chdir(tmpdir)
-
-
-# Returns a camera to use in tests
-@pytest.fixture
-def cam():
-    camera = Camera()
-    yield camera
-    camera.pc2.close()
-
-
 @pytest.fixture
 def cam_with_controls(cam: Camera):
     cam.brightness = 0.7
@@ -163,35 +145,38 @@ def test_property_invalid_size(cam: Camera, size):
 
 
 @pytest.mark.parametrize(
-    "method_to_call,prop,expected",
+    "method_to_call", ["start_preview", "take_photo", "record_video"]
+)
+@pytest.mark.parametrize(
+    "prop,expected",
     [
-        ("start_preview", "brightness", 0.7),
-        ("start_preview", "contrast", 11.2),
-        ("start_preview", "exposure", 600),
-        ("start_preview", "gain", 2),
-        ("start_preview", "white_balance", "indoor"),
-        ("start_preview", "greyscale", True),
-        ("start_preview", "preview_size", (800, 600)),
-        ("start_preview", "still_size", (800, 600)),
-        ("start_preview", "video_size", (800, 600)),
-        ("take_photo", "brightness", 0.7),
-        ("take_photo", "contrast", 11.2),
-        ("take_photo", "exposure", 600),
-        ("take_photo", "gain", 2),
-        ("take_photo", "white_balance", "indoor"),
-        ("take_photo", "greyscale", True),
-        ("take_photo", "preview_size", (800, 600)),
-        ("take_photo", "still_size", (800, 600)),
-        ("take_photo", "video_size", (800, 600)),
-        ("record_video", "brightness", 0.7),
-        ("record_video", "contrast", 11.2),
-        ("record_video", "exposure", 600),
-        ("record_video", "gain", 2),
-        ("record_video", "white_balance", "indoor"),
-        ("record_video", "greyscale", True),
-        ("record_video", "preview_size", (800, 600)),
-        ("record_video", "still_size", (800, 600)),
-        ("record_video", "video_size", (800, 600)),
+        ("brightness", 0.7),
+        ("contrast", 11.2),
+        ("exposure", 600),
+        ("gain", 2),
+        ("white_balance", "indoor"),
+        ("greyscale", True),
+        ("preview_size", (800, 600)),
+        ("still_size", (800, 600)),
+        ("video_size", (800, 600)),
+        ("brightness", 0.7),
+        ("contrast", 11.2),
+        ("exposure", 600),
+        ("gain", 2),
+        ("white_balance", "indoor"),
+        ("greyscale", True),
+        ("preview_size", (800, 600)),
+        ("still_size", (800, 600)),
+        ("video_size", (800, 600)),
+        ("brightness", 0.7),
+        ("contrast", 11.2),
+        ("exposure", 600),
+        ("gain", 2),
+        ("white_balance", "indoor"),
+        ("greyscale", True),
+        ("preview_size", (800, 600)),
+        ("still_size", (800, 600)),
+        ("video_size", (800, 600)),
     ],
 )
 def test_controls_retained(
@@ -213,22 +198,12 @@ def test_controls_retained(
 
 
 @pytest.mark.parametrize(
-    "method_to_call,mode,expected",
-    [
-        ("start_preview", "preview_configuration", Transform(hflip=1, vflip=1)),
-        ("start_preview", "still_configuration", Transform(hflip=1, vflip=1)),
-        ("start_preview", "video_configuration", Transform(hflip=1, vflip=1)),
-        ("take_photo", "preview_configuration", Transform(hflip=1, vflip=1)),
-        ("take_photo", "still_configuration", Transform(hflip=1, vflip=1)),
-        ("take_photo", "video_configuration", Transform(hflip=1, vflip=1)),
-        ("record_video", "preview_configuration", Transform(hflip=1, vflip=1)),
-        ("record_video", "still_configuration", Transform(hflip=1, vflip=1)),
-        ("record_video", "video_configuration", Transform(hflip=1, vflip=1)),
-    ],
+    "method_to_call", ["start_preview", "take_photo", "record_video"]
 )
-def test_transforms_retained(
-    cam_with_controls: Camera, method_to_call: str, mode: str, expected
-):
+@pytest.mark.parametrize(
+    "mode", ["preview_configuration", "still_configuration", "video_configuration"]
+)
+def test_transforms_retained(cam_with_controls: Camera, method_to_call: str, mode: str):
 
     cam = cam_with_controls
 
@@ -241,7 +216,8 @@ def test_transforms_retained(
     else:
         run_method()
 
-    assert getattr(cam.pc2, mode).make_dict()["transform"] == expected
+    expected_orientation = Transform(hflip=1, vflip=1)
+    assert getattr(cam.pc2, mode).make_dict()["transform"] == expected_orientation
 
 
 # ----------------------------------

@@ -85,4 +85,4 @@ def test_image_overlay_position_and_transparency(
 # Test that you can't specify no filename
 def test_filename_none():
     with pytest.raises(PicameraZeroException):
-        _ = utils.format_filename(None, ".jpg")
+        _ = utils.format_filename(None, ".jpg")  # type: ignore
