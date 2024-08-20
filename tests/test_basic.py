@@ -139,6 +139,13 @@ def test_property_invalid_size(cam: Camera, size):
     assert cam.video_size == MAX_VIDEO_SIZE
 
 
+@pytest.mark.parametrize(
+    "name", ["brightness", "contrast", "exposure", "gain", "white_balance", "greyscale"]
+)
+def test_property_exists_at_startup(cam: Camera, name: str):
+    getattr(cam, name)
+
+
 # -------------------------------------
 # Test controls and transform retained
 # -------------------------------------

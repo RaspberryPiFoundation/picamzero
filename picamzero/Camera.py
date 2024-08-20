@@ -35,6 +35,7 @@ class Camera:
         """
         try:
             self.pc2 = Picamera2()
+
         except RuntimeError:
             logger.error("Could not connect to the camera!")
             logger.error("Please check all connections")
@@ -120,6 +121,14 @@ class Camera:
             example_msg=str(MAX_VIDEO_SIZE),
         )
 
+    # Check that a control exists (it might not have been set yet)
+    def _get_control_value(self, name: str):
+        if name in self.pc2.controls.make_dict():
+            return getattr(self.pc2.controls, name)
+        else:
+            minvalue, maxvalue, defaultvalue = self.pc2.camera_controls[name]
+            return defaultvalue
+
     # Brightness
     @property
     def brightness(self) -> float:
@@ -129,7 +138,7 @@ class Camera:
         :return float:
             Brightness value between -1.0 and 1.0
         """
-        return self.pc2.controls.Brightness
+        return self._get_control_value("Brightness")
 
     @brightness.setter
     def brightness(self, bvalue: float):
@@ -151,7 +160,7 @@ class Camera:
         :return float:
             Contrast value between 0.0 and 32.0
         """
-        return self.pc2.controls.Contrast
+        return self._get_control_value("Contrast")
 
     @contrast.setter
     def contrast(self, cvalue: float):
@@ -174,7 +183,7 @@ class Camera:
         :returns int:
             Exposure value (max and min depend on mode)
         """
-        return self.pc2.controls.ExposureTime
+        return self._get_control_value("ExposureTime")
 
     @exposure.setter
     def exposure(self, etime: int):
@@ -196,7 +205,7 @@ class Camera:
         :returns float:
             Gain value (max and min depend on mode)
         """
-        return self.pc2.controls.AnalogueGain
+        return self._get_control_value("AnalogueGain")
 
     @gain.setter
     def gain(self, gvalue: float):
@@ -218,7 +227,11 @@ class Camera:
         :return str:
             The selected white balance mode as a string
         """
-        return utils.possible_controls(reverse_kv=True)[self.pc2.controls.AwbMode]
+        control = "AwbMode"
+        if control in self.pc2.controls.make_dict():
+            return utils.possible_controls(reverse_kv=True)[self.pc2.controls.AwbMode]
+        else:
+            return None
 
     @white_balance.setter
     def white_balance(self, wbmode: str):
@@ -252,7 +265,10 @@ class Camera:
 
     @property
     def greyscale(self) -> bool:
-        if self.pc2.controls.Saturation == 0:
+        if (
+            "Saturation" in self.pc2.controls.make_dict()
+            and self.pc2.controls.Saturation == 0
+        ):
             return True
         else:
             # Any saturation above 0 results in greyscale off?
