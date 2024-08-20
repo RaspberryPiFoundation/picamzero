@@ -6,7 +6,7 @@ picamzero is a Python 3 library designed to allow beginners to control a Raspber
 
 1. Open a terminal window on your Raspberry Pi.
 
-![Open a terminal window](images/open-terminal.png)
+![Open a terminal window](docs/images/open-terminal.png)
 
 2. Install packages required from apt:
 
