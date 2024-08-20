@@ -63,10 +63,10 @@ flip_camera(
 ) -> None
 ```
 
-| Parameter   | Type    | Default  | Description |
-| ----------- | ------- | -------- | ----------- |
-| vflip       | bool    | False     | Whether to flip along the vertical axis. |
-| hflip       | bool    | False     | Whether to flip along the horizontal axis. |
+| Parameter   | Data type    | Default  | Compulsory? | Description |
+| ----------- | ------- | -------- | -------- | ----------- |
+| vflip       | bool    | False     | No | Whether to flip along the vertical axis. |
+| hflip       | bool    | False     | No | Whether to flip along the horizontal axis. |
 
 ##### Example
 ```

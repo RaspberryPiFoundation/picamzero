@@ -12,6 +12,7 @@ nav:
     - Photo methods: photo_methods.md
     - Preview methods: preview_methods.md
     - Video methods: video_methods.md
+    - Colours: colors.md
   - Contributing: contributing.md
 
 markdown_extensions:

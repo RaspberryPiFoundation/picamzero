@@ -15,10 +15,10 @@ take_photo(
 ) -> str
 ```
 
-| Parameter   | Type    | Default  | Description |
-| ----------- | ------- | -------- | ----------- |
-| filename    | str | None     | A file name for a .jpg image. This can also be a path to a file. |
-| gps_coordinates    | tuple | None     | GPS coordinates to be associated with the image, specified as a (latitude, longitude) tuple where both latitude and longitude are themselves tuples of the form (sign, degrees, minutes, seconds). This format can be generated from the [skyfield library](https://github.com/skyfielders/python-skyfield)'s `signed_dms` function. |
+| Parameter   | Data type    | Default  | Compulsory? | Description |
+| ----------- | ------- | -------- | -------- | ----------- |
+| filename    | str | None     |  Yes | A file name for a `.jpg` image. This can also be a path to a file. |
+| gps_coordinates    | tuple | None     | No | GPS coordinates to be associated with the image, specified as a (latitude, longitude) tuple where both latitude and longitude are themselves tuples of the form (sign, degrees, minutes, seconds). This format can be generated from the [skyfield library](https://github.com/skyfielders/python-skyfield)'s `signed_dms` function. |
 
 ##### Example
 ```
@@ -42,7 +42,7 @@ cam.capture_image("mypic.jpg")
 #### `capture_sequence`
 
 Take a series of `num_images` with a gap of `interval` between each one, and save them as
-`filename` with an auto-number. Optionally, `make_video` using all of the images.
+`filename` with an auto-number. Optionally, `make_video` using all of the images. All images will be in `.jpg` format and video in `.mp4` format.
 
 ```
 capture_sequence(
@@ -53,12 +53,12 @@ capture_sequence(
 ) -> None
 ```
 
-| Parameter   | Type    | Default  | Description |
-| ----------- | ------- | -------- | ----------- |
-| filename    | str  | None     | A file name for a .jpg image. This can also be a file path. |
-| num_images  | int     | 10       | How many images to take.|
-| interval    | float   | 0.01     | How long to wait in between each image, in seconds. |
-| make_video  | bool    | False    | Whether to make a `.mp4` video of the images. |
+| Parameter   | Data type    | Default  | Compulsory? | Description |
+| ----------- | ------- | -------- | -------- | ----------- |
+| filename    | str  | None     | Yes | A file name for a `.jpg` image. This can also be a file path. |
+| num_images  | int     | `10`       | No | How many images to take.|
+| interval    | float   | `0.01`     | No | How long to wait in between each image, in seconds. |
+| make_video  | bool    | `False`    | No | Whether to make a `.mp4` video of the images. |
 
 
 ##### Example
@@ -83,11 +83,11 @@ add_image_overlay(
 ) -> None
 ```
 
-| Parameter   | Type    | Default  | Description |
-| ----------- | ------- | -------- | ----------- |
-| image_path   | str  |     | The path to an image to use as the overlay. The image must be in `PNG`, `JPG`/`JPEG` or `BMP` format.  |
-| position   | tuple  |  `(0,0)`   | A tuple of x,y coordinates for the position of the top left corner of the image.  |
-| transparency   | float  |  0.5   | How transparent the image should be. This can be any value between 0 (completely transparent) and 1 (completely opaque). |
+| Parameter   | Data type    | Default  | Compulsory? | Description |
+| ----------- | ------- | -------- | -------- | ----------- |
+| image_path   | str  | -    | Yes | The path to an image to use as the overlay. The image must be in `PNG`, `JPG`/`JPEG` or `BMP` format.  |
+| position   | tuple  |  `(0,0)`   | No  | A tuple of x,y coordinates for the position of the top left corner of the image.  |
+| transparency   | float  |  `0.5`   | No | How transparent the image should be. This can be any value between 0 (completely transparent) and 1 (completely opaque). |
 
 
 #### Example
@@ -116,21 +116,21 @@ annotate(
 ) -> None
 ```
 
-| Parameter   | Type    | Default            | Description                   |
-| ----------- | ------- | ------------------ | ----------------------------- |
-| text        | str     | "Default Text"     | The text to overlay on the image/preview.  |
-| font        | str     | "plain1"          | The font to use. Available fonts are:  `plain1`, `plain2`, `plain-small`, `serif1`,`serif2`, `serif-small`, `handwriting1`, `handwriting2` |
-| color       | str/tuple   |  "white" | A colour in one of the following formats: RGBA: `(255, 255, 255, 255)`, Hex: `#FFFFFF`, String: `"white"`. The following common colour names are available as strings: `white`,`silver`, `gray`, `black`, `red`, `maroon`,`yellow`, `olive`, `lime`, `green`, `aqua`, `teal`, `blue`, `navy`, `fuchsia`, `purple`. |
-| scale       | int     | 3  | How large the text is. [TO DO - WHAT CAN IT BE?] |
-| thickness   | int     | 3  | How thick the text is. [TO DO - WHAT CAN IT BE?] |
-| position    | tuple   | (0, 0)  |  A pair of x, y coordinates for the top left corner of the text. |
-| bgcolor     | tuple   | None  |  A colour as a RGBA value. The first three values are Red, Green and Blue, and the final one is the Alpha (transparency). All values must be between 0 and 255. |
+| Parameter   | Data type    | Default  | Compulsory? | Description |
+| ----------- | ------- | -------- | -------- | ----------- |
+| text        | str     | `"Default Text"`     | No | The text to overlay on the image/preview.  |
+| font        | str     | `"plain1"`          | No | The font to use. Available fonts are:  `plain1`, `plain2`, `plain-small`, `serif1`,`serif2`, `serif-small`, `handwriting1`, `handwriting2` |
+| color       | str/tuple   | `"white"` | No | A colour in RGBA, hex or color string format. (See the [colors](colors.md) documentation for more details.) |
+| scale       | int     | `3`  | No | The base size of the font will be multiplied by this number, for example a value of `2` will make it twice as large. |
+| thickness   | int     | `3`  | No | The thickness of the lines used in the font, measured in px. The value must be between `1` and `10`. |
+| position    | tuple   | `(0, 0)`  |  No |  A pair of x, y coordinates for the top left corner of the text. |
+| bgcolor     | tuple   | None  |  No | A colour in RGBA, hex or color string format. (See the [colors](colors.md) documentation for more details.) |
 
 ##### Example
 ```
 cam.add_image_overlay("logo.gif")
 ```
 
-This will add an overlay to [INSERT DESCRIPTION]
+This will add an overlay to the preview and any images captured.
 
 ---

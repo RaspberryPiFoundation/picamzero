@@ -4,7 +4,7 @@
 ## Record a video
 #### `record_video`
 
-Records a video for a specified duration, given in seconds. If no duration is specified, the video will record for 5 seconds. Returns the filename of the video that was recorded.
+Records a video for a specified `duration`, given in seconds. If no duration is specified, the video will record for 5 seconds. Returns the `filename` of the video that was recorded.
 
 ```
 record_video(
@@ -13,10 +13,10 @@ record_video(
 ) -> str
 ```
 
-| Parameter   | Type    | Default  | Description |
-| ----------- | ------- | -------- | ----------- |
-| filename    | str     | None     | A file name for a .mp4 video. This can also be a path to a file. |
-| duration    | str     | 5        | The length of time to record, in seconds. |
+| Parameter   | Data type    | Default  | Compulsory? | Description |
+| ----------- | ------- | -------- | -------- | ----------- |
+| filename    | str     | None     | Yes | A file name for a `.mp4` video. This can also be a path to a file. |
+| duration    | str     | `5`       | No | The length of time to record, in seconds. |
 
 ##### Example
 ```
@@ -39,10 +39,11 @@ start_recording(
 ) -> None
 ```
 
-| Parameter   | Type    | Default  | Description |
-| ----------- | ------- | -------- | ----------- |
-| filename    | str     | None     | A file name for a .mp4 video. This can also be a path to a file. |
-| preview     | bool     | False   | [TO DO - CAN REMOVE?]|
+| Parameter   | Data type    | Default  | Compulsory? | Description |
+| ----------- | ------- | -------- | -------- | ----------- |
+| filename    | str     | None     | Yes | A file name for a `.mp4` video. This can also be a path to a file. |
+| show_preview   | bool     | `False`     | No | Whether to show a preview. |
+
 
 
 
@@ -51,14 +52,14 @@ start_recording(
 cam.start_recording("new_video.mp4")
 ```
 
-This code will start recording a video called `new_video.mp4`. The video will not finish recording until `stop_recording` is called.
+This code will start recording a video called `new_video.mp4`. The video will not finish recording until `stop_recording()` is called.
 
 ---
 
 ## Stop recording
 #### `stop_recording`
 
-Stops a recording that is currently in progress.
+Stops a recording that is currently in progress. This method has no parameters or return value.
 
 ```
 stop_recording() -> None
@@ -66,6 +67,7 @@ stop_recording() -> None
 
 ##### Example
 ```
+# Stops a previously started recording
 cam.stop_recording()
 ```
 
@@ -84,11 +86,11 @@ take_video_and_still(
 ) -> None
 ```
 
-| Parameter   | Type    | Default            | Description                   |
-| ----------- | ------- | ------------------ | ----------------------------- |
-| filename       | str     | "Default Text"     | A file name for a .mp4 video. This can also be a path to a file. |
-| duration       | int     | 20         | The length of time to record, in seconds. |
-| still_interval  | int  | 4  | How frequently to take a photo, in seconds. If the duration is not exactly divisible by the interval specified, the method will ignore any remaining time. |
+| Parameter   | Data type    | Default  | Compulsory? | Description |
+| ----------- | ------- | -------- | -------- | ----------- |
+| filename       | str     | None    | Yes | A file name for a `.mp4` video. This can also be a path to a file. |
+| duration       | int     | 20         | No | The length of time to record, in seconds. |
+| still_interval  | int  | 4  | No | How frequently to take a photo, in seconds. If the duration is not exactly divisible by the interval specified, the method will ignore any remaining time. |
 
 
 ##### Example
