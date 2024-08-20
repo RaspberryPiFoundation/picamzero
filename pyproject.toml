@@ -10,9 +10,7 @@ license = {file="LICENSE"}
 dynamic = ["version"]
 
 authors = [
-  { name="Geraint Ballinger", email="geraint.ballinger@raspberrypi.org" },
-  { name="Peter Bell", email="peter.bell@raspberrypi.org" },
-  { name="Laura Sach", email="laura.sach@raspberrypi.org"},
+  { name="Raspberry Pi Foundation", email="learning@raspberrypi.org" }
 ]
 
 dependencies = [
