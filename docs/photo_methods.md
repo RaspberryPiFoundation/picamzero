@@ -1,20 +1,26 @@
-### Photo methods
+# Photo methods
 
 ---
-#### Take a photo (`take_photo`)
+## Take a photo
+#### `take_photo`
 
 Takes a photograph using the camera and saves it as a `.jpg` image.
 Returns the filename of the image.
 
 ```
-take_photo(filename: str) -> str
+take_photo(
+    filename: str,
+    gps_coordinates: tuple[tuple[float, float, float, float],
+                     tuple[float, float, float, float]]
+) -> str
 ```
 
 | Parameter   | Type    | Default  | Description |
 | ----------- | ------- | -------- | ----------- |
 | filename    | str | None     | A file name for a .jpg image. This can also be a path to a file. |
+| gps_coordinates    | tuple | None     | GPS coordinates to be associated with the image, specified as a (latitude, longitude) tuple where both latitude and longitude are themselves tuples of the form (sign, degrees, minutes, seconds). This format can be generated from the [skyfield library](https://github.com/skyfielders/python-skyfield)'s `signed_dms` function. |
 
-###### Example
+##### Example
 ```
 cam.take_photo("mypic.jpg")
 ```
@@ -32,7 +38,8 @@ cam.capture_image("mypic.jpg")
 ```
 ---
 
-#### Capture a sequence of images (timelapse) (`capture_sequence`)
+## Capture a sequence of images (timelapse)
+#### `capture_sequence`
 
 Take a series of `num_images` with a gap of `interval` between each one, and save them as
 `filename` with an auto-number. Optionally, `make_video` using all of the images.
@@ -54,7 +61,7 @@ capture_sequence(
 | make_video  | bool    | False    | Whether to make a `.mp4` video of the images. |
 
 
-###### Example
+##### Example
 ```
 cam.capture_sequence("mysequence.jpg", 12, 0.5, True)
 ```
@@ -63,30 +70,37 @@ This will take a sequence of 12 images, at an interval of half a second (0.5), a
 
 ---
 
-#### Add an image overlay (`add_image_overlay`)
+## Add an image overlay
+#### `add_image_overlay`
 
 Add an image on top of the preview and to still images captured by the camera. Does _not_ overlay the image on video.
 
 ```
-add_image_overlay(PARAMETER_NAME: str) -> None
+add_image_overlay(
+    image_path: str,
+    position: tuple,
+    transparency: float
+) -> None
 ```
 
 | Parameter   | Type    | Default  | Description |
 | ----------- | ------- | -------- | ----------- |
-| PARAMETER_NAME    | str  | None     | A GIF image.  |
+| image_path   | str  |     | The path to an image to use as the overlay. The image must be in `PNG`, `JPG`/`JPEG` or `BMP` format.  |
+| position   | tuple  |  `(0,0)`   | A tuple of x,y coordinates for the position of the top left corner of the image.  |
+| transparency   | float  |  0.5   | How transparent the image should be. This can be any value between 0 (completely transparent) and 1 (completely opaque). |
 
 
-
-###### Example
+#### Example
 ```
 cam.add_image_overlay("logo.gif")
 ```
 
-This will add an overlay to [INSERT DESCRIPTION]
+This will add an overlay to previews and images taken with the camera.
 
 ---
 
-####  Add a text annotation (`annotate`)
+##  Add a text annotation
+#### `annotate`
 
 Adds a text annotation to the preview and to still images captured by the camera. Does _not_ annotate video.
 
@@ -94,29 +108,25 @@ Adds a text annotation to the preview and to still images captured by the camera
 annotate(
     text: str,
     font: str,
-    color: tuple,
-    origin: tuple,
+    color: str/tuple,
     scale: int,
     thickness: int,
     position: tuple,
     bgcolor: tuple,
-    video: bool,
 ) -> None
 ```
 
 | Parameter   | Type    | Default            | Description                   |
 | ----------- | ------- | ------------------ | ----------------------------- |
 | text        | str     | "Default Text"     | The text to overlay on the image/preview.  |
-| font        | str     | "simplex"          | The font to use. Available fonts are: [TO DO] |
-| color       | tuple   | (255, 255, 255, 255)  | A colour as a RGBA value. The first three values are Red, Green and Blue, and the final one is the Alpha (transparency). All values must be between 0 and 255. |
-| origin      | tuple   | (50, 50)  | [TO DO: CAN WE REMOVE THIS?] |
+| font        | str     | "plain1"          | The font to use. Available fonts are:  `plain1`, `plain2`, `plain-small`, `serif1`,`serif2`, `serif-small`, `handwriting1`, `handwriting2` |
+| color       | str/tuple   |  "white" | A colour in one of the following formats: RGBA: `(255, 255, 255, 255)`, Hex: `#FFFFFF`, String: `"white"`. The following common colour names are available as strings: `white`,`silver`, `gray`, `black`, `red`, `maroon`,`yellow`, `olive`, `lime`, `green`, `aqua`, `teal`, `blue`, `navy`, `fuchsia`, `purple`. |
 | scale       | int     | 3  | How large the text is. [TO DO - WHAT CAN IT BE?] |
 | thickness   | int     | 3  | How thick the text is. [TO DO - WHAT CAN IT BE?] |
 | position    | tuple   | (0, 0)  |  A pair of x, y coordinates for the top left corner of the text. |
 | bgcolor     | tuple   | None  |  A colour as a RGBA value. The first three values are Red, Green and Blue, and the final one is the Alpha (transparency). All values must be between 0 and 255. |
-| video       | bool   | False |  [TO DO - CAN WE REMOVE THIS?] |
 
-###### Example
+##### Example
 ```
 cam.add_image_overlay("logo.gif")
 ```

@@ -1,14 +1,15 @@
-### Preview methods
+# Preview methods
 
 ---
-#### Start the preview (`start_preview`)
+## Start the preview
+#### `start_preview`
 
 Starts a preview window so that you can see what the camera sees.
 
 ```
 start_preview() -> None
 ```
-###### Example
+##### Example
 ```
 cam.start_preview()
 ```
@@ -28,7 +29,8 @@ sleep(5)
 
 ---
 
-#### Stop the preview (`stop_preview`)
+## Stop the preview
+#### `stop_preview`
 
 Stops a currently running preview.
 
@@ -36,7 +38,7 @@ Stops a currently running preview.
 stop_preview() -> None
 ```
 
-###### Example
+##### Example
 ```
 cam.stop_preview()
 ```

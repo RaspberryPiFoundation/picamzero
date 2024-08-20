@@ -1,7 +1,8 @@
-### Video methods
+# Video methods
 
 ---
-#### Record a video (`record_video`)
+## Record a video
+#### `record_video`
 
 Records a video for a specified duration, given in seconds. If no duration is specified, the video will record for 5 seconds. Returns the filename of the video that was recorded.
 
@@ -17,7 +18,7 @@ record_video(
 | filename    | str     | None     | A file name for a .mp4 video. This can also be a path to a file. |
 | duration    | str     | 5        | The length of time to record, in seconds. |
 
-###### Example
+##### Example
 ```
 cam.record_video("test_video.mp4", 10)
 ```
@@ -26,7 +27,8 @@ A 10 second video will be recorded and saved into the same folder as the Python 
 
 ---
 
-#### Start recording (`start_recording`)
+## Start recording
+#### `start_recording`
 
 Start recording a video. Use this method if you want to record for an unknown length of time.
 
@@ -44,7 +46,7 @@ start_recording(
 
 
 
-###### Example
+##### Example
 ```
 cam.start_recording("new_video.mp4")
 ```
@@ -53,7 +55,8 @@ This code will start recording a video called `new_video.mp4`. The video will no
 
 ---
 
-#### Stop recording (`stop_recording`)
+## Stop recording
+#### `stop_recording`
 
 Stops a recording that is currently in progress.
 
@@ -61,14 +64,15 @@ Stops a recording that is currently in progress.
 stop_recording() -> None
 ```
 
-###### Example
+##### Example
 ```
 cam.stop_recording()
 ```
 
 ---
 
-####  Record a video and take photos (`take_video_and_still`)
+## Record a video and take photos
+#### `take_video_and_still`
 
 Record a video for a fixed `duration`, and while the video is running also take a photo at a specified `still_interval`.
 
@@ -87,7 +91,7 @@ take_video_and_still(
 | still_interval  | int  | 4  | How frequently to take a photo, in seconds. If the duration is not exactly divisible by the interval specified, the method will ignore any remaining time. |
 
 
-###### Example
+##### Example
 ```
 cam.take_video_and_still("example.mp4", duration=16, still_interval=3)
 ```

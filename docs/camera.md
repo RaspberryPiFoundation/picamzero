@@ -1,13 +1,15 @@
-### Camera
+# Camera
 
-All programs which use picamzero first require you to create a camera object, which is as simple as adding these two lines of code at the start of your file:
+The first thing you must do in any `picamzero` program is create a camera.
+
+Add these two lines of code at the start of your program:
 
 ```
 from picamzero import Camera
 cam = Camera()
 ```
 
-The `Camera` object we have created in the example is called `cam`, but you can call yours something different if you prefer.
+The `Camera` in the example is called `cam`, but you can call yours something different if you prefer.
 
 The camera can do three basic things:
 
@@ -15,7 +17,7 @@ The camera can do three basic things:
 - take a **still** image (photo)
 - record a **video**.
 
-#### Camera properties
+## Camera properties
 
 The following properties of the camera can be set. There is no need to change any of these properties if you just want a standard image.
 
@@ -38,8 +40,6 @@ You can also change the size of the three modes (preview, still and video):
 
 *The default size will depend on which Raspberry Pi camera you are using.
 
-The defaults will be set to make the best use of your camera, so there is no need to change them unless you want to do something specific.
-
 Change a property by giving it a value, for example:
 
 ```
@@ -47,10 +47,12 @@ cam.brightness = 0.5
 cam.greyscale = True
 ```
 
-
-
 ---
-#### Flip the camera (`flip_camera`)
+## Camera methods
+
+A method is something you can ask the camera to do.
+
+### Flip the camera (`flip_camera`)
 
 Flips the orientation of the camera. You can flip along the horizontal axis, the vertical axis or both. The flip will be applied to the preview, still images and videos.
 
@@ -66,7 +68,7 @@ flip_camera(
 | vflip       | bool    | False     | Whether to flip along the vertical axis. |
 | hflip       | bool    | False     | Whether to flip along the horizontal axis. |
 
-###### Example
+##### Example
 ```
 cam.flip_camera(vflip=True)
 ```
@@ -74,3 +76,5 @@ cam.flip_camera(vflip=True)
 The camera image will be flipped along the vertical axis.
 
 ---
+
+There are lots more camera methods for [previewing](preview_methods.md), [taking photos](photo_methods.md) and [recording videos](video_methods.md).

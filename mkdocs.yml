@@ -1,10 +1,20 @@
 site_name: picamzero
+theme: cerulean
 nav:
   - Home: index.md
-  - Getting started: start.md
-  - Camera: camera.md
-  - Photo methods: photo_methods.md
-  - Preview methods: preview_methods.md
-  - Video methods: video_methods.md
+  - How to...:
+    - First program: hello_world.md
+    - Recipes: recipes.md
+    - Use with Picamera2: picamera2.md
+  - API docs:
+    - What are API docs?: api_docs.md
+    - Camera: camera.md
+    - Photo methods: photo_methods.md
+    - Preview methods: preview_methods.md
+    - Video methods: video_methods.md
+  - Contributing: contributing.md
 
-theme: readthedocs
+markdown_extensions:
+  - pymdownx.snippets:
+      check_paths: true
+      base_path: [docs/recipes, "."]
