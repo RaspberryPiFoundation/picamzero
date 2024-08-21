@@ -2,6 +2,8 @@ site_name: picamzero
 site_description: Makes it easy for beginners to control a Raspberry Pi camera with Python.
 theme:
   name: material
+  logo: images/rpf-logo.svg
+  favicon: images/favicon.ico
   features:
     - content.code.copy
 nav:
