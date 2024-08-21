@@ -7,6 +7,11 @@ on:
       - '**/**'
     tags:
       - '**/**'
+    paths-ignore:
+      - 'docs/**'
+      - 'mkdocs.yml'
+      - 'README.md'
+      - 'LICENSE'
 
 jobs:
   build_on_rp4_with_hqc:
