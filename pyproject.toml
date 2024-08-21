@@ -15,6 +15,7 @@ authors = [
 
 dependencies = [
   "picamera2",
+  "opencv-python-headless"
 ]
 
 requires-python = ">= 3.8"
