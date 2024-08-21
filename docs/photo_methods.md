@@ -2,12 +2,11 @@
 
 ---
 ## Take a photo
-#### `take_photo`
 
-Takes a photograph using the camera and saves it as a `.jpg` image.
-Returns the filename of the image.
+- Takes a photograph using the camera and saves it as a `.jpg` image.
+- **Returns** the filename of the image.
 
-```
+```python
 take_photo(
     filename: str,
     gps_coordinates: tuple[tuple[float, float, float, float],
@@ -21,30 +20,32 @@ take_photo(
 | gps_coordinates    | tuple | None     | No | GPS coordinates to be associated with the image, specified as a (latitude, longitude) tuple where both latitude and longitude are themselves tuples of the form (sign, degrees, minutes, seconds). This format can be generated from the [skyfield library](https://github.com/skyfielders/python-skyfield)'s `signed_dms` function. |
 
 ##### Example
-```
+
+```python
 cam.take_photo("mypic.jpg")
 ```
 
 The image will be saved into the same folder as the Python script, unless a path is specified. In this example, the image will be saved into a `photos` folder.
 
-```
+```python
 cam.take_photo("photos/mypic.jpg")
 ```
 
 This method can also be called as ```capture_image()``` and will behave in exactly the same way.
 
-```
+```python
 cam.capture_image("mypic.jpg")
 ```
+
 ---
 
-## Capture a sequence of images (timelapse)
-#### `capture_sequence`
+## Capture a timelapse sequence
 
-Take a series of `num_images` with a gap of `interval` between each one, and save them as
-`filename` with an auto-number. Optionally, `make_video` using all of the images. All images will be in `.jpg` format and video in `.mp4` format.
+- Take a sequence of `num_images` with a gap of `interval` between each one, and save them as `filename` with an auto-number.
+- Optionally, `make_video` using all of the images.
+- All images will be in `.jpg` format and video in `.mp4` format.
 
-```
+```python
 capture_sequence(
     filename: str,
     num_images: int,
@@ -62,7 +63,8 @@ capture_sequence(
 
 
 ##### Example
-```
+
+```python
 cam.capture_sequence("mysequence.jpg", 12, 0.5, True)
 ```
 
@@ -71,11 +73,11 @@ This will take a sequence of 12 images, at an interval of half a second (0.5), a
 ---
 
 ## Add an image overlay
-#### `add_image_overlay`
 
-Add an image on top of the preview and to still images captured by the camera. Does _not_ overlay the image on video.
+- Add an image on top of the preview and to still images captured by the camera.
+- Does _not_ overlay the image on video.
 
-```
+```python
 add_image_overlay(
     image_path: str,
     position: tuple,
@@ -91,20 +93,20 @@ add_image_overlay(
 
 
 #### Example
-```
+
+```python
 cam.add_image_overlay("logo.gif")
 ```
 
-This will add an overlay to previews and images taken with the camera.
+Assuming the file `logo.gif` exists and is in the same folder as the Python script, this code will add an overlay to previews and images taken with the camera.
 
 ---
 
 ##  Add a text annotation
-#### `annotate`
 
 Adds a text annotation to the preview and to still images captured by the camera. Does _not_ annotate video.
 
-```
+```python
 annotate(
     text: str,
     font: str,
@@ -127,10 +129,11 @@ annotate(
 | bgcolor     | tuple   | None  |  No | A colour in RGBA, hex or color string format. (See the [colors](colors.md) documentation for more details.) |
 
 ##### Example
+
 ```python
 cam.add_image_overlay("logo.gif")
 ```
 
-This will add an overlay to the preview and any images captured.
+This will add an annotation to the preview and to any images captured.
 
 ---

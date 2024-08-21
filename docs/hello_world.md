@@ -1,9 +1,9 @@
 # Writing your first program
 
-1. With your Raspberry Pi switched off, connect your Raspberry Pi Camera to a camera port.
+With your Raspberry Pi switched off, connect your Raspberry Pi Camera to a camera port.
     ![Connect the camera ribbon](images/connect-camera.gif)
 
-2. Type this code into your code editor, then save and run it:
+Type this code into your code editor, then save and run it:
 
 ```python
 from picamzero import Camera

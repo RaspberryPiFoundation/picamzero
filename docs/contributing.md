@@ -62,14 +62,15 @@ The distribution will be created in the `dist` directory.
 
 ## Continuous integration
 
-There are two CI jobs executed on each PR. The `lint` job uses `pre-commit` to check for common errors and formatting, while the `build` job simply tries to build the package using the `build` module. Since `picamera2` is only available on a real Raspberry Pi, and Github workers are not Raspberry Pis, it is not possible to run integration tests in the CI pipeline.
-
+There are two CI jobs executed on each PR. The `lint` job uses `pre-commit` to check for common errors and formatting, while the `build` job simply tries to build the package using the `build` module.
 
 ### Pre-commit static checks
 
 You may find it useful to set up `pre-commit` to run some static checks before each commit. Doing so can help catch common errors, and unify code style.
 
-`pre-commit` should already be installed if you followed the installation instructions above - if not, install on a development pi with `sudo apt install pre-commit`. To set it up to run before every commit, execute `pre-commit install`. Once set up, `pre-commit` will check every file changed in a commit. To make `pre-commit` check every file in the repository, execute `pre-commit run --all-files`. Alternatively, to skip verification, you can use the `--no-verify` option when committing: `git commit --no-verify`
+`pre-commit` should already be installed if you followed the installation instructions above - if not, install on a development pi with `sudo apt install pre-commit`. To set it up to run before every commit, execute `pre-commit install`. Once set up, `pre-commit` will check every file changed in a commit.
+
+To make `pre-commit` check every file in the repository, execute `pre-commit run --all-files`. Alternatively, to skip verification, you can use the `--no-verify` option when committing: `git commit --no-verify`
 
 At any time, you can uninstall `pre-commit` by running `pre-commit uninstall`.
 

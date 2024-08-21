@@ -9,7 +9,7 @@ The docs list all of the **methods** available.
 
 You will see a block of code like this:
 
-```
+```python
 record_video(
     filename: str,
     duration: int
@@ -28,10 +28,10 @@ This tells you:
 ## Parameter list
 This is a list of all parameters, their data type, their default value and a description of what each one does.
 
-| Parameter   | Type    | Default  | Description |
-| ----------- | ------- | -------- | ----------- |
-| filename    | str     | None     | A file name for a .mp4 video. This can also be a path to a file. |
-| duration    | str     | 5        | The length of time to record, in seconds. |
+| Parameter   | Data type    | Default  | Compulsory? | Description |
+| ----------- | ------- | -------- | -------- | ----------- |
+| filename    | str     | None     | Yes | A file name for a `.mp4` video. This can also be a path to a file. |
+| duration    | str     | `5`       | No | The length of time to record, in seconds. |
 
 ## Example
 
