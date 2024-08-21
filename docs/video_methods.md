@@ -19,7 +19,7 @@ record_video(
 | duration    | str     | `5`       | No | The length of time to record, in seconds. |
 
 ##### Example
-```
+```python
 cam.record_video("test_video.mp4", 10)
 ```
 
@@ -48,7 +48,7 @@ start_recording(
 
 
 ##### Example
-```
+```python
 cam.start_recording("new_video.mp4")
 ```
 
@@ -94,7 +94,7 @@ take_video_and_still(
 
 
 ##### Example
-```
+```python
 cam.take_video_and_still("example.mp4", duration=16, still_interval=3)
 ```
 

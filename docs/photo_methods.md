@@ -127,7 +127,7 @@ annotate(
 | bgcolor     | tuple   | None  |  No | A colour in RGBA, hex or color string format. (See the [colors](colors.md) documentation for more details.) |
 
 ##### Example
-```
+```python
 cam.add_image_overlay("logo.gif")
 ```
 

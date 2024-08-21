@@ -4,7 +4,7 @@ The `picamzero` library is a simplified wrapper of the `Picamera2` library. This
 
 To do this, access the `pc2` object inside the camera:
 
-```
+```python
 from picamzero import Camera
 cam = Camera()
 

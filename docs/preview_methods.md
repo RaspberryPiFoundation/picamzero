@@ -10,7 +10,7 @@ Starts a preview window so that you can see what the camera sees.
 start_preview() -> None
 ```
 ##### Example
-```
+```python
 cam.start_preview()
 ```
 
@@ -39,7 +39,7 @@ stop_preview() -> None
 ```
 
 ##### Example
-```
+```python
 cam.stop_preview()
 ```
 

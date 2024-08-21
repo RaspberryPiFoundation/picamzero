@@ -37,13 +37,13 @@ This is a list of all parameters, their data type, their default value and a des
 
 An example of how to call the method is provided.
 
-```
+```python
 cam.record_video("test_video.mp4", 10)
 ```
 
 The example will always assume you have already imported the `picamzero` library, and created a camera. The full code to run this example would be:
 
-```
+```python
 from picamzero import Camera
 cam = Camera()
 cam.record_video("test_video.mp4", 10)

@@ -5,7 +5,7 @@
 
 2. Type this code into your code editor, then save and run it:
 
-```
+```python
 from picamzero import Camera
 cam = Camera()
 cam.take_photo("helloworld.jpg")

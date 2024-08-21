@@ -6,32 +6,17 @@ picamzero is a Python 3 library designed to allow beginners to control a Raspber
 
 1. Open a terminal window on your Raspberry Pi.
 
-![Open a terminal window](docs/images/open-terminal.png)
+    ![Open a terminal window](docs/images/open-terminal.png)
 
-2. Install packages required from apt:
-
-    ```
-    sudo apt install -y libcap-dev python3-libcamera
-    ```
-
-3. Create a virtual environment (venv)
+2. Type this command to run the install script:
 
     ```
-    python3 -m venv --system-site-packages venv
+    curl -L http://rpf.io/picamzero-install | bash
     ```
 
-4. Start the virtual environment. You will need to do this each time you want to use picamzero.
-    ```
-    source venv/bin/activate
-    ```
-
-5. Install picamzero
-
-    ```
-    pip3 install picamzero
-    ```
+    This will create a `.picamzero-venv` where picamzero can be used.
 
 ## Documentation
 
 Full, beginner-friendly documentation is provided at
-[http://raspberrypifoundation.github.io/picamzero](http://raspberrypifoundation.github.io/picamzero).
+[https://raspberrypifoundation.github.io/picamera-zero](https://raspberrypifoundation.github.io/picamera-zero).

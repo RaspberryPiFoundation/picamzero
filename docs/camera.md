@@ -69,7 +69,7 @@ flip_camera(
 | hflip       | bool    | False     | No | Whether to flip along the horizontal axis. |
 
 ##### Example
-```
+```python
 cam.flip_camera(vflip=True)
 ```
 
