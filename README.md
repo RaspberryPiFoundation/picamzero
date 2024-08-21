@@ -11,10 +11,10 @@ picamzero is a Python 3 library designed to allow beginners to control a Raspber
 2. Type this command to run the install script:
 
     ```
-    curl -L http://rpf.io/picamzero-install | bash
+    curl -L --fail http://rpf.io/picamzero-install | bash
     ```
 
-    This will create a `.picamzero-venv` where picamzero can be used.
+    This will create a `picamzero-venv` where picamzero can be used.
 
 ## Documentation
 

@@ -8,6 +8,7 @@ if [ "$(whoami)" = "root" ]; then
 else
   SUDO=sudo
 fi
+VENV_NAME='picamzero-venv'
 
 DEPENDENCIES=(
   python3-pip
@@ -26,13 +27,13 @@ echo "I will need to use sudo to install some dependencies"
 echo "-------------------------------------------------------------"
 $SUDO apt-get update
 $SUDO apt-get install -y "${DEPENDENCIES[@]}"
-(cd "$HOME" && python3 -m venv --system-site-packages .picamzero-venv)
-source "${HOME}/.picamzero-venv/bin/activate"
+(cd "$HOME" && python3 -m venv --system-site-packages "$VENV_NAME")
+source "${HOME}/${VENV_NAME}/bin/activate"
 pip install picamzero
 
 echo "-------------------------------------------------------------"
 echo "All done!"
-echo "Created virtual environment .picamzero-venv"
+echo "Created virtual environment \"${VENV_NAME}\""
 echo "To use picamzero with Thonny, follow the instructions here:"
 echo "https://rpf.io/thonny-install"
 
