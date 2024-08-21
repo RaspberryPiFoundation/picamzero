@@ -196,8 +196,10 @@ def test_controls_retained(
     run_method = getattr(cam, method_to_call)
 
     # Add an arg if it's take photo or record video
-    if method_to_call in ["take_photo", "record_video"]:
+    if method_to_call == "take_photo":
         run_method("example")
+    elif method_to_call == "record_video":
+        run_method("example", duration=2)
     else:
         run_method()
 
@@ -218,8 +220,10 @@ def test_transforms_retained(cam_with_controls: Camera, method_to_call: str, mod
     run_method = getattr(cam, method_to_call)
 
     # Add an arg if it's take photo or record video
-    if method_to_call in ["take_photo", "record_video"]:
+    if method_to_call == "take_photo":
         run_method("example")
+    elif method_to_call == "record_video":
+        run_method("example", duration=2)
     else:
         run_method()
 
@@ -432,16 +436,16 @@ def test_unnamed_sequence(cam: Camera):
 
 # Test a sequence capture with a filename but no extension
 def test_named_sequence_no_extension(cam: Camera):
-    cam.capture_sequence("test")
+    cam.capture_sequence("test", num_images=3)
     assert exists("test-0.jpg")
-    assert exists("test-9.jpg")
+    assert exists("test-2.jpg")
 
 
 # Test a named sequence capture with extension
 def test_named_sequence(cam: Camera):
-    cam.capture_sequence("testing.jpg")
+    cam.capture_sequence("testing.jpg", num_images=3)
     assert exists("testing-0.jpg")
-    assert exists("testing-9.jpg")
+    assert exists("testing-2.jpg")
 
 
 # Test whether you can change the number of pics
@@ -455,12 +459,12 @@ def test_sequence_quantity(cam: Camera):
 # Test the sequence interval
 def test_sequence_interval(cam: Camera):
     start = datetime.now()
-    cam.capture_sequence(filename="longer", interval=1, num_images=3)
+    cam.capture_sequence(filename="longer", interval=0.5, num_images=4)
     stop = datetime.now()
     elapsed = stop - start
     start2 = datetime.now()
     # This one should be faster
-    cam.capture_sequence(filename="shorter", interval=0.5, num_images=3)
+    cam.capture_sequence(filename="shorter", interval=0.2, num_images=4)
     stop2 = datetime.now()
     elapsed2 = stop2 - start2
     assert elapsed > elapsed2
@@ -468,7 +472,7 @@ def test_sequence_interval(cam: Camera):
 
 # Test the video gets made when you do a sequence
 def test_sequence_with_video(cam: Camera):
-    cam.capture_sequence(filename="with-vid", make_video=True)
+    cam.capture_sequence(filename="with-vid", num_images=3, make_video=True)
     assert exists("with-vid-timelapse.mp4")
 
 
@@ -479,11 +483,11 @@ def test_sequence_with_video(cam: Camera):
 
 # Can you take a video and stills
 def test_video_with_stills(cam: Camera):
-    cam.take_video_and_still(filename="abc", duration=12, still_interval=2)
+    cam.take_video_and_still(filename="abc", duration=6, still_interval=2)
     assert exists("abc.mp4")
     assert exists("abc-0.jpg")
-    assert exists("abc-5.jpg")
-    assert not exists("abc-6.jpg")
+    assert exists("abc-2.jpg")
+    assert not exists("abc-3.jpg")
 
     cam.take_video_and_still(filename="testvs")
     assert exists("testvs.mp4")
