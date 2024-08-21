@@ -19,12 +19,21 @@ Picamera2.set_logging(level=Picamera2.ERROR)
 
 # Different camera and processor combinations
 # support a different range of resolutions.
-# This is the minimum 'maximum' for all combinations
+# This is the minimum 'maximum' for all combinations.
 MAX_VIDEO_SIZE: tuple[int, int] = (1920, 1080)
 
 
 class Camera:
+
+    _instance_count = 0
+
     def __init__(self):
+
+        if Camera._instance_count > 0:
+            raise PicameraZeroException(
+                "Only one Camera instance is allowed.",
+                "Ensure you are not trying to create multiple Camera objects.",
+            )
         """
         Creates a Camera object based on a Picamera2 object
 
@@ -35,6 +44,7 @@ class Camera:
         """
         try:
             self.pc2 = Picamera2()
+            Camera._instance_count += 1
 
         except RuntimeError:
             logger.error("Could not connect to the camera!")
@@ -58,6 +68,13 @@ class Camera:
         }
 
         self.pc2.start()
+
+    def __del__(self):
+        """
+        Cleanup the Camera instance when it is deleted
+        """
+        Camera._instance_count -= 1
+        self.pc2.close()
 
     # ----------------------------------
     # PROPERTIES

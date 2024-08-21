@@ -1,5 +1,4 @@
 # -------------------------------------------------------------
-# This is not production code but I am losing the will to live
 # Provide the path to the module so that the tests can run
 import os
 import sys
@@ -25,6 +24,10 @@ def cwd(tmpdir, monkeypatch):
 def cam():
     from picamzero import Camera
 
+    Camera._instance_count = 0
+
     camera = Camera()
-    yield camera
-    camera.pc2.close()
+    try:
+        yield camera
+    finally:
+        camera.pc2.close()
