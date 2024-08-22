@@ -354,6 +354,11 @@ class Camera:
         self.vflip = vflip
         self.hflip = hflip
 
+        trans = {"transform": Transform(hflip=hflip, vflip=vflip)}
+        self.pc2.preview_configuration.update(trans)
+        self.pc2.still_configuration.update(trans)
+        self.pc2.video_configuration.update(trans)
+
     @retain_controls
     def start_preview(self):
         """
@@ -390,6 +395,7 @@ class Camera:
         thickness=3,
         position=(0, 0),
         bgcolor=None,
+        preview_only=True,
     ):
         """
         Set a text overlay on the preview and on images
@@ -439,8 +445,13 @@ class Camera:
                     text_prop["thickness"],
                 )
 
-        # Add the annotation as a callback when any pics are taken
-        self.pc2.pre_callback = annotation_callback
+        if preview_only:
+            self.pc2.post_callback = annotation_callback
+        else:
+            # Add the annotation as a callback when any pics are taken
+            self.pc2.pre_callback = annotation_callback
+
+        self.pc2.start()
 
     # Image overlay
     def add_image_overlay(self, image_path, position=(0, 0), transparency=0.5):
