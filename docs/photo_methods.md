@@ -49,7 +49,7 @@ cam.capture_image("mypic.jpg")
 capture_sequence(
     filename: str,
     num_images: int,
-    interval: float,
+    interval: int,
     make_video: bool
 ) -> None
 ```
@@ -58,17 +58,17 @@ capture_sequence(
 | ----------- | ------- | -------- | -------- | ----------- |
 | filename    | str  | None     | Yes | A file name for a `.jpg` image. This can also be a file path. |
 | num_images  | int     | `10`       | No | How many images to take.|
-| interval    | float   | `0.01`     | No | How long to wait in between each image, in seconds. |
+| interval    | int   | `1`     | No | How long to wait in between each image, in seconds. |
 | make_video  | bool    | `False`    | No | Whether to make a `.mp4` video of the images. |
 
 
 ##### Example
 
 ```python
-cam.capture_sequence("mysequence.jpg", 12, 0.5, True)
+cam.capture_sequence("mysequence.jpg", 12, 2, True)
 ```
 
-This will take a sequence of 12 images, at an interval of half a second (0.5), and then make a timelapse video of the images. The video will be called `mysequence.mp4`.
+This will take a sequence of 12 images, with 2 seconds between images, and then make a timelapse video of the images. The video will be called `mysequence.mp4`.
 
 ---
 

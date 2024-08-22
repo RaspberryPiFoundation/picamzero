@@ -576,7 +576,7 @@ class Camera:
     # Take a sequence
     @retain_controls
     def capture_sequence(
-        self, filename=None, num_images=10, interval=0.01, make_video=False
+        self, filename=None, num_images=10, interval=1, make_video=False
     ):
         """
         Take a series of <num_images> and save them as

@@ -458,16 +458,29 @@ def test_sequence_quantity(cam: Camera):
 
 # Test the sequence interval
 def test_sequence_interval(cam: Camera):
-    start = datetime.now()
-    cam.capture_sequence(filename="longer", interval=0.5, num_images=4)
-    stop = datetime.now()
-    elapsed = stop - start
-    start2 = datetime.now()
-    # This one should be faster
-    cam.capture_sequence(filename="shorter", interval=0.2, num_images=4)
-    stop2 = datetime.now()
-    elapsed2 = stop2 - start2
-    assert elapsed > elapsed2
+    # The interval between pics
+    test_interval = 1
+    cam.capture_sequence(filename="longer", interval=test_interval, num_images=3)
+
+    # Get a datetime object from the exif data
+    def get_datetime_from_exif(img_file):
+        img = piexif.load(img_file)
+        str_date = str(img["Exif"][36867])[2:-1]
+        dt_date = datetime.strptime(str_date, "%Y:%m:%j %H:%M:%S")
+        # dt_date = dt_date.replace(microsecond=0)
+        return dt_date
+
+    img_0 = get_datetime_from_exif("longer-0.jpg")
+    img_1 = get_datetime_from_exif("longer-1.jpg")
+    img_2 = get_datetime_from_exif("longer-2.jpg")
+
+    # Get the time diff in seconds
+    result1 = (img_1 - img_0).total_seconds()
+    result2 = (img_2 - img_1).total_seconds()
+
+    # Is it within 1 second of the interval?
+    assert result1 == pytest.approx(test_interval, rel=1)
+    assert result2 == pytest.approx(test_interval, rel=1)
 
 
 # Test the video gets made when you do a sequence
