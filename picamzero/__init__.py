@@ -1,6 +1,7 @@
+import logging
+
 from .Camera import Camera
 from .PicameraZeroException import PicameraZeroException, override_sys_except_hook
-import logging
 
 __version__ = "0.0.2"
 

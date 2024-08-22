@@ -1,14 +1,17 @@
-from picamera2 import Picamera2, MappedArray
-from .PicameraZeroException import PicameraZeroException
-from time import sleep, time
-from . import utilities as utils
-import cv2
 import logging
-import os
 import math
+import os
+from functools import wraps
+from time import sleep, time
+from typing import Callable, TypeVar
+
+import cv2
 import numpy as np
 from libcamera import Transform
-from functools import wraps
+from picamera2 import MappedArray, Picamera2
+
+from . import utilities as utils
+from .PicameraZeroException import PicameraZeroException
 
 logger = logging.getLogger(__name__)
 logging.basicConfig(format="%(levelname)s:%(message)s", level=logging.WARN)
@@ -21,6 +24,9 @@ Picamera2.set_logging(level=Picamera2.ERROR)
 # support a different range of resolutions.
 # This is the minimum 'maximum' for all combinations.
 MAX_VIDEO_SIZE: tuple[int, int] = (1920, 1080)
+
+# T = TypeVar("T", bound=Any)
+T = TypeVar("T")
 
 
 class Camera:
@@ -238,7 +244,7 @@ class Camera:
 
     # White balance
     @property
-    def white_balance(self) -> str:
+    def white_balance(self) -> str | None:
         """
         Get the white balance mode
 
@@ -307,11 +313,8 @@ class Camera:
         else:
             self.pc2.controls.Saturation = 1.0
 
-    # ----------------------------------
-    # METHODS
-    # ----------------------------------
-
-    def retain_controls(method):
+    @staticmethod
+    def retain_controls(method: Callable[..., T | None]) -> Callable[..., T | None]:
         """
         Decorator to note the controls status before a method
         and return to that state after the method ends.
@@ -320,7 +323,7 @@ class Camera:
         """
 
         @wraps(method)
-        def wrapper(self, *args, **kwargs):
+        def wrapper(self, *args, **kwargs) -> T | None:
 
             # Make a note of the old size and controls
             configs = [
@@ -343,10 +346,13 @@ class Camera:
                 config.update(trans)
                 config.size = old_sizes[i]
 
-            if returnvalue is not None:
-                return returnvalue
+            return returnvalue
 
         return wrapper
+
+    # ----------------------------------
+    # METHODS
+    # ----------------------------------
 
     def flip_camera(self, vflip=False, hflip=False):
         """
@@ -546,7 +552,7 @@ class Camera:
     # Take a picture
 
     @retain_controls
-    def take_photo(self, filename=None, gps_coordinates=None):
+    def take_photo(self, filename=None, gps_coordinates=None) -> str:
         """
         Takes a jpeg image using the camera
         :param str filename: The name of the file to save the photo.
