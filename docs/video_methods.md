@@ -16,7 +16,7 @@ record_video(
 | Parameter   | Data type    | Default  | Compulsory? | Description |
 | ----------- | ------- | -------- | -------- | ----------- |
 | filename    | str     | None     | Yes | A file name for a `.mp4` video. This can also be a path to a file. |
-| duration    | str     | `5`       | No | The length of time to record, in seconds. |
+| duration    | int     | `5`       | No | The length of time to record, in seconds. |
 
 ##### Example
 

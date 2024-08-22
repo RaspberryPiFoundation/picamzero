@@ -65,15 +65,25 @@ flip_camera(
 
 | Parameter   | Data type    | Default  | Compulsory? | Description |
 | ----------- | ------- | -------- | -------- | ----------- |
-| vflip       | bool    | False     | No | Whether to flip along the vertical axis. |
-| hflip       | bool    | False     | No | Whether to flip along the horizontal axis. |
+| vflip       | bool    | False     | No | Flips the image vertically. Setting this to True will provide an upside-down image. |
+| hflip       | bool    | False     | No | Flips the image horizontally. Setting this to True will provide a mirror image. |
 
 ##### Example
 ```python
 cam.flip_camera(vflip=True)
 ```
 
-The camera image will be flipped along the vertical axis.
+The camera image will be upside down.
+
+Setting `flip_camera` more than once will mean earlier transforms are disregarded. For example:
+
+```python
+cam.flip_camera(vflip=True)
+cam.flip_camera(hflip=True)
+```
+The camera will **only** be flipped horizontally. The previous `vflip` setting is reset by the second call to the method.
+
+
 
 ---
 

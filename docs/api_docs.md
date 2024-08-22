@@ -26,12 +26,12 @@ This tells you:
 - what the method returns (`-> str`)
 
 ## Parameter list
-This is a list of all parameters, their data type, their default value and a description of what each one does.
+This is a list of all parameters, their data type, their default value, whether it is compulsory for you to provide a value and a description of what each one does.
 
 | Parameter   | Data type    | Default  | Compulsory? | Description |
 | ----------- | ------- | -------- | -------- | ----------- |
 | filename    | str     | None     | Yes | A file name for a `.mp4` video. This can also be a path to a file. |
-| duration    | str     | `5`       | No | The length of time to record, in seconds. |
+| duration    | int     | `5`       | No | The length of time to record, in seconds. |
 
 ## Example
 

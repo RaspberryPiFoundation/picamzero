@@ -131,9 +131,30 @@ annotate(
 ##### Example
 
 ```python
-cam.add_image_overlay("logo.gif")
+cam.annotate(text="London", font="handwriting1", color="#0099FF")
 ```
 
-This will add an annotation to the preview and to any images captured.
+![Lego set for London with blue text 'London' in top left corner](images/london.png)
+
+This will add an annotation to the preview and to any images captured. The annotation may look larger on the preview than captured images due to the resolution difference.
+
+
+## Capture an image as a numpy array
+
+- Takes a photo at full resolution and saves it as an (RGB) numpy array.
+- This can be used in further processing using libraries like opencv.
+
+
+```python
+capture_array() -> np.ndarray
+```
+
+#### Example
+
+```python
+numpy_img = cam.capture_array()
+```
+
+This will capture a numpy array and save it as `numpy_img` for further processing.
 
 ---
