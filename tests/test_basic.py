@@ -34,6 +34,14 @@ def test_init(cam: Camera):
     assert cam.pc2 is not None
 
 
+# Message if more than one camera object created
+def test_single_instance_creation(cam: Camera):
+    # Try to create another Camera instance while one already exists
+    with pytest.raises(PicameraZeroException):
+        another_cam = Camera()
+        another_cam.take_photo()
+
+
 # ----------------------------------
 # Properties
 # ----------------------------------
@@ -457,6 +465,7 @@ def test_sequence_quantity(cam: Camera):
 
 
 # Test the sequence interval
+@pytest.mark.skip(reason="Capture intervals depend on what else is running")
 def test_sequence_interval(cam: Camera):
     # The interval between pics
     test_interval = 1

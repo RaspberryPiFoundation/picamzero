@@ -74,7 +74,8 @@ class Camera:
         Cleanup the Camera instance when it is deleted
         """
         Camera._instance_count -= 1
-        self.pc2.close()
+        if hasattr(self, "pc2") and self.pc2 is not None:
+            self.pc2.close()
 
     # ----------------------------------
     # PROPERTIES

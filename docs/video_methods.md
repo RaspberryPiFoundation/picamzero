@@ -89,6 +89,7 @@ take_video_and_still(
 | duration       | int     | 20         | No | The length of time to record, in seconds. |
 | still_interval  | int  | 4  | No | How frequently to take a photo, in seconds. If the duration is not exactly divisible by the interval specified, the method will ignore any remaining time. The first image will be taken after waiting for the specified interval. |
 
+It may not be possible for the Raspberry Pi to capture images at the exact interval specified, particularly if the interval value is small.
 
 ##### Example
 

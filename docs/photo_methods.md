@@ -61,6 +61,8 @@ capture_sequence(
 | interval    | int   | `1`     | No | How long to wait in between each image, in seconds. |
 | make_video  | bool    | `False`    | No | Whether to make a `.mp4` video of the images. |
 
+It may not be possible for the Raspberry Pi to capture images at the exact interval specified, particularly if the interval value is small.
+
 
 ##### Example
 
