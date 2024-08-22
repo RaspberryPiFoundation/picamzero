@@ -60,33 +60,51 @@ def set_camera_size(
     error_msg_type: str,
     example_msg: str,
 ):
-    max_h, max_w = max_resolution
+    """
+    :param CameraConfiguration config:
+        The camera configuration to mutate.
+    :param tuple[int,int] max_resolution:
+        A [width,height] two-tuple expressing the maximum width and height
+        in pixels.
+    :param tuple[int,int] size:
+        A [width,height] two-tuple expressing the requested size in pixels.
+    :param str error_msg_type:
+        The name of the mode to use in the error message, should the size
+        be greater than the max_resolution.
+    :param str example_msg:
+        An example resolution to show in the error message, should the
+        size be greater than the max_resolution.
+
+    :rtype None
+    :return None
+    """
+    max_w, max_h = max_resolution
     if isinstance(size, tuple) and len(size) == 2:
-        h, w = size
+        w, h = size
         if isinstance(h, int) and isinstance(w, int) and h > 0 and w > 0:
             if h > max_h or w > max_w:
-                config.size = (max_h, max_w)
+                config.size = (max_w, max_h)
                 logger.warning(
                     f"""You specified an invalid size for the camera.
-                    The size has been adjusted to {max_h}, {max_w}."""
+                    The size has been adjusted to ({max_w}, {max_h})."""
                 )
             else:
-                config.size = (h, w)
+                config.size = (w, h)
         else:
-            config.size = (max_h, max_w)
+            config.size = (max_w, max_h)
             logger.warning(
                 f"""The height and width of the {error_msg_type} must
                 be two positive integers.
                 Example: {example_msg}.
-                The size has been adjusted to {max_h}, {max_w}."""
+                The size has been adjusted to ({max_w}, {max_h})."""
             )
     else:
-        config.size = (max_h, max_w)
+        config.size = (max_w, max_h)
         logger.warning(
             f"""The size of the {error_msg_type} must be two positive integers,
             separated by a comma and in brackets.""",
             f"Example: {example_msg}.",
-            f"The size has been adjusted to {max_h}, {max_w}.",
+            f"The size has been adjusted to ({max_w}, {max_h}).",
         )
 
 
