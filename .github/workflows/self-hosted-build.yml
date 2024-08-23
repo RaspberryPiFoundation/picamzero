@@ -22,8 +22,9 @@ jobs:
               - 'mkdocs.yml'
               - 'README.md'
               - 'LICENSE'
+              - 'CHANGELOG.md'
             other:
-              - '!((docs/**)|mkdocs.yml|README.md|LICENSE)'
+              - '!((docs/**)|mkdocs.yml|README.md|LICENSE|CHANGELOG.md)'
       - name: Run build
         if: ${{ steps.filter.outputs.other == 'true' }}
         run: ./scripts/ci --build
