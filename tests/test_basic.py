@@ -472,26 +472,35 @@ def test_unnamed_sequence(cam: Camera):
 # Test a sequence capture with a filename but no extension
 def test_named_sequence_no_extension(cam: Camera):
     cam.capture_sequence("test", num_images=3)
-    assert exists("test-0.jpg")
-    assert exists("test-2.jpg")
+    assert exists("test-1.jpg")
+    assert exists("test-3.jpg")
     cam.take_sequence("alias", num_images=3)
-    assert exists("alias-0.jpg")
-    assert exists("alias-2.jpg")
+    assert exists("alias-1.jpg")
+    assert exists("alias-3.jpg")
 
 
 # Test a named sequence capture with extension
 def test_named_sequence(cam: Camera):
-    cam.capture_sequence("testing.jpg", num_images=3)
-    assert exists("testing-0.jpg")
-    assert exists("testing-2.jpg")
+    cam.capture_sequence("testing.jpg")
+    assert exists("testing-1.jpg")
+    assert exists("testing-10.jpg")
 
 
 # Test whether you can change the number of pics
 def test_sequence_quantity(cam: Camera):
     cam.capture_sequence(filename="fewer", num_images=2)
-    assert exists("fewer-0.jpg")
     assert exists("fewer-1.jpg")
-    assert not exists("fewer-2.jpg")
+    assert exists("fewer-2.jpg")
+    assert not exists("fewer-3.jpg")
+
+
+def test_sequence_is_zero_padded(cam: Camera):
+    cam.capture_sequence(filename="greater", num_images=11)
+    assert exists("greater-01.jpg")
+    assert not exists("greater-00.jpg")
+    assert not exists("greater-1.jpg")
+    assert exists("greater-11.jpg")
+    assert not exists("greater-12.jpg")
 
 
 # Test the sequence interval
@@ -537,24 +546,25 @@ def test_sequence_with_video(cam: Camera):
 def test_video_with_stills(cam: Camera):
     cam.take_video_and_still(filename="abc", duration=6, still_interval=2)
     assert exists("abc.mp4")
-    assert exists("abc-0.jpg")
-    assert exists("abc-2.jpg")
-    assert not exists("abc-3.jpg")
+    assert exists("abc-1.jpg")
+    assert exists("abc-3.jpg")
+    assert not exists("abc-4.jpg")
 
     cam.take_video_and_still(filename="testvs")
     assert exists("testvs.mp4")
-    assert exists("testvs-0.jpg")
-    assert exists("testvs-4.jpg")
-    assert not exists("testvs-5.jpg")
+    assert exists("testvs-1.jpg")
+    assert exists("testvs-5.jpg")
+    assert not exists("testvs-6.jpg")
 
 
 # Test whether the correct number of stills are taken
 # if the interval is not exactly divisible by the duration
 def test_video_with_stills_non_divisible(cam: Camera):
     cam.take_video_and_still(filename="xyz", duration=7, still_interval=3)
-    assert exists("xyz-0.jpg")
+    assert not exists("xyz-0.jpg")
     assert exists("xyz-1.jpg")
-    assert not exists("xyz-2.jpg")
+    assert exists("xyz-2.jpg")
+    assert not exists("xyz-3.jpg")
     assert exists("xyz.mp4")
 
 

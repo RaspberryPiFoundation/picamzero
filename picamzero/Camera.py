@@ -508,11 +508,15 @@ class Camera:
         self.pc2.start_and_record_video(f"{filename}.mp4", config="video")
         start_time = time()
 
+        padding_amount: str = str(math.ceil(math.log10(len(result))))
+        ext: str = "-{:0" + padding_amount + "d}.jpg"
+
         for i, still_time in enumerate(result):
             sleep(max(0, still_time - (time() - start_time)))
 
             request = self.pc2.capture_request()
-            request.save("main", f"{filename}-{i}.jpg")
+            img_filename = utils.format_filename(filename, ext=ext)
+            request.save("main", img_filename.format(i + 1))
             request.release()
 
         remaining_time = duration - (time() - start_time)
@@ -587,8 +591,12 @@ class Camera:
         Take a series of <num_images> and save them as
         <filename> with auto-number, also set the interval between
         """
-        # Format the filename
-        img_filename = utils.format_filename(filename, ext="-{:d}.jpg")
+        # Format the filename using appropriate zero-padded sequence
+        padding_amount: str = str(math.ceil(math.log10(num_images)))
+        ext: str = "-{:0" + padding_amount + "d}.jpg"
+        img_filename = utils.format_filename(filename, ext=ext)
+
+        img_filename = utils.OneIndexedString(img_filename)
 
         if self.pc2.started:
             self.pc2.stop()
@@ -612,7 +620,7 @@ class Camera:
                 )
 
                 for i in range(num_images):
-                    img_path = img_filename.format(i)
+                    img_path = img_filename.format(i + 1)
                     if os.path.exists(img_path):
                         video.write(cv2.imread(img_path))
                     else:

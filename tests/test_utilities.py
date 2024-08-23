@@ -89,3 +89,12 @@ def test_image_overlay_position_and_transparency(
 def test_filename_none():
     with pytest.raises(PicameraZeroException):
         _ = utils.format_filename(None, ".jpg")  # type: ignore
+
+
+def test_one_indexed_string():
+    to_format = utils.OneIndexedString("image-{:03d}")
+    assert [to_format.format(i) for i in range(3)] == [
+        "image-001",
+        "image-002",
+        "image-003",
+    ]
