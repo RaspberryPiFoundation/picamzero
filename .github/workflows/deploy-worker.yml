@@ -2,8 +2,9 @@ name: Deploy workflow
 
 on:
   workflow_dispatch:
-  #release:
-  #  types: [published]
+  push:
+    branches:
+      - main
 
 env:
   PYTHON_VERSION: '3.11'
@@ -16,21 +17,33 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      - uses: dorny/paths-filter@v3
+        id: filter
+        with:
+          filters: |
+            mkdocs:
+              - 'docs/**'
+              - 'mkdocs.yml'
       - name: Configure Git Credentials
+        if: ${{ steps.filter.outputs.mkdocs == 'true' }}
         run: |
           git config user.name github-actions[bot]
           git config user.email 41898282+github-actions[bot]@users.noreply.github.com
       - uses: actions/setup-python@v5
+        if: ${{ steps.filter.outputs.mkdocs == 'true' }}
         with:
           python-version: ${{ env.PYTHON_VERSION }}
       - run: echo "cache_id=$(date --utc '+%V')" >> $GITHUB_ENV
+        if: ${{ steps.filter.outputs.mkdocs == 'true' }}
       - uses: actions/cache@v4
+        if: ${{ steps.filter.outputs.mkdocs == 'true' }}
         with:
           key: mkdocs-material-${{ env.cache_id }}
           path: .cache
           restore-keys: |
             mkdocs-material-
       - run: ./scripts/deploy docs
+        if: ${{ steps.filter.outputs.mkdocs == 'true' }}
 
       #deploy_python:
       #  runs-on: ubuntu-latest
