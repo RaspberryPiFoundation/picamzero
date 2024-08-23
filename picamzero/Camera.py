@@ -539,7 +539,6 @@ class Camera:
         return self.pc2.switch_mode_and_capture_array(self.pc2.still_configuration)
 
     # Take a picture
-
     @retain_controls
     def take_photo(self, filename=None, gps_coordinates=None) -> str:
         """
@@ -577,8 +576,7 @@ class Camera:
         return filename
 
     # Synonym method for take a picture
-    def capture_image(self, filename=None):
-        return self.take_photo(filename)
+    capture_image = take_photo
 
     # Take a sequence
     @retain_controls
@@ -628,6 +626,9 @@ class Camera:
                 logger.error(f"Error creating video: {e}")
         self.pc2.start()  # Restart camera
 
+    # Synonym method for capture_sequence
+    take_sequence = capture_sequence
+
     # Record a video
     @retain_controls
     def record_video(self, filename=None, duration=5):
@@ -640,6 +641,9 @@ class Camera:
         )
         self.pc2.start()
         return filename
+
+    # Synonym method for record_video
+    take_video = record_video
 
     # Record a video with option to take a photo
     @retain_controls

@@ -19,12 +19,17 @@ record_video(
 | duration    | int     | `5`       | No | The length of time to record, in seconds. |
 
 ##### Example
+A 10 second video called `test_video.mp4` will be recorded and saved into the same folder as the Python script.
 
 ```python
 cam.record_video("test_video.mp4", 10)
 ```
 
-A 10 second video called `test_video.mp4` will be recorded and saved into the same folder as the Python script.
+This method can also be called as ```take_video()``` and will behave in exactly the same way.
+
+```python
+cam.take_video("test_video.mp4", 10)
+```
 
 ---
 

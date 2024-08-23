@@ -368,6 +368,8 @@ def test_annotation_valid_font(cam: Camera):
 def test_named_video(cam: Camera):
     cam.record_video("testvideo.mp4", 3)
     assert exists("testvideo.mp4")
+    cam.take_video("testvideo2.mp4", 3)
+    assert exists("testvideo2.mp4")
 
 
 # Record a video with a specific filename
@@ -472,6 +474,9 @@ def test_named_sequence_no_extension(cam: Camera):
     cam.capture_sequence("test", num_images=3)
     assert exists("test-0.jpg")
     assert exists("test-2.jpg")
+    cam.take_sequence("alias", num_images=3)
+    assert exists("alias-0.jpg")
+    assert exists("alias-2.jpg")
 
 
 # Test a named sequence capture with extension

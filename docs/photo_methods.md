@@ -66,12 +66,18 @@ It may not be possible for the Raspberry Pi to capture images at the exact inter
 
 ##### Example
 
+This will take a sequence of 12 images, with 2 seconds between images, and then make a timelapse video of the images. The video will be called `mysequence.mp4`.
+
+
 ```python
 cam.capture_sequence("mysequence.jpg", 12, 2, True)
 ```
 
-This will take a sequence of 12 images, with 2 seconds between images, and then make a timelapse video of the images. The video will be called `mysequence.mp4`.
+This method can also be called as ```take_sequence()``` and will behave in exactly the same way.
 
+```python
+cam.take_sequence("mysequence.jpg", 12, 2, True)
+```
 ---
 
 ## Add an image overlay
