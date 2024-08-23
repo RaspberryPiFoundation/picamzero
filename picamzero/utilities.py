@@ -1,5 +1,7 @@
 import logging
 import os
+from pathlib import Path
+from typing import Union
 
 import cv2
 import piexif
@@ -10,12 +12,13 @@ from .PicameraZeroException import PicameraZeroException
 logger = logging.getLogger(__name__)
 
 
-def format_filename(filename: str, ext: str) -> str:
+def format_filename(filepath: Union[str, Path], ext: str) -> str:
     """
     Helper method: Generate suitable filename/extension
 
-    :param str filename:
-            The text filename the user entered
+    :param str | Path filename:
+            The filename the user entered, either as text or
+            as a Path object
 
     :param str ext:
             The desired extension to be appended (e.g. ".jpg")
@@ -23,20 +26,22 @@ def format_filename(filename: str, ext: str) -> str:
     :return str filename:
             The formatted filename
     """
-    if filename is None:
+    if filepath is None:
         raise PicameraZeroException(
             "No filename was specified",
             hint="A filename is required when taking a photo or recording a video",
         )
     else:
+        formatted_name = ""
+        if isinstance(filepath, Path):
+            file_root, file_ext = os.path.splitext(filepath.name)
+            formatted_name = f"{str(filepath.parent)}/{file_root}{ext}"
 
-        file_root, file_ext = os.path.splitext(filename)
+        else:
+            file_root, file_ext = os.path.splitext(filepath)
+            formatted_name = file_root + ext
 
-        # Check if the extension is valid, if not replace it
-        if file_ext.lower() != ext:
-            filename = file_root + ext
-
-    return filename
+    return formatted_name
 
 
 # Return a dictionary of possible controls

@@ -8,7 +8,7 @@
 
 ```python
 take_photo(
-    filename: str,
+    filename: str | Path,
     gps_coordinates: tuple[tuple[float, float, float, float],
                      tuple[float, float, float, float]]
 ) -> str
@@ -16,7 +16,7 @@ take_photo(
 
 | Parameter   | Data type    | Default  | Compulsory? | Description |
 | ----------- | ------- | -------- | -------- | ----------- |
-| filename    | str | None     |  Yes | A file name for a `.jpg` image. This can also be a path to a file. |
+| filename    | str or Path | None     |  Yes | A file name for a `.jpg` image. This can also be a path to a file as either a string or a `Path` object. |
 | gps_coordinates    | tuple | None     | No | GPS coordinates to be associated with the image, specified as a (latitude, longitude) tuple where both latitude and longitude are themselves tuples of the form (sign, degrees, minutes, seconds). This format can be generated from the [skyfield library](https://github.com/skyfielders/python-skyfield)'s `signed_dms` function. |
 
 ##### Example
@@ -47,7 +47,7 @@ cam.capture_image("mypic.jpg")
 
 ```python
 capture_sequence(
-    filename: str,
+    filename: str | Path,
     num_images: int,
     interval: int,
     make_video: bool
@@ -56,7 +56,7 @@ capture_sequence(
 
 | Parameter   | Data type    | Default  | Compulsory? | Description |
 | ----------- | ------- | -------- | -------- | ----------- |
-| filename    | str  | None     | Yes | A file name for a `.jpg` image. This can also be a file path. |
+| filename    | str or Path  | None     | Yes | A file name for a `.jpg` image. This can also be a path to a file as either a string or a `Path` object. |
 | num_images  | int     | `10`       | No | How many images to take.|
 | interval    | int   | `1`     | No | How long to wait in between each image, in seconds. |
 | make_video  | bool    | `False`    | No | Whether to make a `.mp4` video of the images. |

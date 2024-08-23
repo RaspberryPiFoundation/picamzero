@@ -28,6 +28,9 @@ blah_path: Path = tests_dir / "blah.jpg"
         ("/photos/test.jpg", ".jpg", "/photos/test.jpg"),
         ("/videos/test.mp4", ".mp4", "/videos/test.mp4"),
         ("../test", ".mp4", "../test.mp4"),
+        (Path("../test"), ".mp4", "../test.mp4"),
+        (Path("images/beep.jpg"), ".jpg", "images/beep.jpg"),
+        (Path("whatever.jpg"), ".jpg", "./whatever.jpg"),
     ],
 )
 def test_filename_format(filename, ext, expected):

@@ -8,14 +8,14 @@
 
 ```python
 record_video(
-    filename: str,
+    filename: str | Path,
     duration: int
 ) -> str
 ```
 
 | Parameter   | Data type    | Default  | Compulsory? | Description |
 | ----------- | ------- | -------- | -------- | ----------- |
-| filename    | str     | None     | Yes | A file name for a `.mp4` video. This can also be a path to a file. |
+| filename    | str or Path     | None     | Yes | A filename for a `.mp4` video. This can also be a path to a file as either a string or a `Path` object. |
 | duration    | int     | `5`       | No | The length of time to record, in seconds. |
 
 ##### Example
@@ -34,14 +34,14 @@ A 10 second video called `test_video.mp4` will be recorded and saved into the sa
 
 ```python
 start_recording(
-    filename: str,
+    filename: str | Path,
     preview: bool,
 ) -> None
 ```
 
 | Parameter   | Data type    | Default  | Compulsory? | Description |
 | ----------- | ------- | -------- | -------- | ----------- |
-| filename    | str     | None     | Yes | A file name for a `.mp4` video. This can also be a path to a file. |
+| filename    | str or Path     | None     | Yes | A file name for a `.mp4` video. This can also be a path to a file as either a string or a `Path` object. |
 | show_preview   | bool     | `False`     | No | Whether to show a preview. |
 
 ##### Example
@@ -77,7 +77,7 @@ cam.stop_recording()
 
 ```python
 take_video_and_still(
-    filename: str,
+    filename: str | Path,
     duration: int,
     still_interval: int
 ) -> None
@@ -85,7 +85,7 @@ take_video_and_still(
 
 | Parameter   | Data type    | Default  | Compulsory? | Description |
 | ----------- | ------- | -------- | -------- | ----------- |
-| filename       | str     | None    | Yes | A file name for a `.mp4` video. This can also be a path to a file. |
+| filename       | str or Path     | None    | Yes | A file name for a `.mp4` video.  This can also be a path to a file as either a string or a `Path` object. |
 | duration       | int     | 20         | No | The length of time to record, in seconds. |
 | still_interval  | int  | 4  | No | How frequently to take a photo, in seconds. If the duration is not exactly divisible by the interval specified, the method will ignore any remaining time. The first image will be taken after waiting for the specified interval. |
 
