@@ -18,7 +18,7 @@ dependencies = [
   "opencv-python-headless"
 ]
 
-requires-python = ">= 3.8"
+requires-python = ">= 3.11"
 
 [tool.hatch.version]
 path = "picamzero/__init__.py"
