@@ -27,7 +27,7 @@ The following properties of the camera can be set. There is no need to change an
 | `contrast`      | float   | 1.0      | A value between 0.0 and 32.0. |
 | `exposure`      | int     | None     | How long the exposure for a shot should be. The min and max values vary. |
 | `gain`          | int     | None     | The analogue gain. The min and max values vary. |
-| `greyscale`     | bool    | False    | Turn greyscale (black and white) mode on or off. |
+| `greyscale`     | bool    | False    | Turn greyscale (black and white) mode on or off. Greyscale does **not** apply to video capture.|
 | `white_balance` | str     | `"auto"`   | The white balance profile used. This can be `"auto"`, `"tungsten"`, `"fluorescent"`, `"indoor"`, `"daylight"` or `"cloudy"`. |
 
 You can also change the size of the three modes (preview, still and video):

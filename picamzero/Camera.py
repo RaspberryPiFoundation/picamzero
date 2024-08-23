@@ -592,6 +592,10 @@ class Camera:
         # Format the filename
         img_filename = utils.format_filename(filename, ext="-{:d}.jpg")
 
+        if self.pc2.started:
+            self.pc2.stop()
+        self.pc2.start()
+
         # DON'T specify configs here, the defaults are fine
         self.pc2.start_and_capture_files(
             img_filename, num_files=num_images, delay=interval
