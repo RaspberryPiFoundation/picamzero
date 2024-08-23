@@ -34,9 +34,9 @@ You can also change the size of the three modes (preview, still and video):
 
 | Property          | Type    | Default  | Description |
 | -----------       | ------- | -------- | ----------- |
-| `preview_size`    | tuple   | Depends* | The width and height, in pixels, of the preview window, e.g. `(800, 600)`. Both the height and width must be even numbers.|
-| `still_size`      | tuple   | Depends* | The width and height, in pixels, of any still images. Both the height and width must be even numbers. |
-| `video_size`      | tuple   | Depends* | The width and height, in pixels, of any video captured. Both the height and width must be even numbers. |
+| `preview_size`    | tuple   | Depends* | The width and height, in pixels, of the preview window, e.g. `(800, 600)`. Both the height and width must be even numbers and greater than 15.|
+| `still_size`      | tuple   | Depends* | The width and height, in pixels, of any still images.  Both the height and width must be even numbers and greater than 15. |
+| `video_size`      | tuple   | Depends* | The width and height, in pixels, of any video captured.  Both the height and width must be even numbers and greater than 15. |
 
 *The default size will depend on which Raspberry Pi camera you are using.
 

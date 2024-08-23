@@ -9,6 +9,7 @@ from libcamera import CameraConfiguration, controls
 
 from .PicameraZeroException import PicameraZeroException
 
+logging.basicConfig(format="%(levelname)s:%(message)s", level=logging.WARN)
 logger = logging.getLogger(__name__)
 
 
@@ -65,7 +66,6 @@ def set_camera_size(
     max_resolution: tuple[int, int],
     size: tuple[int, int],
     error_msg_type: str,
-    example_msg: str,
 ):
     """
     :param CameraConfiguration config:
@@ -78,9 +78,6 @@ def set_camera_size(
     :param str error_msg_type:
         The name of the mode to use in the error message, should the size
         be greater than the max_resolution.
-    :param str example_msg:
-        An example resolution to show in the error message, should the
-        size be greater than the max_resolution.
 
     :rtype None
     :return None
@@ -88,30 +85,39 @@ def set_camera_size(
     max_w, max_h = max_resolution
     if isinstance(size, tuple) and len(size) == 2:
         w, h = size
-        if isinstance(h, int) and isinstance(w, int) and h > 0 and w > 0:
+        if isinstance(h, int) and isinstance(w, int) and h > 15 and w > 15:
             if h > max_h or w > max_w:
                 config.size = (max_w, max_h)
                 logger.warning(
-                    f"""You specified an invalid size for the camera.
-                    The size has been adjusted to ({max_w}, {max_h})."""
+                    f"\nThe {error_msg_type} size couldn't be set to {size}"
+                    f"\nReason: One or both of the values was too large."
+                    f"\nThe size has been adjusted to ({max_w}, {max_h})."
                 )
             else:
+                # Make sure both are even
+                if h % 2 or w % 2:
+                    h = h - 1 if h % 2 else h
+                    w = w - 1 if w % 2 else w
+                    logger.warning(
+                        f"\nThe {error_msg_type} size couldn't be set to {size}"
+                        f"\nReason: Width and height must be even numbers."
+                        f"\nThe size has been adjusted to ({w}, {h})."
+                    )
+
                 config.size = (w, h)
         else:
             config.size = (max_w, max_h)
             logger.warning(
-                f"""The height and width of the {error_msg_type} must
-                be two positive integers.
-                Example: {example_msg}.
-                The size has been adjusted to ({max_w}, {max_h})."""
+                f"\nThe {error_msg_type} size couldn't be set to {size}"
+                f"\nReason: Width and height must be integers greater than 15."
+                f"\nThe size has been adjusted to ({max_w}, {max_h})."
             )
     else:
         config.size = (max_w, max_h)
         logger.warning(
-            f"""The size of the {error_msg_type} must be two positive integers,
-            separated by a comma and in brackets.""",
-            f"Example: {example_msg}.",
-            f"The size has been adjusted to ({max_w}, {max_h}).",
+            f"\nThe {error_msg_type} size couldn't be set to {size}"
+            f"\nReason: The size provided was in the wrong format."
+            f"The size has been adjusted to ({max_w}, {max_h})."
         )
 
 

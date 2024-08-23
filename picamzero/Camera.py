@@ -114,7 +114,6 @@ class Camera:
             self.pc2.sensor_resolution,
             size,
             error_msg_type="preview",
-            example_msg="(640, 480)",
         )
 
     @property
@@ -128,7 +127,6 @@ class Camera:
             self.pc2.sensor_resolution,
             size,
             error_msg_type="image",
-            example_msg="(3280, 2464)",
         )
 
     @property
@@ -138,11 +136,7 @@ class Camera:
     @video_size.setter
     def video_size(self, size):
         utils.set_camera_size(
-            self.pc2.video_configuration,
-            MAX_VIDEO_SIZE,
-            size,
-            error_msg_type="video",
-            example_msg=str(MAX_VIDEO_SIZE),
+            self.pc2.video_configuration, MAX_VIDEO_SIZE, size, error_msg_type="video"
         )
 
     # Check that a control exists (it might not have been set yet)

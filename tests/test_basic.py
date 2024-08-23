@@ -136,15 +136,40 @@ def test_property_set_still_size(cam: Camera):
 
 
 @pytest.mark.parametrize(
-    "size", [(9000, 6000), (-9000, 6000), (9000, -6000), (-9000, -6000), (90.00, 6.000)]
+    "size",
+    [
+        (9000, 6000),
+        (-9000, 6000),
+        (9000, -6000),
+        (-9000, -6000),
+        (90.00, 6.000),
+        (9001, 13001),
+        (-101, -201),
+        (1001.0, 801.0),
+        (2, 2),
+        "reallybig",
+    ],
 )
-def test_property_invalid_size(cam: Camera, size):
+def test_property_size_invalid(cam: Camera, size):
     cam.preview_size = size
-    assert cam.preview_size == cam.pc2.sensor_resolution
     cam.still_size = size
-    assert cam.still_size == cam.pc2.sensor_resolution
     cam.video_size = size
+    assert cam.preview_size == cam.pc2.sensor_resolution
+    assert cam.still_size == cam.pc2.sensor_resolution
     assert cam.video_size == MAX_VIDEO_SIZE
+
+
+@pytest.mark.parametrize(
+    "size,expected",
+    [((801, 601), (800, 600)), ((1919, 1079), (1918, 1078))],
+)
+def test_property_size_odd(cam: Camera, size, expected):
+    cam.preview_size = size
+    cam.still_size = size
+    cam.video_size = size
+    assert cam.preview_size == expected
+    assert cam.still_size == expected
+    assert cam.video_size == expected
 
 
 @pytest.mark.parametrize(
