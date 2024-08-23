@@ -7,16 +7,23 @@ on:
       - '**/**'
     tags:
       - '**/**'
-    paths-ignore:
-      - 'docs/**'
-      - 'mkdocs.yml'
-      - 'README.md'
-      - 'LICENSE'
 
 jobs:
   build_on_rp4_with_hqc:
     runs-on: [self-hosted,picamera2]
     steps:
       - uses: actions/checkout@v4
-      - run:
-          ./scripts/ci --build
+      - uses: dorny/paths-filter@v3
+        id: filter
+        with:
+          filters: |
+            docs:
+              - 'docs/**'
+              - 'mkdocs.yml'
+              - 'README.md'
+              - 'LICENSE'
+            other:
+              - '!((docs/**)|mkdocs.yml|README.md|LICENSE)'
+      - name: Run build
+        if: ${{ steps.filter.outputs.other == 'true' }}
+        run: ./scripts/ci --build
