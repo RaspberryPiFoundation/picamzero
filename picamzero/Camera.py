@@ -402,7 +402,6 @@ class Camera:
         thickness=3,
         position=(0, 0),
         bgcolor=None,
-        preview_only=True,
     ):
         """
         Set a text overlay on the preview and on images
@@ -452,13 +451,8 @@ class Camera:
                     text_prop["thickness"],
                 )
 
-        if preview_only:
-            self.pc2.post_callback = annotation_callback
-        else:
-            # Add the annotation as a callback when any pics are taken
-            self.pc2.pre_callback = annotation_callback
-
-        self.pc2.start()
+        # Add the annotation as a callback when any pics are taken
+        self.pc2.pre_callback = annotation_callback
 
     # Image overlay
     def add_image_overlay(self, image_path, position=(0, 0), transparency=0.5):
@@ -535,6 +529,7 @@ class Camera:
         self.stop_recording()
         self.pc2.start()
 
+    @retain_controls
     def capture_array(self) -> np.ndarray:
         """
         Takes a photo at full resolution and saves it as an
