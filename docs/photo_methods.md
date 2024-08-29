@@ -110,7 +110,7 @@ Assuming the file `logo.gif` exists and is in the same folder as the Python scri
 
 ---
 
-##  Add a text annotation
+##  <a name="annotate"></a>Add a text annotation
 
 Adds a text annotation to the preview and to still images captured by the camera. Does _not_ annotate video.
 
