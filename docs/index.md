@@ -3,7 +3,7 @@
 Picamera zero (`picamzero`) makes it easy for beginners to control a Raspberry Pi camera with Python.
 
 ---
-### Install
+### <a name="install"></a> Install
 
 1. Open a terminal window on your Raspberry Pi.
 
