@@ -482,7 +482,7 @@ def test_named_sequence_no_extension(cam: Camera):
 # Test a named sequence capture with extension
 def test_named_sequence(cam: Camera):
     cam.capture_sequence("testing.jpg")
-    assert exists("testing-1.jpg")
+    assert exists("testing-01.jpg")
     assert exists("testing-10.jpg")
 
 
@@ -550,11 +550,11 @@ def test_video_with_stills(cam: Camera):
     assert exists("abc-3.jpg")
     assert not exists("abc-4.jpg")
 
-    cam.take_video_and_still(filename="testvs")
+    cam.take_video_and_still(filename="testvs", duration=10, still_interval=1)
     assert exists("testvs.mp4")
-    assert exists("testvs-1.jpg")
-    assert exists("testvs-5.jpg")
-    assert not exists("testvs-6.jpg")
+    assert exists("testvs-01.jpg")
+    assert exists("testvs-10.jpg")
+    assert not exists("testvs-1.jpg")
 
 
 # Test whether the correct number of stills are taken

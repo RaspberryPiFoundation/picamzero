@@ -508,7 +508,7 @@ class Camera:
         self.pc2.start_and_record_video(f"{filename}.mp4", config="video")
         start_time = time()
 
-        padding_amount: str = str(math.ceil(math.log10(len(result))))
+        padding_amount: str = str(math.ceil(math.log10(len(result) + 1)))
         ext: str = "-{:0" + padding_amount + "d}.jpg"
 
         for i, still_time in enumerate(result):
@@ -592,7 +592,7 @@ class Camera:
         <filename> with auto-number, also set the interval between
         """
         # Format the filename using appropriate zero-padded sequence
-        padding_amount: str = str(math.ceil(math.log10(num_images)))
+        padding_amount: str = str(math.ceil(math.log10(num_images + 1)))
         ext: str = "-{:0" + padding_amount + "d}.jpg"
         img_filename = utils.format_filename(filename, ext=ext)
 
