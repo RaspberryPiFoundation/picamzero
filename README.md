@@ -2,19 +2,16 @@
 
 picamzero is a Python 3 library designed to allow beginners to control a Raspberry Pi camera with Python.
 
-## Installation
+## Install
 
 1. Open a terminal window on your Raspberry Pi.
 
-    ![Open a terminal window](docs/images/open-terminal.png)
-
-2. Type this command to run the install script:
+2. Run these commands (one at a time) to install `picamzero`:
 
     ```
-    curl -L --fail http://rpf.io/picamzero-install | bash
+    sudo apt update
+    sudo apt install python3-picamzero
     ```
-
-    This will create a `picamzero-venv` where picamzero can be used.
 
 ## Documentation
 
