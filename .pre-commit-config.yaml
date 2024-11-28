@@ -1,0 +1,49 @@
+repos:
+ - repo: https://github.com/pre-commit/pre-commit-hooks
+   rev: v4.6.0
+   hooks:
+    - id: check-case-conflict
+    # - id: check-docstring-first
+    - id: check-merge-conflict
+    - id: check-json
+    - id: check-yaml
+      args: ["--unsafe"]
+    - id: check-toml
+    - id: mixed-line-ending
+    - id: trailing-whitespace
+    - id: requirements-txt-fixer
+ - repo: https://github.com/pycqa/flake8
+   rev: 6.0.0
+   hooks:
+    - id: flake8
+      args: ["--config=.flake8"]
+      types: [python]
+ - repo: https://github.com/psf/black-pre-commit-mirror
+   rev: 24.4.2
+   hooks:
+    - id: black
+      language_version: python3.11
+ - repo: https://github.com/pycqa/isort
+   rev: 5.12.0
+   hooks:
+    - id: isort
+      name: isort (python)
+      files: (^picamzero/|^tests/)
+      types: [python]
+ - repo: https://github.com/PyCQA/bandit
+   rev: 1.7.5
+   hooks:
+    - id: bandit
+      args: ["-c", "pyproject.toml"]
+      files: (^picamzero/|^tests/)
+      types: [python]
+      additional_dependencies: [ "bandit[toml]" ]
+
+ - repo: https://github.com/pre-commit/mirrors-mypy
+   rev: v1.3.0
+   hooks:
+    - id: mypy
+      files: ^picamzero/
+      types: [python]
+
+

@@ -1,0 +1,224 @@
+#!/usr/bin/env python3
+
+import atexit
+import logging
+import os
+import subprocess
+import sys
+
+from argparse import ArgumentParser
+from pathlib import Path
+
+
+PROGRAM_NAME = "picamera_zero_ci"
+CURRENT_DIR = Path(__file__).parent
+PROJECT_DIR = CURRENT_DIR.parent
+VENV = PROJECT_DIR / "venv"
+VENV_PIP = VENV / "bin" / "pip"
+VENV_PYTHON = VENV / "bin" / "python"
+VENV_PYTEST = VENV / "bin" / "pytest"
+VENV_PRECOMMIT = VENV / "bin" / "pre-commit"
+VENV_TWINE = VENV / "bin" / "twine"
+DIST = PROJECT_DIR / "dist"
+
+picamzero_init_file = PROJECT_DIR / "picamzero" / "__init__.py"
+
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(PROGRAM_NAME)
+
+
+def run(cmd, *args, **kwargs):
+    cmd_string = " ".join(cmd)
+    logger.debug(f"Executing {cmd_string}")
+    proc = subprocess.run(cmd, *args, **kwargs)
+    if proc.returncode != 0:
+        raise RuntimeError(f"Command {cmd_string} errored.")
+
+
+def parse_cmdline_args():
+    arg_parser = ArgumentParser(
+        prog=PROGRAM_NAME,
+        description=os.linesep.join(
+            [
+                "This script is used in .github/workflows/build-worker.yml.",
+                "It installs dependencies before running either",
+                "the linter or the build - depending",
+                "on the command line argument. Defaults to build",
+            ]
+        ),
+    )
+    arg_parser.add_argument(
+        "--build", action="store_true", default=False, help="Run the build."
+    )
+    arg_parser.add_argument(
+        "--lint", action="store_true", default=False, help="Run static checks."
+    )
+    arg_parser.add_argument(
+        "--deploy-test-pypi",
+        action="store_true",
+        default=False,
+        help="Run a deployment to test-PyPI",
+    )
+    arg_parser.add_argument(
+        "--deploy-pypi",
+        action="store_true",
+        default=False,
+        help="Run a deployment to PyPI",
+    )
+    arg_parser.add_argument(
+        "--publish-git-tags",
+        action="store_true",
+        default=False,
+        help="Publish the current version as git tags using semantic versioning",
+    )
+    arg_parser.add_argument(
+        "--smoke-tests",
+        action="store_true",
+        default=False,
+        help="Execute the smoke tests",
+    )
+    arg_parser.add_argument(
+        "--version",
+        action="store_true",
+        default=False,
+        help="Print the current version of picamzero to stdout",
+    )
+
+    args = arg_parser.parse_args()
+
+    args_as_dict = vars(args)
+
+    arg_count = len([True for value in args_as_dict.values() if value])
+    if arg_count > 1:
+        logger.error("Too many arguments - expecting only one")
+        sys.exit(1)
+
+    # Default to build if no args given
+    if not any(args_as_dict.values()):
+        args.build = True
+    return args
+
+
+def is_running_on_raspberry_pi():
+    try:
+        with open("/proc/cpuinfo") as f:
+            content = f.read()
+        return "Raspberry Pi" in content
+    except FileNotFoundError:
+        return False
+
+
+def setup(args):
+    """
+    Handles changing of the directory, creation of the venv,
+    and installation of dependencies
+    """
+    # Change to the base project directory
+    original_cwd = os.getcwd()
+    if original_cwd != str(PROJECT_DIR):
+        os.chdir(PROJECT_DIR)
+        # Change back to the original directory at the end of execution
+        atexit.register(lambda: os.chdir(original_cwd))
+
+    # setup venv
+    if not VENV.exists():
+        logger.info("Initialising venv...")
+        cmd = ["python3", "-m", "venv", VENV.name]
+        if is_running_on_raspberry_pi():
+            cmd.insert(3, "--system-site-packages")
+        run(cmd, text=True)
+
+    logger.info("Installing dependencies into venv...")
+    run(
+        [str(VENV_PIP), "install", "-r", str(PROJECT_DIR / "requirements.dev.txt")],
+        stdout=subprocess.DEVNULL if args.version else None,
+        text=True,
+    )
+
+
+def build():
+    if is_running_on_raspberry_pi():
+        run([str(VENV_PYTEST)], text=True)
+    else:
+        logger.warning("Skipping tests since not running on a Raspberry Pi")
+    run([str(VENV_PYTHON), "-m", "build"], text=True)
+
+
+def lint():
+    cmd = [str(VENV_PRECOMMIT), "run", "--all-files"]
+    run(cmd, text=True)
+
+
+def deploy_pypi(test=True):
+    run([str(VENV_TWINE), "check", f"{str(DIST)}/*"], text=True)
+    upload_args = [str(VENV_TWINE), "upload", f"{str(DIST)}/*"]
+    if test:
+        upload_args.insert(len(upload_args) - 1, "-r")
+        upload_args.insert(len(upload_args) - 1, "testpypi")
+    run(upload_args, text=True)
+
+
+def smoke_tests():
+    pass  # TODO
+
+
+def get_version():
+    with picamzero_init_file.open() as f:
+        contents = f.readlines()
+    version = (
+        [line for line in contents if "__version__" in line][0]
+        .split()[-1]
+        .replace(r'"', "")
+        .replace("'", "")
+    )
+    return version
+
+
+def publish_git_tags():
+    split_version = get_version().split(".")
+    version_major = split_version[0]
+    version_minor = split_version[1] if len(split_version) > 1 else "0"
+    version_patch = split_version[2] if len(split_version) > 2 else "0"
+
+    # git tag
+    cmds = [
+        ["git", "tag", "-f", f"v{version_major}"],
+        ["git", "tag", "-f", f"v{version_major}.{version_minor}"],
+        ["git", "tag", "-f", f"v{version_major}.{version_minor}.{version_patch}"],
+        ["git", "push", "-f", "origin", "--tags"],
+    ]
+    for i, cmd in enumerate(cmds):
+        if i == len(cmds) - 1:
+            logger.info("Overwriting the remote tags")
+        run(cmd, text=True)
+
+
+def version():
+    print(get_version())
+
+
+def main():
+    args = parse_cmdline_args()
+
+    setup(args)
+
+    if args.build:
+        build()
+    elif args.lint:
+        lint()
+    elif args.deploy_pypi:
+        build()
+        deploy_pypi(test=False)
+    elif args.deploy_test_pypi:
+        build()
+        deploy_pypi(test=True)
+    elif args.publish_git_tags:
+        publish_git_tags()
+    elif args.smoke_tests:
+        smoke_tests()
+    elif args.version:
+        version()
+
+
+if __name__ == "__main__":
+    main()

@@ -1,0 +1,51 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "picamzero"
+description = "A library to make it easy for beginners to use the Raspberry Pi camera"
+readme = "README.md"
+license = {file="LICENSE"}
+dynamic = ["version"]
+
+authors = [
+  { name="Raspberry Pi Foundation", email="learning@raspberrypi.org" }
+]
+
+dependencies = [
+  "picamera2",
+  "opencv-python-headless"
+]
+
+requires-python = ">= 3.11"
+
+[tool.hatch.version]
+path = "picamzero/__init__.py"
+
+# Configure static checkers/tools
+[tool.isort]
+atomic = true
+line_length = 88
+profile = "black"
+skip_gitignore = true
+src_paths = ["src", "tests"]
+skip_glob = ["tests/resources", "venv", "dist", "docs", "scripts"]
+
+[tool.black]
+line-length = 88
+target-version = ['py39']
+include = '\.pyi?$'
+extend-exclude = '''
+(
+  ^/test/resources
+)
+'''
+
+[tool.bandit]
+skips = ["B101", "B404"]
+exclude = ["tests/resources"]
+
+[tool.pyright]
+pythonPlatform = "Linux"
+

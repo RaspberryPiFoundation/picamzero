@@ -1,0 +1,34 @@
+site_name: picamzero
+site_description: Makes it easy for beginners to control a Raspberry Pi camera with Python.
+theme:
+  name: material
+  logo: images/rpf-logo.svg
+  favicon: images/favicon.ico
+  features:
+    - content.code.copy
+nav:
+  - Home: index.md
+  - How to...:
+    - First program: hello_world.md
+    - Recipes: recipes.md
+    - Use with Picamera2: picamera2.md
+  - API docs:
+    - What are API docs?: api_docs.md
+    - Camera: camera.md
+    - Photo methods: photo_methods.md
+    - Preview methods: preview_methods.md
+    - Video methods: video_methods.md
+    - Colours: colors.md
+  - Contributing: contributing.md
+
+markdown_extensions:
+  - pymdownx.snippets:
+      check_paths: true
+      base_path: [docs/recipes, "."]
+  - pymdownx.highlight:
+      anchor_linenums: true
+      line_spans: __span
+      pygments_lang_class: true
+  - pymdownx.inlinehilite
+  - pymdownx.superfences
+

@@ -1,0 +1,72 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+CURRENT_DIR=$(dirname "$(realpath "${BASH_SOURCE[0]}")")
+PROJECT_DIR=$(dirname "$CURRENT_DIR")
+
+DOCS_CMD="docs"
+PYTHON_CMD="python"
+
+usage() {
+  echo -e "$(basename "$0") [${DOCS_CMD}|${PYTHON_CMD} github_ref]"
+  echo -e ""
+  echo -e "Inputs:"
+  # shellcheck disable=SC2016
+  echo -e '  github_ref: The value of "${{ github.ref }}". Only required'
+  echo -e "  when $PYTHON_CMD is given."
+  echo ""
+}
+
+deploy_docs() {
+  local tmpdir
+  tmpdir=$(mktemp -d)
+  local venv_dir="${tmpdir}/venv"
+  local PIP="$venv_dir/bin/pip"
+  local MKDOCS="$venv_dir/bin/mkdocs"
+
+  # Creating a temporary venv
+  echo "Creating temporary venv at $venv_dir"
+  python3 -m venv "$venv_dir"
+
+  echo "Installing mkdocs and other dependencies"
+  $PIP install -r "${PROJECT_DIR}/requirements.txt"
+
+  echo "Deploying mkdocs site"
+  $MKDOCS gh-deploy --force
+}
+
+deploy_python() {
+  local ref="$1"
+  echo "$ref"
+
+  # TODO check that tag matches version
+  # TODO deploy to PyPI
+}
+
+
+github_ref=""
+# Parse args
+if [ "$#" -eq 0 ]; then
+  echo "Missing command. Specify either ${DOCS_CMD} or ${PYTHON_CMD}"
+  usage
+  exit 1
+elif [ "$1" != "$DOCS_CMD" ] && [ "$1" != "$PYTHON_CMD" ]; then
+  echo "Unrecognised argument: $1"
+  echo "First argument should be ${DOCS_CMD} or ${PYTHON_CMD}"
+  usage
+  exit 1
+elif [ "$1" = "$PYTHON_CMD" ] && [ "$#" -lt 2 ]; then
+  echo "Missing argument: github_ref"
+  usage
+  exit 1
+elif [ "$1" = "$PYTHON_CMD" ]; then
+  github_ref="$2"
+fi
+
+# Run
+if [ "$1" = "$DOCS_CMD" ]; then
+  deploy_docs
+else
+  deploy_python "$github_ref"
+fi
