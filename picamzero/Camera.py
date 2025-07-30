@@ -18,7 +18,7 @@ logging.basicConfig(format="%(levelname)s:%(message)s", level=logging.WARN)
 
 # Suppress Libcamera and Picamera warnings
 os.environ["LIBCAMERA_LOG_LEVELS"] = "4"
-Picamera2.set_logging(level=Picamera2.ERROR)
+Picamera2.set_logging(level=logging.ERROR)
 
 # Different camera and processor combinations
 # support a different range of resolutions.
