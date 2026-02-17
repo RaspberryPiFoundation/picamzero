@@ -1,6 +1,6 @@
-# Pi camera zero (picamzero)
+# `picamzero`
 
-picamzero is a Python 3 library designed to allow beginners to control a Raspberry Pi camera with Python.
+`picamzero` is a Python 3 library designed to allow beginners to control a Raspberry Pi camera with Python.
 
 ## Install
 
@@ -16,4 +16,4 @@ picamzero is a Python 3 library designed to allow beginners to control a Raspber
 ## Documentation
 
 Full, beginner-friendly documentation is provided at
-[https://raspberrypifoundation.github.io/picamera-zero](https://raspberrypifoundation.github.io/picamera-zero).
+[[https://raspberrypifoundation.github.io/picamera-zero](https://raspberrypifoundation.github.io/picamera-zero)](https://raspberrypifoundation.github.io/picamzero/).
