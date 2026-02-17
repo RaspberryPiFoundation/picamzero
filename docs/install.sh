@@ -21,7 +21,7 @@ DEPENDENCIES=(
   python3-opencv
 )
 echo "***************************"
-echo "Picamera Zero (picamzero)"
+echo "picamzero"
 echo "***************************"
 echo "I will need to use sudo to install some dependencies"
 echo "-------------------------------------------------------------"

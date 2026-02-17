@@ -1,6 +1,6 @@
-# Picamera zero (picamzero)
+# `picamzero`
 
-Picamera zero (`picamzero`) makes it easy for beginners to control a Raspberry Pi camera with Python.
+`picamzero` makes it easy for beginners to control a Raspberry Pi camera with Python.
 
 ---
 ### <a name="install"></a> Install
