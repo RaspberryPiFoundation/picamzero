@@ -11,7 +11,7 @@ logger = logging.getLogger(__name__)
 
 class PicameraZeroException(Exception):
     """
-    Base class for exceptions thrown by the picamera-zero
+    Base class for exceptions thrown by the picamzero
     library.
     """
 
@@ -51,8 +51,8 @@ def override_sys_except_hook():
     beginner programmers may find a full stack trace quite
     intimidating.
 
-    This would be called either in picamera-zero's __init__.py or when
-    instantiating picamera-zero's Camera object:
+    This would be called either in picamzero's __init__.py or when
+    instantiating picamzero's Camera object:
 
     """
 

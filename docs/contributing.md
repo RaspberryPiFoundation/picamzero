@@ -16,14 +16,14 @@ source venv/bin/activate
 pip install -r requirements.txt
 ```
 
-Note that `picamera2` - the library on which `picamera-zero` depends - is only installable on Linux.
+Note that `picamera2` - the library on which `picamzero` depends - is only installable on Linux.
 
 ## Clone the repo
 
 Make sure that you have a SSH key set up in GitHub first.
 
 ```
-git clone git@github.com:RaspberryPiFoundation/picamera-zero.git
+git clone git@github.com:RaspberryPiFoundation/picamzero.git
 ```
 
 ## Documentation
