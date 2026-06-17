@@ -448,11 +448,13 @@ def test_capture_array(cam: Camera):
 # ----------------------------------
 
 
-def test_picture_with_gps_coordinates(cam):
+@pytest.mark.parametrize("kwarg_key", ["gps_coordinates", "latlon_coordinates"])
+def test_picture_with_exif_coordinates(cam, kwarg_key):
     filename = "picture_with_gps.jpg"
     latitude = (1.0, 29.1, 29.0, 48.78250810956524)
     longitude = (-1.0, 79.0, 17.0, 53.33060722541995)
-    cam.take_photo(filename, gps_coordinates=(latitude, longitude))
+    kwargs = {kwarg_key: (latitude, longitude)}
+    cam.take_photo(filename, **kwargs)
     assert exists(filename)
     exif_data = piexif.load(filename)
     assert "GPS" in exif_data
@@ -461,6 +463,19 @@ def test_picture_with_gps_coordinates(cam):
     assert gps_ifd[piexif.GPSIFD.GPSLatitudeRef].decode() == "N"
     assert gps_ifd[piexif.GPSIFD.GPSLongitude] == ((79, 1), (17, 1), (533, 10))
     assert gps_ifd[piexif.GPSIFD.GPSLongitudeRef].decode() == "W"
+
+
+def test_raises_exception_when_both_exif_coordinates_args_used(cam):
+    latitude = (1.0, 29.1, 29.0, 48.78250810956524)
+    longitude1 = (-1.0, 79.0, 17.0, 53.33060722541995)
+    coordinates1 = (latitude, longitude1)
+    longitude2 = (-1.0, 80.0, 17.0, 53.33060722541995)
+    coordinates2 = (latitude, longitude2)
+
+    with pytest.raises(PicameraZeroException):
+        cam.take_photo(
+            "image1.jpg", gps_coordinates=coordinates1, latlon_coordinates=coordinates2
+        )
 
 
 # Fail to specify a filename for a sequence

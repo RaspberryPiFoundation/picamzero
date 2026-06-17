@@ -10,7 +10,9 @@
 take_photo(
     filename: str | Path,
     gps_coordinates: tuple[tuple[float, float, float, float],
-                     tuple[float, float, float, float]]
+                     tuple[float, float, float, float]],
+    latlon_coordinates: tuple[tuple[float, float, float, float],
+                     tuple[float, float, float, float]],
 ) -> str
 ```
 
@@ -18,6 +20,7 @@ take_photo(
 | ----------- | ------- | -------- | -------- | ----------- |
 | filename    | str or Path | None     |  Yes | A file name for a `.jpg` image. This can also be a path to a file as either a string or a `Path` object. |
 | gps_coordinates    | tuple | None     | No | GPS coordinates to be associated with the image, specified as a (latitude, longitude) tuple where both latitude and longitude are themselves tuples of the form (sign, degrees, minutes, seconds). This format can be generated from the [skyfield library](https://github.com/skyfielders/python-skyfield)'s `signed_dms` function. |
+| latlon_coordinates  | tuple | None     | No | Another name for `gps_coordinates` for situations where the latitude and longitude coordinates are _not_ calculated using GPS. You can use this parameter instead of `gps_coordinates` to avoid implying that the passed coordinates were calculated using GPS. |
 
 ##### Example
 
