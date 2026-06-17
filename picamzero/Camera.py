@@ -544,19 +544,28 @@ class Camera:
 
     # Take a picture
     @retain_controls
-    def take_photo(self, filename=None, gps_coordinates=None) -> str:
+    def take_photo(
+        self, filename=None, gps_coordinates=None, latlon_coordinates=None
+    ) -> str:
         """
         Takes a jpeg image using the camera
         :param str filename: The name of the file to save the photo.
         If it doesn't end with '.jpg', the ending '.jpg' is added.
         :param tuple[tuple[float, float, float, float],
-                     tuple[float, float, float, float]] gps_coordinate:
-        The gps coordinates to be associated
+                     tuple[float, float, float, float]] gps_coordinates:
+        The latitude and longitude coordinates to be associated
         with the image, specified as a (latitude, longitude) tuple where
         both latitude and longitude are themselves tuples of the
         form (sign, degrees, minutes, seconds). This format
         can be generated from the skyfield library's signed_dms
         function.
+        :param tuple[tuple[float, float, float, float],
+                     tuple[float, float, float, float]] latlon_coordinates:
+        Another name for :obj:`gps_coordinates` for situations
+        where the latitude and longitude coordinates are not
+        calculated using GPS. This parameter can be used instead
+        of `gps_coordinates` to avoid implying that the
+        coordinates were calculated using GPS.
         """
         filename = utils.format_filename(filename, ".jpg")
 
@@ -566,6 +575,29 @@ class Camera:
 
         # Capture the image
         kwargs: dict = {}
+
+        if (
+            gps_coordinates
+            and latlon_coordinates
+            and gps_coordinates != latlon_coordinates
+        ):
+            raise PicameraZeroException(
+                os.linesep.join(
+                    [
+                        "Received both latlon_coordinates "
+                        + "and gps_coordinates, but they are "
+                        + "not the same.",
+                        "Please provide only one of "
+                        + "latlon_coordinates or "
+                        + "gps_coordinates, but not both.",
+                    ]
+                )
+            )
+        # fall back to latlon_coordinates when gps_coordinates
+        # not provided
+        if not gps_coordinates:
+            gps_coordinates = latlon_coordinates
+
         if gps_coordinates is not None:
             kwargs["exif_data"] = utils.signed_dms_coordinates_to_exif_dict(
                 gps_coordinates
