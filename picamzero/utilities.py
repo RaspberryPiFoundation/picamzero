@@ -194,11 +194,9 @@ def convert_color(color):
                 if len(color) == 7:
                     color += "ff"  # Add alpha value if not provided
                 elif len(color) != 9:
-                    logger.warning(
-                        f"""{color} is not a valid hex color.
+                    logger.warning(f"""{color} is not a valid hex color.
                         It must be in the format #RRGGBB or #RRGGBBAA.
-                        The font color has been set to black (#000000ff)"""
-                    )
+                        The font color has been set to black (#000000ff)""")
                     return None
 
                 # Split the color into its hex values
@@ -215,19 +213,15 @@ def convert_color(color):
                     try:
                         int_color = int(hex_color, 16)
                     except ValueError:
-                        logger.warning(
-                            f"""{color} contains an invalid hex value.
+                        logger.warning(f"""{color} contains an invalid hex value.
                             Each part must be a valid hex value
                             between 00 and ff.
-                            The font color has been set to black (#000000ff)"""
-                        )
+                            The font color has been set to black (#000000ff)""")
                         return None
                     if not (0 <= int_color <= 255):
-                        logger.warning(
-                            f"""{color} contains a value out of range.
+                        logger.warning(f"""{color} contains a value out of range.
                             Each part must be between 00 and ff.
-                            The font color has been set to black (#000000ff)"""
-                        )
+                            The font color has been set to black (#000000ff)""")
                         return None
                     rgba_values.append(int_color)
 
@@ -258,18 +252,14 @@ def convert_color(color):
 
             for c in color:
                 if not (0 <= c <= 255):
-                    logger.warning(
-                        f"""{c} is not a valid color value.
-                    The font color has been set to black (0, 0, 0, 255)"""
-                    )
+                    logger.warning(f"""{c} is not a valid color value.
+                    The font color has been set to black (0, 0, 0, 255)""")
                     None
             return tuple(color)
 
-    logger.warning(
-        """
+    logger.warning("""
         The font color you specified was not in the expected format.
-        It will be set to \"black\""""
-    )
+        It will be set to \"black\"""")
     return None
 
 
@@ -296,12 +286,10 @@ def check_image_overlay(image_path, position, transparency):
 
     if not isinstance(position, tuple) or not len(position) == 2:
         position = (0, 0)
-        logger.warning(
-            """You have specified an invalid position for the overlay image.
+        logger.warning("""You have specified an invalid position for the overlay image.
             The position must be two positive integers, separated by a comma
             and in brackets.
-            The position has been set to (0, 0) - the top left."""
-        )
+            The position has been set to (0, 0) - the top left.""")
 
     if not isinstance(transparency, float) or not (0.0 <= transparency <= 1.0):
         transparency = 0.5

@@ -9,7 +9,6 @@ import sys
 from argparse import ArgumentParser
 from pathlib import Path
 
-
 PROGRAM_NAME = "picamera_zero_ci"
 CURRENT_DIR = Path(__file__).parent
 PROJECT_DIR = CURRENT_DIR.parent
