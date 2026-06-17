@@ -12,3 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - All references to `picamera-zero` renamed to `picamzero` for consistency.
 - URL to public documentation.
 
+## [1.1.0]
+
+### Added
+- `latlon_coordinates` argument to `take_photo` method that can be used instead of `gps_coordinates` to avoid implying in code examples that the provided coordinates are provided using GPS.
