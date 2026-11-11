@@ -813,10 +813,10 @@
 </table>
 <h5 id="example">Example</h5>
 <p>A 10 second video called <code>test_video.mp4</code> will be recorded and saved into the same folder as the Python script.</p>
-<div class="language-python highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="n">cam</span><span class="o">.</span><span class="n">record_video</span><span class="p">(</span><span class="s2">&quot;test_video.mp4&quot;</span><span class="p">,</span> <span class="mi">10</span><span class="p">)</span>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="n">cam</span><span class="o">.</span><span class="n">record_video</span><span class="p">(</span><span class="s2">"test_video.mp4"</span><span class="p">,</span> <span class="mi">10</span><span class="p">)</span>
 </span></code></pre></div>
 <p>This method can also be called as <code>take_video()</code> and will behave in exactly the same way.</p>
-<div class="language-python highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="n">cam</span><span class="o">.</span><span class="n">take_video</span><span class="p">(</span><span class="s2">&quot;test_video.mp4&quot;</span><span class="p">,</span> <span class="mi">10</span><span class="p">)</span>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="n">cam</span><span class="o">.</span><span class="n">take_video</span><span class="p">(</span><span class="s2">"test_video.mp4"</span><span class="p">,</span> <span class="mi">10</span><span class="p">)</span>
 </span></code></pre></div>
 <hr />
 <h2 id="start-recording">Start recording</h2>
@@ -856,7 +856,7 @@
 </tbody>
 </table>
 <h5 id="example_1">Example</h5>
-<div class="language-python highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="n">cam</span><span class="o">.</span><span class="n">start_recording</span><span class="p">(</span><span class="s2">&quot;new_video.mp4&quot;</span><span class="p">)</span>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="n">cam</span><span class="o">.</span><span class="n">start_recording</span><span class="p">(</span><span class="s2">"new_video.mp4"</span><span class="p">)</span>
 </span></code></pre></div>
 <p>This code will start recording a video called <code>new_video.mp4</code>. The video will not finish recording until <code>stop_recording()</code> is called.</p>
 <hr />
@@ -917,7 +917,7 @@
 </table>
 <p>It may not be possible for the Raspberry Pi to capture images at the exact interval specified, particularly if the interval value is small.</p>
 <h5 id="example_3">Example</h5>
-<div class="language-python highlight"><pre><span></span><code><span id="__span-8-1"><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a><span class="n">cam</span><span class="o">.</span><span class="n">take_video_and_still</span><span class="p">(</span><span class="s2">&quot;example.mp4&quot;</span><span class="p">,</span> <span class="n">duration</span><span class="o">=</span><span class="mi">16</span><span class="p">,</span> <span class="n">still_interval</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-8-1"><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a><span class="n">cam</span><span class="o">.</span><span class="n">take_video_and_still</span><span class="p">(</span><span class="s2">"example.mp4"</span><span class="p">,</span> <span class="n">duration</span><span class="o">=</span><span class="mi">16</span><span class="p">,</span> <span class="n">still_interval</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
 </span></code></pre></div>
 <p>This will record a 16 second video called <code>example.mp4</code>. It will also take a still image at 3, 6, 9, 12 and 15 seconds and save them as <code>example-1.jpg</code>, <code>example-2.jpg</code> etc.</p>
 

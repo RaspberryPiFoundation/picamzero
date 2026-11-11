@@ -491,7 +491,7 @@
         <li class="md-nav__item">
   <a href="#camtake_sequencemysequencejpg-12-2-true" class="md-nav__link">
     <span class="md-ellipsis">
-      cam.take_sequence(&quot;mysequence.jpg&quot;, 12, 2, True)
+      cam.take_sequence("mysequence.jpg", 12, 2, True)
     </span>
   </a>
   
@@ -745,7 +745,7 @@
         <li class="md-nav__item">
   <a href="#camtake_sequencemysequencejpg-12-2-true" class="md-nav__link">
     <span class="md-ellipsis">
-      cam.take_sequence(&quot;mysequence.jpg&quot;, 12, 2, True)
+      cam.take_sequence("mysequence.jpg", 12, 2, True)
     </span>
   </a>
   
@@ -888,13 +888,13 @@
 </tbody>
 </table>
 <h5 id="example">Example</h5>
-<div class="language-python highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="n">cam</span><span class="o">.</span><span class="n">take_photo</span><span class="p">(</span><span class="s2">&quot;mypic.jpg&quot;</span><span class="p">)</span>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="n">cam</span><span class="o">.</span><span class="n">take_photo</span><span class="p">(</span><span class="s2">"mypic.jpg"</span><span class="p">)</span>
 </span></code></pre></div>
 <p>The image will be saved into the same folder as the Python script, unless a path is specified. In this example, the image will be saved into a <code>photos</code> folder.</p>
-<div class="language-python highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="n">cam</span><span class="o">.</span><span class="n">take_photo</span><span class="p">(</span><span class="s2">&quot;photos/mypic.jpg&quot;</span><span class="p">)</span>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="n">cam</span><span class="o">.</span><span class="n">take_photo</span><span class="p">(</span><span class="s2">"photos/mypic.jpg"</span><span class="p">)</span>
 </span></code></pre></div>
 <p>This method can also be called as <code>capture_image()</code> and will behave in exactly the same way.</p>
-<div class="language-python highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="n">cam</span><span class="o">.</span><span class="n">capture_image</span><span class="p">(</span><span class="s2">&quot;mypic.jpg&quot;</span><span class="p">)</span>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="n">cam</span><span class="o">.</span><span class="n">capture_image</span><span class="p">(</span><span class="s2">"mypic.jpg"</span><span class="p">)</span>
 </span></code></pre></div>
 <hr />
 <h2 id="capture-a-timelapse-sequence">Capture a timelapse sequence</h2>
@@ -954,10 +954,10 @@
 <p>It may not be possible for the Raspberry Pi to capture images at the exact interval specified, particularly if the interval value is small.</p>
 <h5 id="example_1">Example</h5>
 <p>This will take a sequence of 12 images, with 2 seconds between images, and then make a timelapse video of the images. The video will be called <code>mysequence.mp4</code>.</p>
-<div class="language-python highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="n">cam</span><span class="o">.</span><span class="n">capture_sequence</span><span class="p">(</span><span class="s2">&quot;mysequence.jpg&quot;</span><span class="p">,</span> <span class="mi">12</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="n">cam</span><span class="o">.</span><span class="n">capture_sequence</span><span class="p">(</span><span class="s2">"mysequence.jpg"</span><span class="p">,</span> <span class="mi">12</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
 </span></code></pre></div>
 <p>This method can also be called as <code>take_sequence()</code> and will behave in exactly the same way.</p>
-<h2 id="camtake_sequencemysequencejpg-12-2-true"><div class="language-python highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="n">cam</span><span class="o">.</span><span class="n">take_sequence</span><span class="p">(</span><span class="s2">&quot;mysequence.jpg&quot;</span><span class="p">,</span> <span class="mi">12</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
+<h2 id="camtake_sequencemysequencejpg-12-2-true"><div class="language-python highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="n">cam</span><span class="o">.</span><span class="n">take_sequence</span><span class="p">(</span><span class="s2">"mysequence.jpg"</span><span class="p">,</span> <span class="mi">12</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
 </span></code></pre></div></h2>
 <h2 id="add-an-image-overlay">Add an image overlay</h2>
 <ul>
@@ -1005,7 +1005,7 @@
 </tbody>
 </table>
 <h4 id="example_2">Example</h4>
-<div class="language-python highlight"><pre><span></span><code><span id="__span-8-1"><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a><span class="n">cam</span><span class="o">.</span><span class="n">add_image_overlay</span><span class="p">(</span><span class="s2">&quot;logo.gif&quot;</span><span class="p">)</span>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-8-1"><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a><span class="n">cam</span><span class="o">.</span><span class="n">add_image_overlay</span><span class="p">(</span><span class="s2">"logo.gif"</span><span class="p">)</span>
 </span></code></pre></div>
 <p>Assuming the file <code>logo.gif</code> exists and is in the same folder as the Python script, this code will add an overlay to previews and images taken with the camera.</p>
 <hr />
@@ -1084,7 +1084,7 @@
 </tbody>
 </table>
 <h5 id="example_3">Example</h5>
-<div class="language-python highlight"><pre><span></span><code><span id="__span-10-1"><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a><span class="n">cam</span><span class="o">.</span><span class="n">annotate</span><span class="p">(</span><span class="n">text</span><span class="o">=</span><span class="s2">&quot;London&quot;</span><span class="p">,</span> <span class="n">font</span><span class="o">=</span><span class="s2">&quot;handwriting1&quot;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;#0099FF&quot;</span><span class="p">)</span>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-10-1"><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a><span class="n">cam</span><span class="o">.</span><span class="n">annotate</span><span class="p">(</span><span class="n">text</span><span class="o">=</span><span class="s2">"London"</span><span class="p">,</span> <span class="n">font</span><span class="o">=</span><span class="s2">"handwriting1"</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">"#0099FF"</span><span class="p">)</span>
 </span></code></pre></div>
 <p><img alt="Lego set for London with blue text 'London' in top left corner" src="../images/london.png" /></p>
 <p>This will add an annotation to the preview and to any images captured. The annotation may look larger on the preview than captured images due to the resolution difference.</p>

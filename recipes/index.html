@@ -662,7 +662,7 @@
 </span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="n">cam</span> <span class="o">=</span> <span class="n">Camera</span><span class="p">()</span>
 </span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a><span class="n">cam</span><span class="o">.</span><span class="n">start_preview</span><span class="p">()</span>
 </span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a><span class="n">sleep</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
-</span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a><span class="n">cam</span><span class="o">.</span><span class="n">take_photo</span><span class="p">(</span><span class="s2">&quot;test.jpg&quot;</span><span class="p">)</span>
+</span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a><span class="n">cam</span><span class="o">.</span><span class="n">take_photo</span><span class="p">(</span><span class="s2">"test.jpg"</span><span class="p">)</span>
 </span></code></pre></div>
 <h2 id="start-a-preview-and-record-a-video">Start a preview and record a video</h2>
 <p>The preview will display while the camera records a 5 second video called <code>test.mp4</code>.</p>
@@ -670,16 +670,16 @@
 </span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>
 </span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="n">cam</span> <span class="o">=</span> <span class="n">Camera</span><span class="p">()</span>
 </span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="n">cam</span><span class="o">.</span><span class="n">start_preview</span><span class="p">()</span>
-</span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a><span class="n">cam</span><span class="o">.</span><span class="n">record_video</span><span class="p">(</span><span class="s2">&quot;test.mp4&quot;</span><span class="p">,</span> <span class="n">duration</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
+</span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a><span class="n">cam</span><span class="o">.</span><span class="n">record_video</span><span class="p">(</span><span class="s2">"test.mp4"</span><span class="p">,</span> <span class="n">duration</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
 </span></code></pre></div>
 <h2 id="take-a-timelapse-sequence">Take a timelapse sequence</h2>
 <p>The preview will display and the camera will take 5 photos with a 1 second interval between each photo.</p>
-<p>The images will automatically be numbered <code>sequence-0.jpg</code>, <code>sequence-1.jpg</code> etc.</p>
+<p>The images will automatically be numbered <code>sequence-1.jpg</code>, <code>sequence-2.jpg</code> <em>etc.</em> (starting with the index 1).</p>
 <div class="language-python highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">picamzero</span><span class="w"> </span><span class="kn">import</span> <span class="n">Camera</span>
 </span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>
 </span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="n">cam</span> <span class="o">=</span> <span class="n">Camera</span><span class="p">()</span>
 </span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="n">cam</span><span class="o">.</span><span class="n">start_preview</span><span class="p">()</span>
-</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a><span class="n">cam</span><span class="o">.</span><span class="n">capture_sequence</span><span class="p">(</span><span class="n">filename</span><span class="o">=</span><span class="s2">&quot;sequence.jpg&quot;</span><span class="p">,</span> <span class="n">num_images</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">interval</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a><span class="n">cam</span><span class="o">.</span><span class="n">capture_sequence</span><span class="p">(</span><span class="n">filename</span><span class="o">=</span><span class="s2">"sequence.jpg"</span><span class="p">,</span> <span class="n">num_images</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">interval</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
 </span></code></pre></div>
 <h2 id="take-a-black-and-white-image">Take a black and white image</h2>
 <p>The camera will take one black and white image. (No preview is started in this example).</p>
@@ -687,7 +687,7 @@
 </span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>
 </span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="n">cam</span> <span class="o">=</span> <span class="n">Camera</span><span class="p">()</span>
 </span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a><span class="n">cam</span><span class="o">.</span><span class="n">greyscale</span> <span class="o">=</span> <span class="kc">True</span>
-</span><span id="__span-3-5"><a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a><span class="n">cam</span><span class="o">.</span><span class="n">take_photo</span><span class="p">(</span><span class="s2">&quot;bnw.jpg&quot;</span><span class="p">)</span>
+</span><span id="__span-3-5"><a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a><span class="n">cam</span><span class="o">.</span><span class="n">take_photo</span><span class="p">(</span><span class="s2">"bnw.jpg"</span><span class="p">)</span>
 </span></code></pre></div>
 
 
