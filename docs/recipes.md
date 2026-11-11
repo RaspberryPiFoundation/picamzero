@@ -22,7 +22,7 @@ The preview will display while the camera records a 5 second video called `test.
 
 The preview will display and the camera will take 5 photos with a 1 second interval between each photo.
 
-The images will automatically be numbered `sequence-0.jpg`, `sequence-1.jpg` etc.
+The images will automatically be numbered `sequence-1.jpg`, `sequence-2.jpg` _etc._ (starting with the index 1).
 
 ```python
 --8<-- "docs/recipes/timelapse.py"
