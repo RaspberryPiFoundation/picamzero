@@ -13,7 +13,7 @@ Install the dependencies directly into a virtual environment using Python's buil
 ```bash
 python3 -m venv venv
 source venv/bin/activate
-pip install -r requirements.txt
+pip install -r requirements.dev.txt
 ```
 
 Note that `picamera2` - the library on which `picamzero` depends - is only installable on Linux.

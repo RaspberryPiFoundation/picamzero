@@ -30,7 +30,7 @@ deploy_docs() {
   python3 -m venv "$venv_dir"
 
   echo "Installing mkdocs and other dependencies"
-  $PIP install -r "${PROJECT_DIR}/requirements.txt"
+  $PIP install -r "${PROJECT_DIR}/requirements.dev.txt"
 
   echo "Deploying mkdocs site"
   $MKDOCS gh-deploy --force

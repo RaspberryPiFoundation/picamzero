@@ -1,4 +1,7 @@
-build==1.2.1
-mkdocs==1.6.0
-pre-commit==3.8.0
-pytest==8.2.1
+build==1.6.1
+mkdocs==1.6.1
+mkdocs-material==9.8.1
+numpy>=2.5.4
+opencv-python-headless==4.6.0.*
+pre-commit==4.7.0
+pytest==9.2.0
